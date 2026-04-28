@@ -407,10 +407,13 @@ code {
   overflow: hidden;
 }
 .t-logo img {
-  width: 100%;
-  height: 100%;
+  width: 88%;
+  height: 88%;
   object-fit: contain;
   display: block;
+}
+.t-logo[data-school="WPGA"] {
+  background: #1a2a4a;
 }
 .t-dot {
   position: absolute;
