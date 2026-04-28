@@ -62,7 +62,7 @@
           </div>
           <p class="hero-now">
             <span class="hero-now-label">Currently</span>
-            building <strong>Sorta</strong>, a desktop file organizer, and extending my VL53L8CX point-cloud rig with 6-DOF pose tracking.
+            building <strong>Sorta</strong>, a desktop file organizer, and extending my VL53L8CX point-cloud rig with 6-DOF pose tracking. Recently shipped <strong>Sentinel</strong>, a real-time AI occupancy monitor.
           </p>
         </div>
         <figure class="hero-photo">
@@ -195,6 +195,25 @@
         </article>
 
         <article class="project">
+          <div class="project-tag">AI · Computer Vision</div>
+          <h3>Sentinel — AI Occupancy Monitor</h3>
+          <p>
+            A real-time room occupancy counter that connects to an IP camera and uses a <strong>YOLOv8-Pose</strong> model to detect and track people, counting entries and exits as they cross a virtual tripwire. All events are logged to SQLite and visualized in a live <strong>Streamlit</strong> dashboard.
+          </p>
+          <ul class="project-bullets">
+            <li>Shoulder-midpoint tripwire logic — more robust than bounding-box centre across camera angles and partial occlusions</li>
+            <li>Per-person state machine with buffer zone prevents double-counting at the line</li>
+            <li>Model accelerated with <strong>Intel OpenVINO</strong> for faster inference on CPU; live dashboard polls the database every 2 seconds</li>
+          </ul>
+          <div class="project-stack">
+            <span>Python</span><span>YOLOv8-Pose</span><span>OpenVINO</span><span>OpenCV</span><span>SQLite</span><span>Streamlit</span>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/reubenlavin08/Sentinel-AI-Occupancy-Monitor" target="_blank" rel="noopener" class="link-arrow">View on GitHub &rarr;</a>
+          </div>
+        </article>
+
+        <article class="project">
           <div class="project-tag">Software · In progress</div>
           <h3>Sorta — Desktop File Organizer</h3>
           <p>
@@ -263,7 +282,8 @@
           <h3>Programming</h3>
           <ul>
             <li>Java <span class="lvl">— fundamentals (AP CS)</span></li>
-            <li>Python <span class="lvl">— beginner</span></li>
+            <li>Python <span class="lvl">— intermediate</span></li>
+            <li>SQL / SQLite</li>
           </ul>
         </div>
         <div class="skill-group">
@@ -276,10 +296,12 @@
           </ul>
         </div>
         <div class="skill-group">
-          <h3>Tools</h3>
+          <h3>Tools &amp; Libraries</h3>
           <ul>
             <li>Git &amp; GitHub</li>
             <li>VS Code</li>
+            <li>OpenCV · YOLOv8 · OpenVINO</li>
+            <li>Streamlit · Pandas</li>
             <li>Windows &amp; basic terminal</li>
           </ul>
         </div>
