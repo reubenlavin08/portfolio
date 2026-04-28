@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect width="48" height="48" rx="3" fill="#0f1216"/><rect x="0.5" y="0.5" width="47" height="47" rx="2.5" fill="none" stroke="#b6c2cf" stroke-opacity="0.55"/><text x="24" y="30" font-family="JetBrains Mono, Consolas, monospace" font-size="14" font-weight="600" fill="#d8dde4" text-anchor="middle" letter-spacing="0.5">UBC</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="3" fill="#002145"/>
+  <!-- UBC thunderbird simplified crest shape -->
+  <polygon points="24,7 30,14 28,14 32,21 26,21 29,28 24,24 19,28 22,21 16,21 20,14 18,14" fill="#C3942E"/>
+  <text x="24" y="43" font-family="Georgia, serif" font-size="8" font-weight="700" fill="#C3942E" text-anchor="middle" letter-spacing="1">UBC</text>
+</svg>

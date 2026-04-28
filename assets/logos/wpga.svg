@@ -1,1 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect width="48" height="48" rx="3" fill="#0f1216"/><rect x="0.5" y="0.5" width="47" height="47" rx="2.5" fill="none" stroke="#b6c2cf" stroke-opacity="0.55"/><text x="24" y="30" font-family="JetBrains Mono, Consolas, monospace" font-size="11" font-weight="600" fill="#d8dde4" text-anchor="middle" letter-spacing="0.5">WPGA</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="3" fill="#1a1f2e"/>
+  <!-- Shield shape -->
+  <path d="M24 6 L36 11 L36 26 C36 33 30 39 24 42 C18 39 12 33 12 26 L12 11 Z" fill="none" stroke="#b8a04a" stroke-width="1.5"/>
+  <!-- Inner shield detail -->
+  <path d="M24 10 L33 14 L33 26 C33 31.5 28.5 36.5 24 39 C19.5 36.5 15 31.5 15 26 L15 14 Z" fill="#b8a04a" opacity="0.12"/>
+  <text x="24" y="29" font-family="Georgia, serif" font-size="7.5" font-weight="700" fill="#b8a04a" text-anchor="middle" letter-spacing="0.5">WPGA</text>
+</svg>
