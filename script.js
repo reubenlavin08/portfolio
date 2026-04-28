@@ -66,7 +66,9 @@
       ],
       stack: ['Python', 'YOLOv8-Pose', 'OpenVINO', 'OpenCV', 'SQLite', 'Streamlit'],
       github: 'https://github.com/reubenlavin08/Sentinel-AI-Occupancy-Monitor',
-      gallery: [],
+      gallery: [
+        { type: 'image', src: 'assets/projects/sentinel-demo.png' },
+      ],
     },
     emailaudit: {
       tag: 'Software · Agents',
