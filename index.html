@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reuben Lavin — Portfolio</title>
+  <meta name="description" content="Portfolio of Reuben Lavin — incoming UBC Science student, planning to transfer into Engineering. Robotics, embedded systems, and software." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Reuben Lavin — Portfolio" />
+  <meta property="og:description" content="Incoming UBC Science · Engineering transfer track · Robotics &amp; embedded systems." />
+  <meta property="og:image" content="assets/headshot.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#0d1014" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <header class="nav" id="nav">
+    <a href="#top" class="brand">
+      <span class="brand-mark">RL</span>
+      <span class="brand-name">Reuben Lavin</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#about">About</a>
+      <a href="#education">Education</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#activities">Activities</a>
+      <a href="#resume">Resume</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-inner hero-grid">
+        <div class="hero-text">
+          <p class="eyebrow">Incoming UBC Science &mdash; Engineering transfer track</p>
+          <h1 class="hero-title">
+            Reuben <span class="accent">Lavin</span>
+          </h1>
+          <p class="hero-sub">
+            High school senior heading to the University of British Columbia, planning to transfer into Engineering after first year. I build with embedded electronics, code, and a soldering iron.
+          </p>
+          <p class="hero-tags">
+            <span class="tag">Robotics</span>
+            <span class="tag">Embedded · ESP32</span>
+            <span class="tag">Hands-on builder</span>
+          </p>
+          <div class="hero-cta">
+            <a href="#projects" class="btn btn-primary">View projects</a>
+            <a href="#contact" class="btn btn-ghost">Get in touch</a>
+          </div>
+          <p class="hero-now">
+            <span class="hero-now-label">Currently</span>
+            building <strong>Sorta</strong>, a desktop file organizer, and extending my VL53L8CX point-cloud rig with 6-DOF pose tracking.
+          </p>
+        </div>
+        <figure class="hero-photo">
+          <div class="hero-photo-frame">
+            <img src="assets/headshot.jpg" alt="Reuben Lavin" onerror="this.parentElement.classList.add('no-photo'); this.remove();" />
+            <span class="hero-photo-fallback" aria-hidden="true">RL</span>
+          </div>
+          <figcaption class="hero-photo-caption">Vancouver, BC</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="section-head">
+        <span class="section-num">01</span>
+        <h2>About</h2>
+      </div>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>
+            I'm a Grade 12 student at <strong>West Point Grey Academy</strong> in Vancouver, heading to the <strong>University of British Columbia</strong> this fall for Science — with a planned transfer into Engineering after first year. I'm drawn to <strong>robotics</strong>: the place where physics, mathematics, and software meet a moving piece of hardware.
+          </p>
+          <p>
+            Outside of academics I'm an MMA black belt and assistant instructor, a varsity tennis player, and a jazz band leader. I treat engineering the same way I treat training — precise, patient, and built up rep by rep.
+          </p>
+        </div>
+        <aside class="about-card">
+          <h3>Quick facts</h3>
+          <ul>
+            <li><span>Location</span><strong>Vancouver, BC</strong></li>
+            <li><span>Now</span><strong>Grade 12 · WPGA</strong></li>
+            <li><span>Next</span><strong>UBC Science · Sept 2026</strong></li>
+            <li><span>Goal</span><strong>Transfer to Engineering</strong></li>
+            <li><span>Focus</span><strong>Robotics &amp; Embedded</strong></li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="education">
+      <div class="section-head">
+        <span class="section-num">02</span>
+        <h2>Education</h2>
+      </div>
+      <ol class="timeline">
+        <li>
+          <div class="t-dot"></div>
+          <div class="t-meta">Sept 2026 — incoming</div>
+          <h3>University of British Columbia</h3>
+          <p class="t-sub">Bachelor of Science · Engineering transfer planned for second year</p>
+          <ul class="t-bullets">
+            <li>Foundational coursework in calculus, physics, chemistry, and computer science</li>
+            <li>Continuing self-directed work in embedded systems and robotics</li>
+          </ul>
+        </li>
+        <li>
+          <div class="t-dot"></div>
+          <div class="t-meta">2020 — 2026 (graduating)</div>
+          <h3>West Point Grey Academy</h3>
+          <p class="t-sub">Grade 12 · Honor Roll · Graduating June 2026</p>
+          <ul class="t-bullets">
+            <li>AP Computer Science, AP Statistics, AP Human Geography</li>
+            <li>AP Scholars Award · Merit Award · Alfred Lu Spirit Award</li>
+            <li>Music Program Hall of Fame · Varsity Tennis</li>
+          </ul>
+        </li>
+        <li>
+          <div class="t-dot"></div>
+          <div class="t-meta">2018 — 2023</div>
+          <h3>Kumon Math</h3>
+          <p class="t-sub">Graduated full program · Outstanding Academics recognition</p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" id="projects">
+      <div class="section-head">
+        <span class="section-num">03</span>
+        <h2>Projects</h2>
+      </div>
+      <div class="projects">
+        <article class="project">
+          <figure class="project-figure project-figure-video">
+            <video src="assets/projects/pointcloud-demo.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Live VL53L8CX point cloud rendering, 3D scatter of depth measurements color-coded by distance."></video>
+          </figure>
+          <div class="project-tag">Robotics · Perception</div>
+          <h3>VL53L8CX Live Point Cloud + 6-DOF Pose</h3>
+          <p>
+            ESP-IDF firmware streams an 8×8 depth grid from a ST <strong>VL53L8CX</strong> ToF sensor at 15&nbsp;Hz over USB-serial, while a Python visualizer renders it as a GPU-accelerated point cloud with animated sensor beams, a color-coded distance scale, and live <strong>6-DOF pose estimation</strong> — no IMU required.
+          </p>
+          <ul class="project-bullets">
+            <li>Threaded serial pipeline drains the buffer and renders the newest valid frame — kills the one-frame-stale lag of earlier matplotlib versions</li>
+            <li>World-frame point memory: ~6&nbsp;s of past observations re-projected into the current sensor frame, alpha-faded by age</li>
+            <li>Closed-form Kabsch / Procrustes SVD between consecutive clouds, with translation and rotation sanity gates</li>
+          </ul>
+          <div class="project-stack">
+            <span>C · ESP-IDF</span><span>ESP32-S3</span><span>Python</span><span>PyQtGraph + OpenGL</span>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/ReubenLavin08/vl53l8cx-pointcloud-esp32" target="_blank" rel="noopener" class="link-arrow">View on GitHub &rarr;</a>
+          </div>
+        </article>
+
+        <article class="project">
+          <div class="project-tag">Software · Agents</div>
+          <h3>Email Audit — Claude Cowork Skill</h3>
+          <p>
+            A Claude Cowork skill that consolidates an Outlook inbox and a Gmail inbox into a single prioritized action list. Solves the fragmented-inbox problem with a hybrid <strong>browser-automation + native API</strong> approach.
+          </p>
+          <ul class="project-bullets">
+            <li>Split-fetch strategy: browser navigation for Outlook web, official OAuth via Google Workspace Connector for Gmail</li>
+            <li>Zero-credential design — relies on active sessions and OAuth tokens; no passwords stored</li>
+            <li>Unified prioritization output that surfaces urgent items across both platforms</li>
+          </ul>
+          <div class="project-stack">
+            <span>Claude Cowork</span><span>SKILL.md</span><span>Browser automation</span><span>OAuth</span>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/ReubenLavin08/email-audit-claude-cowork-skill" target="_blank" rel="noopener" class="link-arrow">View on GitHub &rarr;</a>
+          </div>
+        </article>
+
+        <article class="project">
+          <div class="project-tag">Software · In progress</div>
+          <h3>Sorta — Desktop File Organizer</h3>
+          <p>
+            A personal app I'm currently building to keep a Windows PC tidy automatically — sorting downloads, screenshots, and stray files into the right folders by type, date, and rules I define. Born out of frustration watching my own desktop and Downloads folder spiral out of control.
+          </p>
+          <ul class="project-bullets">
+            <li>Rule-based file classification and routing</li>
+            <li>Designed to run quietly in the background, not as a one-off cleanup</li>
+            <li>Active project — adding features as I find new pain points</li>
+          </ul>
+          <div class="project-stack">
+            <span>Active development</span>
+          </div>
+          <div class="project-links">
+            <a href="#contact" class="link-arrow">Ask me about it &rarr;</a>
+          </div>
+        </article>
+
+        <article class="project">
+          <figure class="project-figure project-figure-video">
+            <video src="assets/projects/rc-car-drive.mp4" poster="assets/projects/rc-car.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Autonomous RC car driving on a parquet floor, navigating with ultrasonic sensors."></video>
+          </figure>
+          <div class="project-tag">Robotics</div>
+          <h3>Autonomous RC Car</h3>
+          <p>
+            Built a small autonomous driving car using <strong>ultrasonic sensors</strong> for obstacle detection and basic navigation — the kind of "see, decide, drive" loop that's at the heart of every mobile robot.
+          </p>
+          <ul class="project-bullets">
+            <li>Ultrasonic distance sensing for obstacle avoidance</li>
+            <li>Microcontroller-driven steering and motor control</li>
+            <li>End-to-end build: wiring, code, chassis, debugging on real hardware</li>
+          </ul>
+          <div class="project-stack">
+            <span>Embedded</span><span>Sensors</span><span>Motor control</span>
+          </div>
+        </article>
+
+        <article class="project">
+          <figure class="project-figure project-figure-video">
+            <video src="assets/projects/rc-plane-build.mp4" poster="assets/projects/rc-plane.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Building the RC plane wing on a workbench, mid-construction."></video>
+          </figure>
+          <div class="project-tag">Aerospace · Hardware</div>
+          <h3>RC Plane Build</h3>
+          <p>
+            Designed and assembled a remote-controlled airplane — a hands-on dive into aerodynamics, control surfaces, and radio link tuning. Took it from parts on a bench to flying hardware.
+          </p>
+          <ul class="project-bullets">
+            <li>Airframe assembly and balance</li>
+            <li>Servo, ESC, and receiver wiring</li>
+            <li>Field-side troubleshooting and trim adjustments</li>
+          </ul>
+          <div class="project-stack">
+            <span>Aerodynamics</span><span>RC electronics</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="skills">
+      <div class="section-head">
+        <span class="section-num">04</span>
+        <h2>Skills</h2>
+      </div>
+      <div class="skills-grid">
+        <div class="skill-group">
+          <h3>Programming</h3>
+          <ul>
+            <li>Java <span class="lvl">— fundamentals (AP CS)</span></li>
+            <li>Python <span class="lvl">— beginner</span></li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h3>Hardware &amp; Build</h3>
+          <ul>
+            <li>Soldering &amp; breadboarding</li>
+            <li>Sensor wiring (I²C devices)</li>
+            <li>RC platforms · servos · ESCs</li>
+            <li>Foam-board airframe construction</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h3>Tools</h3>
+          <ul>
+            <li>Git &amp; GitHub</li>
+            <li>VS Code</li>
+            <li>Windows &amp; basic terminal</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h3>Academic</h3>
+          <ul>
+            <li>AP Computer Science</li>
+            <li>AP Calculus BC <span class="lvl">— in progress</span></li>
+            <li>AP Statistics</li>
+            <li>Physics fundamentals</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="activities">
+      <div class="section-head">
+        <span class="section-num">05</span>
+        <h2>Activities &amp; Leadership</h2>
+      </div>
+      <div class="activities">
+        <div class="activity">
+          <h3>MMA Assistant Instructor</h3>
+          <p class="a-meta">Ken Shin Dojo · Kerrisdale Community Centre</p>
+          <p>Black belt in Jiu Jitsu &amp; Kickboxing. Teach younger students fundamentals, sparring drills, and discipline.</p>
+        </div>
+        <div class="activity">
+          <h3>Grad Committee Treasurer</h3>
+          <p class="a-meta">Class of 2026 · West Point Grey Academy</p>
+          <p>Managed the budget, vendor payments, and fundraising bookkeeping for the graduating class.</p>
+        </div>
+        <div class="activity">
+          <h3>Jazz Quartet Band Leader</h3>
+          <p class="a-meta">WPGA Music Program</p>
+          <p>Led a four-piece jazz quartet and performed in the school's R&amp;B band — piano, bass, drums, and sax.</p>
+        </div>
+        <div class="activity">
+          <h3>Varsity Tennis</h3>
+          <p class="a-meta">WPGA · Vancouver Lawn Tennis Club</p>
+          <p>Competitive player on WPGA's varsity team and member of Vancouver Lawn Tennis &amp; Badminton Club.</p>
+        </div>
+        <div class="activity">
+          <h3>Windsor Market</h3>
+          <p class="a-meta">2021 — 2024</p>
+          <p>Stocking, register, meat department, general handyman — three years of customer-facing retail experience.</p>
+        </div>
+        <div class="activity">
+          <h3>Volunteer Work</h3>
+          <p class="a-meta">Community</p>
+          <p>Kerrisdale Community Centre, Camp Jubilee restoration, WPGA productions, and concert venue merch sales.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="resume">
+      <div class="section-head">
+        <span class="section-num">06</span>
+        <h2>Resume</h2>
+      </div>
+      <div class="resume-actions">
+        <a class="btn btn-primary" href="assets/Reuben_Lavin_CV.pdf" target="_blank" rel="noopener">Open in new tab</a>
+        <a class="btn btn-ghost" href="assets/Reuben_Lavin_CV.pdf" download>Download PDF</a>
+      </div>
+      <div class="resume-embed">
+        <object data="assets/Reuben_Lavin_CV.pdf#view=FitH&amp;toolbar=0" type="application/pdf" aria-label="Reuben Lavin resume preview">
+          <p>Your browser can't display the embedded PDF. <a href="assets/Reuben_Lavin_CV.pdf" target="_blank" rel="noopener">Open it here</a>.</p>
+        </object>
+      </div>
+    </section>
+
+    <section class="section section-contact" id="contact">
+      <div class="section-head">
+        <span class="section-num">07</span>
+        <h2>Get in touch</h2>
+      </div>
+      <p class="contact-lede">
+        Looking for an intern, collaborator, or just want to talk robots? My inbox is open.
+      </p>
+      <div class="contact-grid">
+        <a class="contact-card" href="mailto:reubenlavin08@gmail.com">
+          <span class="c-label">Email</span>
+          <span class="c-value">reubenlavin08@gmail.com</span>
+        </a>
+        <a class="contact-card" href="https://github.com/ReubenLavin08" target="_blank" rel="noopener">
+          <span class="c-label">GitHub</span>
+          <span class="c-value">@reubenlavin08</span>
+        </a>
+        <a class="contact-card" href="https://www.linkedin.com/in/reuben-lavin-4bb2712ba/" target="_blank" rel="noopener">
+          <span class="c-label">LinkedIn</span>
+          <span class="c-value">reuben-lavin</span>
+        </a>
+        <a class="contact-card" href="assets/Reuben_Lavin_CV.pdf" download>
+          <span class="c-label">Resume</span>
+          <span class="c-value">Download PDF</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; <span id="year"></span> Reuben Lavin · Built from scratch with HTML, CSS &amp; JS.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
