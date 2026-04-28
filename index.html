@@ -152,123 +152,80 @@
         <span class="section-num">03</span>
         <h2>Projects</h2>
       </div>
-      <div class="projects">
-        <article class="project">
-          <figure class="project-figure project-figure-video">
-            <video src="assets/projects/pointcloud-demo.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Live VL53L8CX point cloud rendering, 3D scatter of depth measurements color-coded by distance."></video>
+      <div class="proj-grid">
+
+        <article class="proj-card" data-project="vl53l8cx" tabindex="0" role="button" aria-label="Open VL53L8CX project">
+          <figure class="proj-thumb proj-thumb--video">
+            <video src="assets/projects/pointcloud-demo.mp4" autoplay muted loop playsinline preload="metadata"></video>
           </figure>
-          <div class="project-tag">Robotics · Perception</div>
-          <h3>VL53L8CX Live Point Cloud + 6-DOF Pose</h3>
-          <p>
-            ESP-IDF firmware streams an 8×8 depth grid from a ST <strong>VL53L8CX</strong> ToF sensor at 15&nbsp;Hz over USB-serial, while a Python visualizer renders it as a GPU-accelerated point cloud with animated sensor beams, a color-coded distance scale, and live <strong>6-DOF pose estimation</strong> — no IMU required.
-          </p>
-          <ul class="project-bullets">
-            <li>Threaded serial pipeline drains the buffer and renders the newest valid frame — kills the one-frame-stale lag of earlier matplotlib versions</li>
-            <li>World-frame point memory: ~6&nbsp;s of past observations re-projected into the current sensor frame, alpha-faded by age</li>
-            <li>Closed-form Kabsch / Procrustes SVD between consecutive clouds, with translation and rotation sanity gates</li>
-          </ul>
-          <div class="project-stack">
-            <span>C · ESP-IDF</span><span>ESP32-S3</span><span>Python</span><span>PyQtGraph + OpenGL</span>
-          </div>
-          <div class="project-links">
-            <a href="https://github.com/ReubenLavin08/vl53l8cx-pointcloud-esp32" target="_blank" rel="noopener" class="link-arrow">View on GitHub &rarr;</a>
+          <div class="proj-body">
+            <span class="proj-tag">Robotics · Perception</span>
+            <h3>VL53L8CX Live Point Cloud + 6-DOF Pose</h3>
+            <p>ESP32 firmware + Python visualizer for a live ToF point cloud with 6-DOF pose estimation — no IMU required.</p>
+            <span class="proj-cta">View project &rarr;</span>
           </div>
         </article>
 
-        <article class="project">
-          <div class="project-tag">Software · Agents</div>
-          <h3>Email Audit — Claude Cowork Skill</h3>
-          <p>
-            A Claude Cowork skill that consolidates an Outlook inbox and a Gmail inbox into a single prioritized action list. Solves the fragmented-inbox problem with a hybrid <strong>browser-automation + native API</strong> approach.
-          </p>
-          <ul class="project-bullets">
-            <li>Split-fetch strategy: browser navigation for Outlook web, official OAuth via Google Workspace Connector for Gmail</li>
-            <li>Zero-credential design — relies on active sessions and OAuth tokens; no passwords stored</li>
-            <li>Unified prioritization output that surfaces urgent items across both platforms</li>
-          </ul>
-          <div class="project-stack">
-            <span>Claude Cowork</span><span>SKILL.md</span><span>Browser automation</span><span>OAuth</span>
+        <article class="proj-card" data-project="sentinel" tabindex="0" role="button" aria-label="Open Sentinel project">
+          <div class="proj-thumb proj-thumb--text">
+            <span class="proj-thumb-label">AI</span>
           </div>
-          <div class="project-links">
-            <a href="https://github.com/ReubenLavin08/email-audit-claude-cowork-skill" target="_blank" rel="noopener" class="link-arrow">View on GitHub &rarr;</a>
+          <div class="proj-body">
+            <span class="proj-tag">AI · Computer Vision</span>
+            <h3>Sentinel — AI Occupancy Monitor</h3>
+            <p>Real-time people counting via YOLOv8-Pose tripwire over an IP camera, with a live Streamlit dashboard.</p>
+            <span class="proj-cta">View project &rarr;</span>
           </div>
         </article>
 
-        <article class="project">
-          <div class="project-tag">AI · Computer Vision</div>
-          <h3>Sentinel — AI Occupancy Monitor</h3>
-          <p>
-            A real-time room occupancy counter that connects to an IP camera and uses a <strong>YOLOv8-Pose</strong> model to detect and track people, counting entries and exits as they cross a virtual tripwire. All events are logged to SQLite and visualized in a live <strong>Streamlit</strong> dashboard.
-          </p>
-          <ul class="project-bullets">
-            <li>Shoulder-midpoint tripwire logic — more robust than bounding-box centre across camera angles and partial occlusions</li>
-            <li>Per-person state machine with buffer zone prevents double-counting at the line</li>
-            <li>Model accelerated with <strong>Intel OpenVINO</strong> for faster inference on CPU; live dashboard polls the database every 2 seconds</li>
-          </ul>
-          <div class="project-stack">
-            <span>Python</span><span>YOLOv8-Pose</span><span>OpenVINO</span><span>OpenCV</span><span>SQLite</span><span>Streamlit</span>
+        <article class="proj-card" data-project="emailaudit" tabindex="0" role="button" aria-label="Open Email Audit project">
+          <div class="proj-thumb proj-thumb--text">
+            <span class="proj-thumb-label">✉</span>
           </div>
-          <div class="project-links">
-            <a href="https://github.com/reubenlavin08/Sentinel-AI-Occupancy-Monitor" target="_blank" rel="noopener" class="link-arrow">View on GitHub &rarr;</a>
+          <div class="proj-body">
+            <span class="proj-tag">Software · Agents</span>
+            <h3>Email Audit — Claude Cowork Skill</h3>
+            <p>Consolidates Outlook + Gmail into one prioritized action list via browser automation and OAuth.</p>
+            <span class="proj-cta">View project &rarr;</span>
           </div>
         </article>
 
-        <article class="project">
-          <div class="project-tag">Software · In progress</div>
-          <h3>Sorta — Desktop File Organizer</h3>
-          <p>
-            A personal app I'm currently building to keep a Windows PC tidy automatically — sorting downloads, screenshots, and stray files into the right folders by type, date, and rules I define. Born out of frustration watching my own desktop and Downloads folder spiral out of control.
-          </p>
-          <ul class="project-bullets">
-            <li>Rule-based file classification and routing</li>
-            <li>Designed to run quietly in the background, not as a one-off cleanup</li>
-            <li>Active project — adding features as I find new pain points</li>
-          </ul>
-          <div class="project-stack">
-            <span>Active development</span>
-          </div>
-          <div class="project-links">
-            <a href="#contact" class="link-arrow">Ask me about it &rarr;</a>
-          </div>
-        </article>
-
-        <article class="project">
-          <figure class="project-figure project-figure-video">
-            <video src="assets/projects/rc-car-drive.mp4" poster="assets/projects/rc-car.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Autonomous RC car driving on a parquet floor, navigating with ultrasonic sensors."></video>
+        <article class="proj-card" data-project="rccar" tabindex="0" role="button" aria-label="Open RC Car project">
+          <figure class="proj-thumb proj-thumb--video">
+            <video src="assets/projects/rc-car-new.mov" poster="assets/projects/rc-car-thumb.jpg" autoplay muted loop playsinline preload="metadata"></video>
           </figure>
-          <div class="project-tag">Robotics</div>
-          <h3>Autonomous RC Car</h3>
-          <p>
-            Built a small autonomous driving car using <strong>ultrasonic sensors</strong> for obstacle detection and basic navigation — the kind of "see, decide, drive" loop that's at the heart of every mobile robot.
-          </p>
-          <ul class="project-bullets">
-            <li>Ultrasonic distance sensing for obstacle avoidance</li>
-            <li>Microcontroller-driven steering and motor control</li>
-            <li>End-to-end build: wiring, code, chassis, debugging on real hardware</li>
-          </ul>
-          <div class="project-stack">
-            <span>Embedded</span><span>Sensors</span><span>Motor control</span>
+          <div class="proj-body">
+            <span class="proj-tag">Robotics</span>
+            <h3>Autonomous RC Car</h3>
+            <p>Self-navigating car using ultrasonic sensors — full end-to-end hardware and firmware build.</p>
+            <span class="proj-cta">View project &rarr;</span>
           </div>
         </article>
 
-        <article class="project">
-          <figure class="project-figure project-figure-video">
-            <video src="assets/projects/rc-plane-build.mp4" poster="assets/projects/rc-plane.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Building the RC plane wing on a workbench, mid-construction."></video>
+        <article class="proj-card" data-project="rcplane" tabindex="0" role="button" aria-label="Open RC Plane project">
+          <figure class="proj-thumb proj-thumb--video">
+            <video src="assets/projects/rc-plane-1.mov" poster="assets/projects/rc-plane-thumb.jpg" autoplay muted loop playsinline preload="metadata"></video>
           </figure>
-          <div class="project-tag">Aerospace · Hardware</div>
-          <h3>RC Plane Build</h3>
-          <p>
-            Designed and assembled a remote-controlled airplane — a hands-on dive into aerodynamics, control surfaces, and radio link tuning. Took it from parts on a bench to flying hardware.
-          </p>
-          <ul class="project-bullets">
-            <li>Airframe assembly and balance</li>
-            <li>Servo, ESC, and receiver wiring</li>
-            <li>Field-side troubleshooting and trim adjustments</li>
-          </ul>
-          <div class="project-stack">
-            <span>Aerodynamics</span><span>RC electronics</span>
+          <div class="proj-body">
+            <span class="proj-tag">Aerospace · Hardware</span>
+            <h3>RC Plane Build</h3>
+            <p>Designed and assembled an RC airplane from scratch — airframe, control surfaces, and radio tuning.</p>
+            <span class="proj-cta">View project &rarr;</span>
           </div>
         </article>
+
+        <article class="proj-card" data-project="sorta" tabindex="0" role="button" aria-label="Open Sorta project">
+          <div class="proj-thumb proj-thumb--text">
+            <span class="proj-thumb-label">⌗</span>
+          </div>
+          <div class="proj-body">
+            <span class="proj-tag">Software · In progress</span>
+            <h3>Sorta — Desktop File Organizer</h3>
+            <p>Background app that keeps a Windows PC tidy by auto-sorting downloads and screenshots by type and rules.</p>
+            <span class="proj-cta">View project &rarr;</span>
+          </div>
+        </article>
+
       </div>
     </section>
 
@@ -404,6 +361,30 @@
   <footer class="footer">
     <p>&copy; <span id="year"></span> Reuben Lavin · Built from scratch with HTML, CSS &amp; JS.</p>
   </footer>
+
+  <!-- Project Modal -->
+  <div class="modal" id="projectModal" hidden aria-modal="true" role="dialog">
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-box">
+      <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+      <div class="modal-gallery-wrap" id="modalGalleryWrap">
+        <div class="modal-gallery" id="modalGallery"></div>
+        <button class="gal-btn gal-prev" id="galPrev" aria-label="Previous">&#8249;</button>
+        <button class="gal-btn gal-next" id="galNext" aria-label="Next">&#8250;</button>
+        <div class="gal-dots" id="galDots"></div>
+      </div>
+      <div class="modal-info">
+        <div class="modal-header">
+          <span class="proj-tag" id="mTag"></span>
+          <h2 id="mTitle"></h2>
+        </div>
+        <p id="mDesc"></p>
+        <ul class="project-bullets" id="mBullets"></ul>
+        <div class="project-stack" id="mStack"></div>
+        <div class="modal-links" id="mLinks"></div>
+      </div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
