@@ -49,10 +49,41 @@
         'World-frame point memory: ~6 s of past observations re-projected into the current sensor frame, alpha-faded by age',
         'Closed-form Kabsch / Procrustes SVD between consecutive clouds, with translation and rotation sanity gates',
       ],
-      stack: ['C · ESP-IDF', 'ESP32-S3', 'Python', 'PyQtGraph + OpenGL'],
-      github: 'https://github.com/ReubenLavin08/vl53l8cx-pointcloud-esp32',
+      stack: ['C · ESP-IDF', 'ESP32-S3', 'Python', 'PyQtGraph + OpenGL', 'Point clouds', 'Sensor fusion'],
+      github: 'https://github.com/reubenlavin08/vl53l8cx-pointcloud-esp32',
       gallery: [
         { type: 'video', src: 'assets/projects/pointcloud-demo.mp4' },
+      ],
+    },
+    bullseye: {
+      tag: 'Product · Open Source',
+      title: 'Bullseye — Marketplace Deal Scorer',
+      desc: 'Open-source Windows desktop app that scores Facebook Marketplace listings against real eBay sold-comp data in real time. Deterministic percentile-rank scoring with confidence bands and honesty guards — no LLM in the scoring path, same listing always produces the same score. Free forever for 3 saved searches, Pro for unlimited.',
+      bullets: [
+        'Tukey-trimmed median + IQR over the eBay Browse API (last 90 days) drives the percentile rank — not "estimated value" or Marketplace-vs-Marketplace',
+        'Four-layer adaptive scanner: exponential rate-limit cooldown, slow-start ramp (60s → 20s floor), half-open circuit breaker with cheap HTML probe, round-robin coordinator across watches',
+        'Lineage: evolved from salvage-radar → bullseye → bullseye-app over three rewrites',
+      ],
+      stack: ['Python', 'Supabase Edge Functions', 'eBay Browse API', 'AGPL-3.0', 'Statistical analysis', 'Web scraping'],
+      github: 'https://github.com/reubenlavin08/bullseye-app',
+      website: 'https://getbullseye.app',
+      gallery: [
+        { type: 'video', src: 'assets/projects/bullseye-demo.mp4' },
+      ],
+    },
+    claudemonitor: {
+      tag: 'Embedded · Dashboards',
+      title: 'Claude Monitor — Live Pi Usage Dashboard',
+      desc: 'A wall-mounted 7" Raspberry Pi screen that shows live Claude Code usage: exact 5-hour and weekly window percentages, reset countdowns, per-session context %, cost, and every active session on the desktop. Built because Anthropic doesn\'t expose any of this through an API — the numbers are only rendered to the terminal.',
+      bullets: [
+        'Scrapes the CLI\'s /usage dialog by spawning a hidden claude.cmd via pywinpty, types the command, and parses the dialog text every 90s',
+        'FastAPI + watchdog server streams updates over WebSocket; static dashboard sized for a fixed 800×480 canvas with a CRT-terminal aesthetic',
+        'If a scrape fails, bars render as — rather than approximated numbers; what\'s on screen is always either real or visibly absent',
+      ],
+      stack: ['Python', 'FastAPI', 'pywinpty', 'Raspberry Pi', 'WebSocket', 'Computer vision', 'Voice control'],
+      github: 'https://github.com/reubenlavin08/claude-monitor',
+      gallery: [
+        { type: 'image', src: 'assets/projects/claude-monitor-dashboard.png' },
       ],
     },
     sentinel: {
@@ -64,24 +95,27 @@
         'Per-person state machine with an 80 px buffer zone prevents double-counting at the line',
         'Model accelerated with Intel OpenVINO for faster CPU inference; occupancy can never go below zero',
       ],
-      stack: ['Python', 'YOLOv8-Pose', 'OpenVINO', 'OpenCV', 'SQLite', 'Streamlit'],
+      stack: ['Python', 'YOLOv8-Pose', 'OpenVINO', 'OpenCV', 'SQLite', 'Streamlit', 'Pose estimation', 'Object tracking'],
       github: 'https://github.com/reubenlavin08/Sentinel-AI-Occupancy-Monitor',
       gallery: [
         { type: 'image', src: 'assets/projects/sentinel-demo.png' },
       ],
     },
-    emailaudit: {
-      tag: 'Software · Agents',
-      title: 'Email Audit — Claude Cowork Skill',
-      desc: 'A Claude Cowork skill that consolidates an Outlook inbox and a Gmail inbox into a single prioritized action list. Solves the fragmented-inbox problem with a hybrid browser-automation + native API approach.',
+    cvcourse: {
+      tag: 'Learning · Experiment',
+      title: 'Sensor Fusion — A Personalized Learning Experiment',
+      desc: 'A self-paced course on computer vision, sensor calibration, and multi-sensor fusion, designed around AI as a first-class learning collaborator. The artifact is a working static-site course; the point is the experiment — testing whether structured AI collaboration helps a single learner cover college-level technical material faster and deeper than passive content or solo grinding.',
       bullets: [
-        'Split-fetch strategy: browser navigation for Outlook web, official OAuth via Google Workspace Connector for Gmail',
-        'Zero-credential design — relies on active sessions and OAuth tokens; no passwords stored',
-        'Unified prioritization output that surfaces urgent items across both inboxes',
+        '"Ask Claude" and "Stuck?" buttons on every lesson and quiz — each click copies a topic-specific, pre-engineered Socratic prompt to the clipboard and opens claude.ai',
+        'A portable BRIEFING.md handoff document reloads full project context into any fresh Claude chat in under 30 seconds',
+        'Built to support a three-phase assistive-helmet project: Phase 1 (shipped) = ToF + 6-DOF pose, Phase 2 = camera CV, Phase 3 = ToF + camera + IMU fused into a unified state estimator',
       ],
-      stack: ['Claude Cowork', 'SKILL.md', 'Browser automation', 'OAuth'],
-      github: 'https://github.com/ReubenLavin08/email-audit-claude-cowork-skill',
-      gallery: [],
+      stack: ['Static site', 'Active recall', 'AI-collaborative design', 'Sensor fusion', 'Computer vision', 'Linear algebra'],
+      github: 'https://github.com/reubenlavin08/cv-robotics-course',
+      website: 'https://reubenlavin08.github.io/cv-robotics-course/',
+      gallery: [
+        { type: 'image', src: 'assets/projects/cv-course-home.png' },
+      ],
     },
     rccar: {
       tag: 'Robotics',
@@ -92,7 +126,7 @@
         'Microcontroller-driven steering and motor control loop',
         'Full end-to-end build: chassis, wiring, firmware, and hands-on hardware debugging',
       ],
-      stack: ['Embedded', 'Ultrasonic sensors', 'Motor control'],
+      stack: ['Embedded', 'Ultrasonic sensors', 'Motor control', 'Obstacle avoidance'],
       github: null,
       gallery: [
         { type: 'image', src: 'assets/projects/rc-car-photo.jpg' },
@@ -120,19 +154,6 @@
         { type: 'video', src: 'assets/projects/rc-plane-4.mov', poster: 'assets/projects/rc-plane-thumb.jpg' },
         { type: 'video', src: 'assets/projects/rc-plane-build.mp4', poster: 'assets/projects/rc-plane.jpg' },
       ],
-    },
-    sorta: {
-      tag: 'Software · AI · In progress',
-      title: 'Sorta — AI File Organizer',
-      desc: 'A desktop app that watches folders and uses LLM reasoning to read, understand, and automatically route files to the right destination. Ollama runs a local model first for privacy and speed; Claude API serves as the fallback. A 12-check safety gate prevents any destructive moves before a file is touched.',
-      bullets: [
-        'LLM orchestration layer: tries Ollama locally first, falls through to Claude API — file content extracted (PDF, text) and passed as context so the model knows what it\'s sorting',
-        'Safety gate runs 12 checks on every file event before allowing a move — recycle bin, system paths, locked files, and more all blocked at the gate',
-        'Ships as a WPF dashboard + Windows system tray app and a CLI daemon; originally built in Swift / SwiftUI for macOS, now porting to C# / .NET 8 for Windows x64',
-      ],
-      stack: ['C# · .NET 8', 'WPF', 'Swift · SwiftUI', 'Ollama', 'Claude API', 'Supabase'],
-      github: 'https://github.com/reubenlavin08/Sorta_windowsx_64',
-      gallery: [],
     },
   };
 
@@ -228,6 +249,15 @@
     mStack.innerHTML   = p.stack.map(s => `<span>${s}</span>`).join('');
 
     mLinks.innerHTML = '';
+    if (p.website) {
+      const a = document.createElement('a');
+      a.href      = p.website;
+      a.target    = '_blank';
+      a.rel       = 'noopener';
+      a.className = 'link-arrow';
+      a.textContent = p.website.replace(/^https?:\/\//, '').replace(/\/$/, '') + ' →';
+      mLinks.appendChild(a);
+    }
     if (p.github) {
       const a = document.createElement('a');
       a.href      = p.github;
@@ -236,7 +266,7 @@
       a.className = 'link-arrow';
       a.textContent = 'View on GitHub →';
       mLinks.appendChild(a);
-    } else {
+    } else if (!p.website) {
       const span = document.createElement('span');
       span.style.cssText = 'font-family:var(--mono,monospace);font-size:12px;color:var(--text-mute);letter-spacing:0.04em;text-transform:uppercase';
       span.textContent = 'Private / no repo yet';

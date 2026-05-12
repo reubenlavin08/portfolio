@@ -62,7 +62,7 @@
           </div>
           <p class="hero-now">
             <span class="hero-now-label">Currently</span>
-            building <strong>Sorta</strong>, a desktop file organizer, and extending my VL53L8CX point-cloud rig with 6-DOF pose tracking. Recently shipped <strong>Sentinel</strong>, a real-time AI occupancy monitor.
+            building <strong>Claude Monitor</strong>, a live Claude Code usage dashboard on a Raspberry Pi, and shipping <strong>Bullseye</strong>, an open-source Marketplace deal scorer. Extending my VL53L8CX point-cloud rig with 6-DOF pose tracking.
           </p>
         </div>
         <figure class="hero-photo">
@@ -111,7 +111,7 @@
         <li>
           <div class="t-dot"></div>
           <div class="t-logo" data-school="UBC">
-            <img src="assets/logos/ubc.svg" alt="" onerror="this.remove()" />
+            <img src="assets/logos/ubc.png" alt="UBC" onerror="this.remove()" />
           </div>
           <div class="t-meta">Sept 2026 — incoming</div>
           <h3>University of British Columbia</h3>
@@ -124,21 +124,22 @@
         <li>
           <div class="t-dot"></div>
           <div class="t-logo" data-school="WPGA">
-            <img src="assets/logos/wpga.png" alt="" onerror="this.remove()" />
+            <img src="assets/logos/wpga.png" alt="West Point Grey Academy" onerror="this.remove()" />
           </div>
           <div class="t-meta">2020 — 2026 (graduating)</div>
           <h3>West Point Grey Academy</h3>
           <p class="t-sub">Grade 12 · Honor Roll · Graduating June 2026</p>
           <ul class="t-bullets">
-            <li>AP Computer Science, AP Statistics, AP Human Geography</li>
-            <li>AP Scholars Award · Merit Award · Alfred Lu Spirit Award</li>
+            <li>AP Computer Science · AP Statistics · AP Calculus BC · AP English Language · AP Human Geography</li>
+            <li>AP Scholars Award · Merit Award · Alfred Lu Spirit Award · Citizenship Award</li>
             <li>Music Program Hall of Fame · Varsity Tennis</li>
+            <li>Core Connectors Mental Health Literacy Certificate &mdash; Adam's Apples Foundation</li>
           </ul>
         </li>
         <li>
           <div class="t-dot"></div>
           <div class="t-logo" data-school="K">
-            <img src="assets/logos/kumon.svg" alt="" onerror="this.remove()" />
+            <img src="assets/logos/kumon.png" alt="Kumon" onerror="this.remove()" />
           </div>
           <div class="t-meta">2018 — 2023</div>
           <h3>Kumon Math</h3>
@@ -166,10 +167,34 @@
           </div>
         </article>
 
-        <article class="proj-card" data-project="sentinel" tabindex="0" role="button" aria-label="Open Sentinel project">
-          <div class="proj-thumb proj-thumb--text">
-            <span class="proj-thumb-label">AI</span>
+        <article class="proj-card" data-project="bullseye" tabindex="0" role="button" aria-label="Open Bullseye project">
+          <figure class="proj-thumb proj-thumb--video">
+            <video src="assets/projects/bullseye-demo.mp4" autoplay muted loop playsinline preload="metadata" style="object-fit: contain; background: #000;"></video>
+          </figure>
+          <div class="proj-body">
+            <span class="proj-tag">Product · Open Source</span>
+            <h3>Bullseye — Marketplace Deal Scorer</h3>
+            <p>Open-source Windows app that scores Facebook Marketplace listings against real eBay sold comps in real time.</p>
+            <span class="proj-cta">View project &rarr;</span>
           </div>
+        </article>
+
+        <article class="proj-card" data-project="claudemonitor" tabindex="0" role="button" aria-label="Open Claude Monitor project">
+          <figure class="proj-thumb">
+            <img src="assets/projects/claude-monitor-dashboard.png" alt="Claude Monitor CRT dashboard" loading="lazy" />
+          </figure>
+          <div class="proj-body">
+            <span class="proj-tag">Embedded · Dashboards</span>
+            <h3>Claude Monitor — Live Pi Usage Dashboard</h3>
+            <p>Wall-mounted 7" Raspberry Pi screen showing live Claude Code usage scraped from the CLI dialog.</p>
+            <span class="proj-cta">View project &rarr;</span>
+          </div>
+        </article>
+
+        <article class="proj-card" data-project="sentinel" tabindex="0" role="button" aria-label="Open Sentinel project">
+          <figure class="proj-thumb">
+            <img src="assets/projects/sentinel-demo.png" alt="Sentinel occupancy dashboard" loading="lazy" />
+          </figure>
           <div class="proj-body">
             <span class="proj-tag">AI · Computer Vision</span>
             <h3>Sentinel — AI Occupancy Monitor</h3>
@@ -178,14 +203,14 @@
           </div>
         </article>
 
-        <article class="proj-card" data-project="emailaudit" tabindex="0" role="button" aria-label="Open Email Audit project">
-          <div class="proj-thumb proj-thumb--text">
-            <span class="proj-thumb-label">✉</span>
-          </div>
+        <article class="proj-card" data-project="cvcourse" tabindex="0" role="button" aria-label="Open Sensor Fusion Course project">
+          <figure class="proj-thumb">
+            <img src="assets/projects/cv-course-home.png" alt="Sensor Fusion course homepage" loading="lazy" />
+          </figure>
           <div class="proj-body">
-            <span class="proj-tag">Software · Agents</span>
-            <h3>Email Audit — Claude Cowork Skill</h3>
-            <p>Consolidates Outlook + Gmail into one prioritized action list via browser automation and OAuth.</p>
+            <span class="proj-tag">Learning · Experiment</span>
+            <h3>Sensor Fusion — A Personalized Learning Experiment</h3>
+            <p>Self-paced CV / calibration / fusion course built around AI as a first-class learning collaborator.</p>
             <span class="proj-cta">View project &rarr;</span>
           </div>
         </article>
@@ -214,18 +239,6 @@
           </div>
         </article>
 
-        <article class="proj-card" data-project="sorta" tabindex="0" role="button" aria-label="Open Sorta project">
-          <div class="proj-thumb proj-thumb--text">
-            <span class="proj-thumb-label">⌗</span>
-          </div>
-          <div class="proj-body">
-            <span class="proj-tag">Software · AI · In progress</span>
-            <h3>Sorta — AI File Organizer</h3>
-            <p>Desktop app that watches folders and uses a local LLM + Claude to read, understand, and auto-route files.</p>
-            <span class="proj-cta">View project &rarr;</span>
-          </div>
-        </article>
-
       </div>
     </section>
 
@@ -246,6 +259,7 @@
         <div class="skill-group">
           <h3>Hardware &amp; Build</h3>
           <ul>
+            <li>Microcontrollers (ESP32, Arduino, ESP-IDF)</li>
             <li>Soldering &amp; breadboarding</li>
             <li>Sensor wiring (I²C devices)</li>
             <li>RC platforms · servos · ESCs</li>
@@ -266,8 +280,10 @@
           <h3>Academic</h3>
           <ul>
             <li>AP Computer Science</li>
-            <li>AP Calculus BC <span class="lvl">— in progress</span></li>
+            <li>AP Calculus BC</li>
             <li>AP Statistics</li>
+            <li>AP English Language</li>
+            <li>AP Human Geography</li>
             <li>Physics fundamentals</li>
           </ul>
         </div>
@@ -281,9 +297,9 @@
       </div>
       <div class="activities">
         <div class="activity">
-          <h3>MMA Assistant Instructor</h3>
+          <h3>Black Belt &amp; Assistant Instructor</h3>
           <p class="a-meta">Ken Shin Dojo · Kerrisdale Community Centre</p>
-          <p>Black belt in Jiu Jitsu &amp; Kickboxing. Teach younger students fundamentals, sparring drills, and discipline.</p>
+          <p>Youngest black belt and assistant instructor in Ken Shin Dojo's history (founded 2006). Lead 20+ students across three weekly kickboxing and jiu-jitsu classes, including students with physical and mental disabilities — work that demands additional patience and compassion.</p>
         </div>
         <div class="activity">
           <h3>Grad Committee Treasurer</h3>
@@ -291,9 +307,9 @@
           <p>Managed the budget, vendor payments, and fundraising bookkeeping for the graduating class.</p>
         </div>
         <div class="activity">
-          <h3>Jazz Quartet Band Leader</h3>
-          <p class="a-meta">WPGA Music Program</p>
-          <p>Led a four-piece jazz quartet and performed in the school's R&amp;B band — piano, bass, drums, and sax.</p>
+          <h3>Music Hall of Fame · Jazz Combo Founder</h3>
+          <p class="a-meta">WPGA Music Program · Self-taught multi-instrumentalist</p>
+          <p>Inducted into the WPGA Music Hall of Fame for 12 years of commitment. Self-taught on drums, bass, piano, saxophone, and guitar. Founded the WPGA Jazz Combo (2023) and grew it from four to seven members across 10+ performances. Co-founder and rhythm-section leader of the WPGA R&amp;B band. Performed for Special Olympics Canada.</p>
         </div>
         <div class="activity">
           <h3>Varsity Tennis</h3>
@@ -301,9 +317,19 @@
           <p>Competitive player on WPGA's varsity team and member of Vancouver Lawn Tennis &amp; Badminton Club.</p>
         </div>
         <div class="activity">
-          <h3>Windsor Market</h3>
+          <h3>UBC Physics Olympics</h3>
+          <p class="a-meta">2026 · WPGA</p>
+          <p>Competing on the WPGA team at the 2026 UBC Physics Olympics — a one-day inter-school competition covering physics theory and hands-on apparatus design.</p>
+        </div>
+        <div class="activity">
+          <h3>Euclid Mathematics Contest</h3>
+          <p class="a-meta">2026 · University of Waterloo CEMC</p>
+          <p>Participated in the 2026 Euclid Contest, the Centre for Education in Mathematics and Computing's senior-level Canadian math competition focused on proof-style problem solving.</p>
+        </div>
+        <div class="activity">
+          <h3>Head of Technical Maintenance — Windsor Market</h3>
           <p class="a-meta">2021 — 2024</p>
-          <p>Stocking, register, meat department, general handyman — three years of customer-facing retail experience.</p>
+          <p>Primary on-call technician for a small commercial grocer for three years. Repaired industrial refrigeration, HVAC, electrical circuitry, and structural systems — hands-on STEM applied to facility infrastructure and operational safety. Also ran till, stock, and back-office operations.</p>
         </div>
         <div class="activity">
           <h3>Volunteer Work</h3>
@@ -342,7 +368,7 @@
           <span class="c-label">Email</span>
           <span class="c-value">reubenlavin08@gmail.com</span>
         </a>
-        <a class="contact-card" href="https://github.com/ReubenLavin08" target="_blank" rel="noopener">
+        <a class="contact-card" href="https://github.com/reubenlavin08" target="_blank" rel="noopener">
           <span class="c-label">GitHub</span>
           <span class="c-value">@reubenlavin08</span>
         </a>
