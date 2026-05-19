@@ -69,6 +69,9 @@
       website: 'https://getbullseye.app',
       gallery: [
         { type: 'video', src: 'assets/projects/bullseye-demo.mp4' },
+        { type: 'image', src: 'assets/projects/bullseye-landing.png' },
+        { type: 'image', src: 'assets/projects/bullseye-home.png' },
+        { type: 'image', src: 'assets/projects/bullseye-featured.png' },
       ],
     },
     claudemonitor: {
@@ -84,6 +87,8 @@
       github: 'https://github.com/reubenlavin08/claude-monitor',
       gallery: [
         { type: 'image', src: 'assets/projects/claude-monitor-dashboard.png' },
+        { type: 'image', src: 'assets/projects/claude-monitor-live.png' },
+        { type: 'image', src: 'assets/projects/claude-monitor-housing.jpg' },
       ],
     },
     sentinel: {
@@ -153,6 +158,21 @@
         { type: 'video', src: 'assets/projects/rc-plane-3.mov', poster: 'assets/projects/rc-plane-thumb.jpg' },
         { type: 'video', src: 'assets/projects/rc-plane-4.mov', poster: 'assets/projects/rc-plane-thumb.jpg' },
         { type: 'video', src: 'assets/projects/rc-plane-build.mp4', poster: 'assets/projects/rc-plane.jpg' },
+      ],
+    },
+    ccdiscord: {
+      tag: 'Automation · Windows API',
+      title: 'cc-discord-remote — Drive Claude Code from Discord',
+      desc: 'A Discord bot that lets you drive a Claude Code session running on your laptop from anywhere — typed prompts go in over Win32 console APIs, and responses stream back by tailing Claude\'s session JSONL. Built because Claude Code\'s official /remote-control requires same-account auth between the phone and the laptop; this works across accounts.',
+      bullets: [
+        'Live attach to a running terminal via ctypes: AttachConsole + WriteConsoleInput against the Claude Code process',
+        'Response capture without screen scraping — tails the session JSONL Claude writes to disk and streams new turns back to Discord',
+        'Supervised by a Windows Scheduled Task with an ensure-running watchdog (PowerShell + VBScript) so the bot survives restarts',
+      ],
+      stack: ['Python', 'discord.py', 'Win32 console APIs', 'ctypes', 'Claude Agent SDK', 'PowerShell · Scheduled Task'],
+      github: 'https://github.com/reubenlavin08/cc-discord-remote',
+      gallery: [
+        { type: 'image', src: 'assets/projects/cc-discord-remote-phone.jpg' },
       ],
     },
   };
@@ -311,4 +331,48 @@
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(id); }
     });
   });
+
+  // --- Gallery lightbox ---
+  (() => {
+    const grid    = document.getElementById('galleryGrid');
+    const box     = document.getElementById('lightbox');
+    const img     = document.getElementById('lightboxImg');
+    const close   = document.getElementById('lightboxClose');
+    const prev    = document.getElementById('lightboxPrev');
+    const next    = document.getElementById('lightboxNext');
+    const counter = document.getElementById('lightboxCounter');
+    if (!grid || !box) return;
+
+    const items = Array.from(grid.querySelectorAll('.gal-item'));
+    const srcs  = items.map(b => b.dataset.src);
+    let idx = 0;
+
+    const show = i => {
+      idx = (i + srcs.length) % srcs.length;
+      img.src = srcs[idx];
+      counter.textContent = `${idx + 1} / ${srcs.length}`;
+    };
+    const open = i => {
+      show(i);
+      box.hidden = false;
+      document.body.style.overflow = 'hidden';
+    };
+    const dismiss = () => {
+      box.hidden = true;
+      img.src = '';
+      document.body.style.overflow = '';
+    };
+
+    items.forEach((btn, i) => btn.addEventListener('click', () => open(i)));
+    close.addEventListener('click', dismiss);
+    prev.addEventListener('click', () => show(idx - 1));
+    next.addEventListener('click', () => show(idx + 1));
+    box.addEventListener('click', e => { if (e.target === box) dismiss(); });
+    document.addEventListener('keydown', e => {
+      if (box.hidden) return;
+      if (e.key === 'Escape')     dismiss();
+      if (e.key === 'ArrowLeft')  show(idx - 1);
+      if (e.key === 'ArrowRight') show(idx + 1);
+    });
+  })();
 })();

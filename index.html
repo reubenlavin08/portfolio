@@ -30,6 +30,7 @@
       <a href="#about">About</a>
       <a href="#education">Education</a>
       <a href="#projects">Projects</a>
+      <a href="#gallery">Gallery</a>
       <a href="#skills">Skills</a>
       <a href="#activities">Activities</a>
       <a href="#resume">Resume</a>
@@ -146,6 +147,19 @@
           <p class="t-sub">Graduated full program · Outstanding Academics recognition</p>
         </li>
       </ol>
+
+      <div class="certs">
+        <h3 class="certs-head">Certifications</h3>
+        <ul class="certs-list">
+          <li class="cert">
+            <img src="assets/certifications/google-ai-professional.png" alt="Google AI Professional certificate badge" />
+            <div>
+              <h4>Google AI Professional</h4>
+              <p>Google · Earned 2026 · Certificate of completion in applied AI fundamentals, generative AI workflows, and prompt-engineering practice.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
     </section>
 
     <section class="section" id="projects">
@@ -239,12 +253,52 @@
           </div>
         </article>
 
+        <article class="proj-card" data-project="ccdiscord" tabindex="0" role="button" aria-label="Open cc-discord-remote project">
+          <figure class="proj-thumb">
+            <img src="assets/projects/cc-discord-remote-phone.jpg" alt="cc-discord-remote on phone" loading="lazy" />
+          </figure>
+          <div class="proj-body">
+            <span class="proj-tag">Automation · Windows API</span>
+            <h3>cc-discord-remote — Drive Claude Code from Discord</h3>
+            <p>Phone-controlled Claude Code: a Discord bot that attaches to a live terminal via Win32 console APIs and tails session JSONL for responses.</p>
+            <span class="proj-cta">View project &rarr;</span>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <section class="section" id="gallery">
+      <div class="section-head">
+        <span class="section-num">04</span>
+        <h2>Build &amp; Process</h2>
+      </div>
+      <p class="section-lede">
+        Workbench shots, field tests, and prototypes &mdash; the stuff behind the project cards.
+      </p>
+      <div class="gallery-grid" id="galleryGrid">
+        <button class="gal-item" data-src="assets/gallery/build-01-workbench.jpg" aria-label="Workbench"><img loading="lazy" src="assets/gallery/build-01-workbench.jpg" alt="Workbench with components" /></button>
+        <button class="gal-item" data-src="assets/gallery/build-02-chip.jpg" aria-label="Chip close-up"><img loading="lazy" src="assets/gallery/build-02-chip.jpg" alt="Microcontroller chip on a fingertip" /></button>
+        <button class="gal-item" data-src="assets/gallery/build-03-rc-car.jpg" aria-label="RC car build"><img loading="lazy" src="assets/gallery/build-03-rc-car.jpg" alt="RC car indoor build" /></button>
+        <button class="gal-item" data-src="assets/gallery/build-04-rc-car-field.jpg" aria-label="RC car outdoors"><img loading="lazy" src="assets/gallery/build-04-rc-car-field.jpg" alt="RC car outdoors" /></button>
+        <button class="gal-item" data-src="assets/gallery/build-05-pcb-close.jpg" aria-label="PCB close-up"><img loading="lazy" src="assets/gallery/build-05-pcb-close.jpg" alt="PCB close-up" /></button>
+        <button class="gal-item" data-src="assets/gallery/build-06-component.jpg" aria-label="Component"><img loading="lazy" src="assets/gallery/build-06-component.jpg" alt="Surface-mount component" /></button>
+        <button class="gal-item" data-src="assets/gallery/build-07-wired.jpg" aria-label="Wired prototype"><img loading="lazy" src="assets/gallery/build-07-wired.jpg" alt="Prototype wiring" /></button>
+        <button class="gal-item" data-src="assets/gallery/build-08-rc-plane.jpg" aria-label="RC plane outdoors"><img loading="lazy" src="assets/gallery/build-08-rc-plane.jpg" alt="RC plane outdoors" /></button>
+        <button class="gal-item" data-src="assets/gallery/build-09-board.jpg" aria-label="Dev board"><img loading="lazy" src="assets/gallery/build-09-board.jpg" alt="Dev board with wiring" /></button>
+        <button class="gal-item" data-src="assets/gallery/build-10-turnigy.jpg" aria-label="Battery charger"><img loading="lazy" src="assets/gallery/build-10-turnigy.jpg" alt="Turnigy battery charger" /></button>
+        <button class="gal-item" data-src="assets/gallery/build-11-soldered.jpg" aria-label="Soldered board"><img loading="lazy" src="assets/gallery/build-11-soldered.jpg" alt="Hand-soldered board" /></button>
+        <button class="gal-item" data-src="assets/gallery/build-12-bench.jpg" aria-label="Bench setup"><img loading="lazy" src="assets/gallery/build-12-bench.jpg" alt="Bench setup" /></button>
+        <button class="gal-item" data-src="assets/gallery/build-13-lcd.jpg" aria-label="LCD module"><img loading="lazy" src="assets/gallery/build-13-lcd.jpg" alt="LCD module test" /></button>
+        <button class="gal-item" data-src="assets/gallery/build-14-multimeter.jpg" aria-label="Multimeter"><img loading="lazy" src="assets/gallery/build-14-multimeter.jpg" alt="Multimeter readout" /></button>
+        <button class="gal-item" data-src="assets/gallery/build-15-wiring.jpg" aria-label="Wiring detail"><img loading="lazy" src="assets/gallery/build-15-wiring.jpg" alt="Wiring detail" /></button>
+        <button class="gal-item" data-src="assets/gallery/build-16-assembly.jpg" aria-label="Assembly"><img loading="lazy" src="assets/gallery/build-16-assembly.jpg" alt="Assembly view" /></button>
       </div>
     </section>
 
     <section class="section" id="skills">
       <div class="section-head">
-        <span class="section-num">04</span>
+        <span class="section-num">05</span>
         <h2>Skills</h2>
       </div>
       <div class="skills-grid">
@@ -292,7 +346,7 @@
 
     <section class="section" id="activities">
       <div class="section-head">
-        <span class="section-num">05</span>
+        <span class="section-num">06</span>
         <h2>Activities &amp; Leadership</h2>
       </div>
       <div class="activities">
@@ -341,23 +395,21 @@
 
     <section class="section" id="resume">
       <div class="section-head">
-        <span class="section-num">06</span>
+        <span class="section-num">07</span>
         <h2>Resume</h2>
       </div>
       <div class="resume-actions">
-        <a class="btn btn-primary" href="assets/Reuben_Lavin_CV.pdf" target="_blank" rel="noopener">Open in new tab</a>
+        <a class="btn btn-primary" href="assets/resume.html" target="_blank" rel="noopener">Open in new tab</a>
         <a class="btn btn-ghost" href="assets/Reuben_Lavin_CV.pdf" download>Download PDF</a>
       </div>
       <div class="resume-embed">
-        <object data="assets/Reuben_Lavin_CV.pdf#view=FitH&amp;toolbar=0" type="application/pdf" aria-label="Reuben Lavin resume preview">
-          <p>Your browser can't display the embedded PDF. <a href="assets/Reuben_Lavin_CV.pdf" target="_blank" rel="noopener">Open it here</a>.</p>
-        </object>
+        <iframe src="assets/resume.html" title="Reuben Lavin resume preview" loading="lazy"></iframe>
       </div>
     </section>
 
     <section class="section section-contact" id="contact">
       <div class="section-head">
-        <span class="section-num">07</span>
+        <span class="section-num">08</span>
         <h2>Get in touch</h2>
       </div>
       <p class="contact-lede">
@@ -387,6 +439,15 @@
   <footer class="footer">
     <p>&copy; <span id="year"></span> Reuben Lavin · Built from scratch with HTML, CSS &amp; JS.</p>
   </footer>
+
+  <!-- Gallery Lightbox -->
+  <div class="lightbox" id="lightbox" hidden aria-modal="true" role="dialog">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
+    <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous">&#8249;</button>
+    <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next">&#8250;</button>
+    <img class="lightbox-img" id="lightboxImg" alt="" />
+    <div class="lightbox-counter" id="lightboxCounter"></div>
+  </div>
 
   <!-- Project Modal -->
   <div class="modal" id="projectModal" hidden aria-modal="true" role="dialog">
