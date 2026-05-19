@@ -862,8 +862,8 @@ code {
   transform: translateY(-2px);
 }
 .cert img {
-  width: 64px;
-  height: 64px;
+  width: 104px;
+  height: 72px;
   object-fit: contain;
   flex-shrink: 0;
   background: transparent;
