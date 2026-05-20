@@ -42,12 +42,13 @@
   const PROJECTS = {
     vl53l8cx: {
       tag: 'Robotics · Perception',
-      title: 'VL53L8CX Live Point Cloud + 6-DOF Pose',
-      desc: 'ESP-IDF firmware streams an 8×8 depth grid from a ST VL53L8CX ToF sensor at 15 Hz over USB-serial, while a Python visualizer renders it as a GPU-accelerated point cloud with animated sensor beams, a color-coded distance scale, and live 6-DOF pose estimation — no IMU required.',
+      title: 'Assistive Helmet — Phase 1: Live ToF Point Cloud + 6-DOF Pose',
+      desc: 'Phase 1 of a three-phase assistive-vision helmet for blind users. The motivation: a friend built a vibrating cane — this is the same idea with a richer signal. ESP-IDF firmware streams an 8×8 depth grid from a ST VL53L8CX ToF sensor at 15 Hz over USB-serial; a Python visualizer renders it as a GPU-accelerated point cloud with live 6-DOF pose estimation. The roadmap: Phase 1 ToF + ESP32 (shipped), Phase 2 USB camera + CV, Phase 3 fused state estimator.',
       bullets: [
         'Threaded serial pipeline drains the buffer and renders the newest valid frame — eliminates the one-frame-stale lag of earlier matplotlib versions',
         'World-frame point memory: ~6 s of past observations re-projected into the current sensor frame, alpha-faded by age',
         'Closed-form Kabsch / Procrustes SVD between consecutive clouds, with translation and rotation sanity gates',
+        'The original IMU shipped dead from the factory — internally shorted. Returned and re-ordered; pose currently runs from ToF clouds only, which the architecture was designed to support.',
       ],
       stack: ['C · ESP-IDF', 'ESP32-S3', 'Python', 'PyQtGraph + OpenGL', 'Point clouds', 'Sensor fusion'],
       github: 'https://github.com/reubenlavin08/vl53l8cx-pointcloud-esp32',
