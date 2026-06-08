@@ -9,8 +9,12 @@
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Reuben Lavin — Portfolio" />
   <meta property="og:description" content="Incoming UBC Science · Engineering transfer track · Robotics &amp; embedded systems." />
-  <meta property="og:image" content="assets/headshot.jpg" />
+  <meta property="og:image" content="assets/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="A Coast Salish spindle whorl rendered in mixed reality on the Meta Quest 3 — from the Spindle Whorl AR project." />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="assets/og-image.jpg" />
   <meta name="theme-color" content="#0d1014" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -116,7 +120,7 @@
           </div>
           <div class="t-meta">Sept 2026 — incoming</div>
           <h3>University of British Columbia</h3>
-          <p class="t-sub">Bachelor of Science · Engineering transfer planned for second year</p>
+          <p class="t-sub">Bachelor of Science · Engineering transfer planned after first year</p>
           <ul class="t-bullets">
             <li>Foundational coursework in calculus, physics, chemistry, and computer science</li>
             <li>Continuing self-directed work in embedded systems and robotics</li>
@@ -180,21 +184,35 @@
       </div>
       <div class="proj-grid">
 
-        <article class="proj-card" data-project="vl53l8cx" tabindex="0" role="button" aria-label="Open VL53L8CX project">
+        <article class="proj-card" data-project="vl53l8cx" tabindex="0" role="button" aria-label="Open assistive helmet project">
           <figure class="proj-thumb proj-thumb--video">
+            <span class="proj-status">In progress</span>
             <video src="assets/projects/pointcloud-demo.mp4" autoplay muted loop playsinline preload="metadata"></video>
           </figure>
           <div class="proj-body">
-            <span class="proj-tag">Robotics · Perception</span>
-            <h3>Assistive Helmet &mdash; Phase 1: Live ToF Point Cloud</h3>
-            <p>Phase 1 of a three-phase assistive-vision helmet for blind users. ESP32 + VL53L8CX streams a live 64-zone depth grid; Python visualizer renders a real-time 3D point cloud.</p>
+            <span class="proj-tag">Robotics · Sensor Fusion</span>
+            <h3>Assistive Navigation Helmet &mdash; Dual ToF + IMU</h3>
+            <p>A wearable for blind users on an ESP32-S3: two VL53L8CX depth sensors fused with a BNO085 IMU, driving directional haptics across three head-mounted motors.</p>
+            <span class="proj-cta">View project &rarr;</span>
+          </div>
+        </article>
+
+        <article class="proj-card" data-project="spindlewhorl" tabindex="0" role="button" aria-label="Open Spindle Whorl AR project">
+          <figure class="proj-thumb proj-thumb--video proj-thumb--contain">
+            <span class="proj-status">In progress</span>
+            <video src="assets/projects/spindle-whorl-demo.mp4" poster="assets/projects/spindle-whorl-poster.jpg" autoplay muted loop playsinline preload="metadata"></video>
+          </figure>
+          <div class="proj-body">
+            <span class="proj-tag">AR / VR · Cultural Heritage</span>
+            <h3>Spindle Whorl AR &mdash; Quest 3 Heritage Preservation</h3>
+            <p>A Meta Quest 3 mixed-reality app that rebuilds Coast Salish spindle whorls as 3D discs you pick up and turn with your bare hands &mdash; preservation beyond a flat photograph.</p>
             <span class="proj-cta">View project &rarr;</span>
           </div>
         </article>
 
         <article class="proj-card" data-project="bullseye" tabindex="0" role="button" aria-label="Open Bullseye project">
-          <figure class="proj-thumb proj-thumb--video">
-            <video src="assets/projects/bullseye-demo.mp4" autoplay muted loop playsinline preload="metadata" style="object-fit: contain; background: #000;"></video>
+          <figure class="proj-thumb proj-thumb--video proj-thumb--contain">
+            <video src="assets/projects/bullseye-demo.mp4" autoplay muted loop playsinline preload="metadata"></video>
           </figure>
           <div class="proj-body">
             <span class="proj-tag">Product · Open Source</span>
@@ -242,7 +260,7 @@
 
         <article class="proj-card" data-project="rccar" tabindex="0" role="button" aria-label="Open RC Car project">
           <figure class="proj-thumb proj-thumb--video">
-            <video src="assets/projects/rc-car-new.mov" poster="assets/projects/rc-car-thumb.jpg" autoplay muted loop playsinline preload="metadata"></video>
+            <video src="assets/projects/rc-car-new.mp4" poster="assets/projects/rc-car-thumb.jpg" autoplay muted loop playsinline preload="metadata"></video>
           </figure>
           <div class="proj-body">
             <span class="proj-tag">Robotics</span>
@@ -254,7 +272,7 @@
 
         <article class="proj-card" data-project="rcplane" tabindex="0" role="button" aria-label="Open RC Plane project">
           <figure class="proj-thumb proj-thumb--video">
-            <video src="assets/projects/rc-plane-1.mov" poster="assets/projects/rc-plane-thumb.jpg" autoplay muted loop playsinline preload="metadata"></video>
+            <video src="assets/projects/rc-plane-1.mp4" poster="assets/projects/rc-plane-thumb.jpg" autoplay muted loop playsinline preload="metadata"></video>
           </figure>
           <div class="proj-body">
             <span class="proj-tag">Aerospace · Hardware</span>

@@ -38,22 +38,58 @@
     targets.forEach(el => el.classList.add('visible'));
   }
 
+  // --- Scroll-spy active nav ---
+  const navLinkEls = [...document.querySelectorAll('.nav-links a')];
+  const spied = navLinkEls
+    .map(a => ({ a, sec: document.querySelector(a.getAttribute('href')) }))
+    .filter(x => x.sec);
+  if (spied.length && 'IntersectionObserver' in window) {
+    const spy = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const id = '#' + e.target.id;
+          navLinkEls.forEach(a => a.classList.toggle('active', a.getAttribute('href') === id));
+        }
+      });
+    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+    spied.forEach(x => spy.observe(x.sec));
+  }
+
   // --- Project data ---
   const PROJECTS = {
     vl53l8cx: {
-      tag: 'Robotics · Perception',
-      title: 'Assistive Helmet — Phase 1: Live ToF Point Cloud + 6-DOF Pose',
-      desc: 'Phase 1 of a three-phase assistive-vision helmet for blind users. The motivation: a friend built a vibrating cane — this is the same idea with a richer signal. ESP-IDF firmware streams an 8×8 depth grid from a ST VL53L8CX ToF sensor at 15 Hz over USB-serial; a Python visualizer renders it as a GPU-accelerated point cloud with live 6-DOF pose estimation. The roadmap: Phase 1 ToF + ESP32 (shipped), Phase 2 USB camera + CV, Phase 3 fused state estimator.',
+      tag: 'Robotics · Sensor Fusion',
+      title: 'Assistive Navigation Helmet — Dual ToF + IMU + Directional Haptics',
+      desc: 'A wearable navigation aid for blind and low-vision users, built on an ESP32-S3. The motivation: a friend built a vibrating cane — this is the same idea with a far richer signal. It fuses two ST VL53L8CX multizone time-of-flight sensors (one angled down for ground and low obstacles, one angled up for overhead) with a BNO085 IMU for head orientation, then turns obstacle proximity into directional haptic feedback across three head-mounted vibration motors. Part of a three-phase roadmap: Phase 1 ToF + ESP32 (done), Phase 2 USB camera + CV, Phase 3 full sensor fusion.',
       bullets: [
-        'Threaded serial pipeline drains the buffer and renders the newest valid frame — eliminates the one-frame-stale lag of earlier matplotlib versions',
-        'World-frame point memory: ~6 s of past observations re-projected into the current sensor frame, alpha-faded by age',
-        'Closed-form Kabsch / Procrustes SVD between consecutive clouds, with translation and rotation sanity gates',
-        'The original IMU shipped dead from the factory — internally shorted. Returned and re-ordered; pose currently runs from ToF clouds only, which the architecture was designed to support.',
+        'Dual-bus architecture: two identically-addressed (0x29) VL53L8CX sensors run on independent I2C controllers, each with a per-row cosine table that converts slant range into true forward distance',
+        'Wrote a BNO085 SH-2/SHTP IMU driver from scratch (existing libraries were SPI-only) — root-caused a wrong-address bug (0x4B → 0x4A) and IMU starvation during the ToF firmware upload, fixed with a 500 Hz service task and a shared-bus mutex',
+        'Research-backed directional haptics: obstacle direction maps to forehead / left / right ERM motors with a squared urgency curve, a ~51% dead-zone floor to overcome motor static friction, and a dominance weighting so the most-urgent direction stays legible',
+        'Field-serviceable: token-gated over-the-air firmware updates with bootloader rollback, plus a live desktop PyQtGraph 3-D point cloud and a phone-browser heatmap viewer over WiFi/TCP',
       ],
-      stack: ['C · ESP-IDF', 'ESP32-S3', 'Python', 'PyQtGraph + OpenGL', 'Point clouds', 'Sensor fusion'],
+      stack: ['C · ESP-IDF 5.4', 'ESP32-S3', 'VL53L8CX ToF ×2', 'BNO085 IMU', 'I²C · SH-2/SHTP', 'Sensor fusion', 'Haptics', 'FreeRTOS'],
       github: 'https://github.com/reubenlavin08/vl53l8cx-pointcloud-esp32',
       gallery: [
         { type: 'video', src: 'assets/projects/pointcloud-demo.mp4' },
+        { type: 'image', src: 'assets/projects/helmet-build.jpg' },
+        { type: 'image', src: 'assets/projects/helmet-imu.jpg' },
+      ],
+    },
+    spindlewhorl: {
+      tag: 'AR / VR · Cultural Heritage',
+      title: 'Spindle Whorl AR — Quest 3 Heritage Preservation',
+      desc: 'A mixed-reality experience for the Meta Quest 3 that digitally preserves Coast Salish spindle whorls — carved wooden discs traditionally archived only as flat photographs. Six whorls are rebuilt as domed 3D discs that float in your real room through passthrough; you reach out with your bare hands and pinch to pick one up and turn it, inspecting the carved art from any angle.',
+      bullets: [
+        'Hand-tracked, controller-free interaction — pinch detection from thumb-tip-to-index-tip distance with hysteresis (grab below 25 mm, release above 40 mm) on Unity\'s XRHandSubsystem',
+        'Procedurally generated disc geometry: a biconvex domed annulus with a real centre bore and full inscribed UVs, built in C# rather than imported from a 3D modeller',
+        'Python (OpenCV + PIL) photo pipeline strips the painted-checkerboard background from source photos and aligns each artifact\'s painted hole to the geometric bore',
+        'Headless Unity batch builds plus a verified adb deploy/launch sequence that beats the Quest Home focus race — tested working on a borrowed Quest 3 (v0.5)',
+      ],
+      stack: ['Unity 6', 'Meta Quest 3', 'Passthrough AR', 'OpenXR', 'Hand Tracking', 'C#', 'Python · OpenCV'],
+      github: 'https://github.com/reubenlavin08/spindle-whorl-ar',
+      gallery: [
+        { type: 'video', src: 'assets/projects/spindle-whorl-demo.mp4', poster: 'assets/projects/spindle-whorl-poster.jpg' },
+        { type: 'video', src: 'assets/projects/spindle-whorl-2.mp4',    poster: 'assets/projects/spindle-whorl-poster.jpg' },
       ],
     },
     bullseye: {
@@ -137,7 +173,7 @@
       gallery: [
         { type: 'image', src: 'assets/projects/rc-car-photo.jpg' },
         { type: 'image', src: 'assets/projects/rc-car.jpg' },
-        { type: 'video', src: 'assets/projects/rc-car-new.mov',   poster: 'assets/projects/rc-car-thumb.jpg' },
+        { type: 'video', src: 'assets/projects/rc-car-new.mp4',   poster: 'assets/projects/rc-car-thumb.jpg' },
         { type: 'video', src: 'assets/projects/rc-car-drive.mp4', poster: 'assets/projects/rc-car.jpg' },
       ],
     },
@@ -154,10 +190,10 @@
       github: null,
       gallery: [
         { type: 'image', src: 'assets/projects/rc-plane.jpg' },
-        { type: 'video', src: 'assets/projects/rc-plane-1.mov', poster: 'assets/projects/rc-plane-thumb.jpg' },
-        { type: 'video', src: 'assets/projects/rc-plane-2.mov', poster: 'assets/projects/rc-plane-thumb.jpg' },
-        { type: 'video', src: 'assets/projects/rc-plane-3.mov', poster: 'assets/projects/rc-plane-thumb.jpg' },
-        { type: 'video', src: 'assets/projects/rc-plane-4.mov', poster: 'assets/projects/rc-plane-thumb.jpg' },
+        { type: 'video', src: 'assets/projects/rc-plane-1.mp4', poster: 'assets/projects/rc-plane-thumb.jpg' },
+        { type: 'video', src: 'assets/projects/rc-plane-2.mp4', poster: 'assets/projects/rc-plane-thumb.jpg' },
+        { type: 'video', src: 'assets/projects/rc-plane-3.mp4', poster: 'assets/projects/rc-plane-thumb.jpg' },
+        { type: 'video', src: 'assets/projects/rc-plane-4.mp4', poster: 'assets/projects/rc-plane-thumb.jpg' },
         { type: 'video', src: 'assets/projects/rc-plane-build.mp4', poster: 'assets/projects/rc-plane.jpg' },
       ],
     },

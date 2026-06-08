@@ -7,7 +7,7 @@
   --line-strong: rgba(200, 210, 222, 0.14);
   --text: #d8dde4;
   --text-dim: #8a929d;
-  --text-mute: #5d646e;
+  --text-mute: #7d8490;
   --accent: #b6c2cf;
   --accent-soft: rgba(182, 194, 207, 0.08);
   --rule: 1px solid var(--line);
@@ -1180,6 +1180,51 @@ code {
   .lightbox-close { top: 12px; right: 12px; }
   .lightbox-prev { left: 8px; }
   .lightbox-next { right: 8px; }
+}
+
+/* ---------- Polish: scroll-spy nav, status chips, consistent thumbs ---------- */
+.nav-links a.active { color: var(--text); }
+
+/* Letterboxed thumbnails blend with the site bg instead of stark black */
+.proj-thumb--contain img,
+.proj-thumb--contain video {
+  object-fit: contain;
+  background: var(--bg);
+}
+
+/* "In progress" status chip on active builds */
+.proj-status {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px 4px 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text);
+  background: rgba(13, 16, 20, 0.72);
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.proj-status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #5fd08a;
+  box-shadow: 0 0 6px #5fd08a;
+  animation: status-pulse 2s ease-in-out infinite;
+}
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.45; transform: scale(0.8); }
 }
 
 @media (prefers-reduced-motion: reduce) {
