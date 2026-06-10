@@ -73,7 +73,7 @@
       github: 'https://github.com/reubenlavin08/bullseye-app',
       website: 'https://getbullseye.app',
       gallery: [
-        { type: 'video', src: 'assets/projects/bullseye-demo.mp4' },
+        { type: 'video', src: 'assets/projects/bullseye-demo.mp4', poster: 'assets/projects/bullseye-poster.jpg' },
         { type: 'image', src: 'assets/projects/bullseye-landing.png' },
         { type: 'image', src: 'assets/projects/bullseye-home.png' },
         { type: 'image', src: 'assets/projects/bullseye-featured.png' },
@@ -263,9 +263,21 @@
     modalGallery.style.transform = '';
   }
 
-  function openModal(id) {
+  // Tab must stay inside the open dialog (aria-modal alone doesn't enforce it)
+  function trapFocus(container, e) {
+    const focusables = container.querySelectorAll('button, [href], video[controls]');
+    if (!focusables.length) return;
+    const first = focusables[0], last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+
+  let modalPushed = false; // false when the modal state came from a direct deep link
+
+  function openModal(id, fromHistory) {
     const p = PROJECTS[id];
     if (!p) return;
+    if (!fromHistory) { history.pushState({ project: id }, '', '#project-' + id); modalPushed = true; }
 
     mTag.textContent   = p.tag;
     mTitle.textContent = p.title;
@@ -311,22 +323,40 @@
     }
   }
 
-  function closeModal() {
+  function closeModal(fromHistory) {
     pauseActive();
     modal.hidden = true;
     document.body.style.overflow = '';
+    if (!fromHistory && history.state?.project) {
+      if (modalPushed) history.back();
+      // deep-linked first entry: clean the URL in place, never navigate away
+      else history.replaceState(null, '', location.pathname + location.search);
+    }
+  }
+
+  window.addEventListener('popstate', e => {
+    modalPushed = false;
+    if (e.state?.project) openModal(e.state.project, true);
+    else if (!modal.hidden) closeModal(true);
+  });
+  // Deep link: #project-<id> opens the modal on load
+  const hashMatch = location.hash.match(/^#project-(\w+)$/);
+  if (hashMatch && PROJECTS[hashMatch[1]]) {
+    history.replaceState({ project: hashMatch[1] }, '', location.hash);
+    openModal(hashMatch[1], true);
   }
 
   galPrev.addEventListener('click', () => goToSlide(currentSlide - 1));
   galNext.addEventListener('click', () => goToSlide(currentSlide + 1));
-  modalClose.addEventListener('click', closeModal);
-  modalBackdrop.addEventListener('click', closeModal);
+  modalClose.addEventListener('click', () => closeModal());
+  modalBackdrop.addEventListener('click', () => closeModal());
 
   document.addEventListener('keydown', e => {
     if (modal.hidden) return;
     if (e.key === 'Escape')      closeModal();
     if (e.key === 'ArrowLeft')   goToSlide(currentSlide - 1);
     if (e.key === 'ArrowRight')  goToSlide(currentSlide + 1);
+    if (e.key === 'Tab')         trapFocus(modal, e);
   });
 
   document.querySelectorAll('.proj-card[data-project]').forEach(card => {
@@ -336,6 +366,18 @@
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(id); }
     });
   });
+
+  // --- Pause autoplay videos while offscreen (battery + bandwidth) ---
+  if ('IntersectionObserver' in window) {
+    const vio = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        const v = e.target;
+        if (e.isIntersecting) { v.play().catch(() => {}); }
+        else v.pause();
+      });
+    }, { rootMargin: '100px 0px' });
+    document.querySelectorAll('video[autoplay]').forEach(v => vio.observe(v));
+  }
 
   // --- Hero depth cloud: real VL53L8CX capture rendered live ---
   (() => {
@@ -444,11 +486,13 @@
 
     const items = Array.from(grid.querySelectorAll('.gal-item'));
     const srcs  = items.map(b => b.dataset.src);
+    const alts  = items.map(b => b.querySelector('img')?.alt || '');
     let idx = 0;
 
     const show = i => {
       idx = (i + srcs.length) % srcs.length;
       img.src = srcs[idx];
+      img.alt = alts[idx];
       counter.textContent = `${idx + 1} / ${srcs.length}`;
     };
     const open = i => {

@@ -12,7 +12,6 @@
   --accent-bright: #7ce0a4;
   --accent-ink: #0b130d;
   --accent-soft: rgba(95, 208, 138, 0.09);
-  --rule: 1px solid var(--line);
   --max-w: 960px;
   --gutter: clamp(20px, 5vw, 48px);
 }
@@ -44,10 +43,6 @@ code {
 .mono {
   font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
 }
-
-/* ---------- Background ornaments ---------- */
-.bg-grid { display: none; }
-.bg-glow { display: none; }
 
 /* ---------- Nav ---------- */
 .nav {
@@ -652,20 +647,6 @@ code {
 .proj-card:hover .proj-thumb video {
   filter: grayscale(0.05) contrast(1.06) brightness(1);
   transform: scale(1.03);
-}
-.proj-thumb--text {
-  display: grid;
-  place-items: center;
-  background:
-    repeating-linear-gradient(135deg, transparent 0 14px, rgba(200,210,222,0.03) 14px 15px),
-    var(--bg-2);
-}
-.proj-thumb-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 28px;
-  color: var(--text-mute);
-  opacity: 0.45;
-  letter-spacing: 0.02em;
 }
 .proj-body {
   padding: 20px;
