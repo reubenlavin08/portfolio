@@ -182,33 +182,124 @@
         <span class="section-num">03</span>
         <h2>Projects</h2>
       </div>
+      <div class="case-list">
+
+        <article class="case" id="helmet">
+          <div class="case-media">
+            <figure class="case-video">
+              <span class="proj-status">In progress</span>
+              <video src="assets/projects/pointcloud-demo.mp4" poster="assets/projects/pointcloud-poster.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Live 3D point cloud from the helmet's depth sensors"></video>
+              <figcaption>Live point cloud streamed from the helmet over WiFi</figcaption>
+            </figure>
+            <div class="case-stills">
+              <figure>
+                <img src="assets/projects/helmet-imu.jpg" alt="BNO085 IMU wired on a breadboard during bring-up" loading="lazy" width="1280" height="960" />
+                <figcaption>BNO085 bring-up</figcaption>
+              </figure>
+              <figure>
+                <img src="assets/projects/helmet-build.jpg" alt="First helmet rig: breadboard and sensors mounted on a batting helmet" loading="lazy" width="960" height="1280" />
+                <figcaption>First wearable rig</figcaption>
+              </figure>
+            </div>
+          </div>
+          <div class="case-body">
+            <span class="proj-tag">Robotics · Sensor Fusion · Case Study</span>
+            <h3>Assistive Navigation Helmet</h3>
+            <p class="case-lede">
+              A friend built a cane that vibrates when something is ahead. This is the same idea with a far richer signal: a wearable for blind and low-vision users that turns two 8&times;8 depth grids and head orientation into directional vibration, so an obstacle on your left buzzes your left temple before you reach it.
+            </p>
+            <p>
+              An <strong>ESP32-S3</strong> runs two ST <strong>VL53L8CX</strong> time-of-flight sensors on independent I&sup2;C buses (both ship fixed at address 0x29; separate buses sidestep the collision). The bottom sensor angles ~30&deg; down for ground-level obstacles, with a per-row cosine table converting slant range to true forward distance; the top sensor watches for head-height overhangs. A <strong>BNO085 IMU</strong> tracks head orientation at 100&thinsp;Hz, and three coin motors (forehead, left temple, right temple) render direction. Firmware ships over the air with bootloader rollback, and live data streams to a desktop 3-D point cloud and a phone heatmap viewer.
+            </p>
+            <div class="case-sec">
+              <h4>Three stacked bugs, one IMU driver</h4>
+              <p>
+                Every available BNO085 library for this setup was SPI-only, so I wrote the I&sup2;C SH-2/SHTP transport from scratch and hit three independent bugs, each hiding the next. The probe ACKed at 0x4B but the real address was 0x4A: an ACK can lie, and ground truth is which address returns valid protocol data. Then the handshake worked exactly once per physical power-up and never again, because the chip broadcasts its channel advertisement once, at power-on, and reflashing resets the ESP but not the IMU; the fix is forcing a hub reset on every boot. Finally, the ToF sensor's 84&thinsp;KB firmware upload blocked the bus for a full second, and an unserviced BNO085 starves and stops reporting. It now gets its own 500&thinsp;Hz service task and a shared-bus mutex.
+              </p>
+            </div>
+            <div class="case-sec">
+              <h4>Measure, don't guess: dropping the magnetometer</h4>
+              <p>
+                The motors sit ~5&thinsp;cm from the IMU, intuitively too far to disturb a magnetometer. An A/B test said otherwise: with motors running, the chip's own heading-confidence estimate collapsed from 4.8&deg; to 39&deg; and threw a 60&deg; heading jump, exactly when a real obstacle alert would fire. The physics agrees: Earth's horizontal field here is ~18&thinsp;&micro;T, and a spinning rotor magnet at 5&thinsp;cm adds a few &micro;T of time-varying field the fusion can't model. The helmet now runs the mag-free AR/VR-stabilized rotation vector, the mode the datasheet itself recommends for head tracking in disturbed fields, and calibration tuning cut dynamic yaw drift from +2.24&deg; to +0.82&deg; per run (~63%).
+              </p>
+            </div>
+            <div class="case-sec">
+              <h4>Haptics a person can actually read</h4>
+              <p>
+                Obstacle direction maps to motors through hard regions with a squared urgency curve and dominance weighting (the most urgent direction stays at full strength, others scale to 70%), choices taken from the vibrotactile literature rather than vibes. The first build exposed a gap the papers don't mention: coin ERM motors don't spin below roughly half duty, so a pure squared curve meant silence until 20&thinsp;cm and then sudden full power. The curve now maps onto the motor's usable band, starting at a just-perceptible 51% floor the instant an alert begins.
+              </p>
+            </div>
+            <ul class="project-bullets case-notes">
+              <li>Also run to ground: a 2&thinsp;ms task delay that compiled to zero ticks at a 100&thinsp;Hz tick rate, silently starving the sensor loop on unlucky boots</li>
+              <li>A debug switch that bridged 3.3&thinsp;V to ground mid-flip and browned out the board: logic-level switches should never carry a power rail</li>
+              <li>Every fix, dead end, and root cause is written up in the repo's engineering devlog</li>
+            </ul>
+            <p class="case-results">
+              <strong>Where it stands:</strong> both depth streams and the IMU run concurrently (~30&thinsp;Hz ranging, 100&thinsp;Hz orientation) with directional haptics live on the bench. Phase 1 shipped; Phase 2 adds a camera; Phase 3 fuses all three.
+            </p>
+            <div class="project-stack">
+              <span>C · ESP-IDF 5.4</span><span>ESP32-S3</span><span>VL53L8CX ToF &times;2</span><span>BNO085 IMU</span><span>SH-2/SHTP</span><span>FreeRTOS</span><span>Haptics</span>
+            </div>
+            <div class="case-links">
+              <a class="link-arrow" href="https://github.com/reubenlavin08/vl53l8cx-pointcloud-esp32" target="_blank" rel="noopener">View on GitHub &rarr;</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="case" id="spindle-whorl">
+          <div class="case-media">
+            <figure class="case-video case-video--contain">
+              <span class="proj-status">In progress</span>
+              <video src="assets/projects/spindle-whorl-demo.mp4" poster="assets/projects/spindle-whorl-poster.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Hand-tracked grab of a spindle whorl disc in passthrough AR"></video>
+              <figcaption>Bare-hand pinch and turn, captured in-headset on a Quest 3</figcaption>
+            </figure>
+          </div>
+          <div class="case-body">
+            <span class="proj-tag">AR / VR · Cultural Heritage · Case Study</span>
+            <h3>Spindle Whorl AR</h3>
+            <p class="case-lede">
+              Coast Salish spindle whorls are carved wooden discs, but museum archives mostly hold them as flat photographs. This Meta Quest 3 mixed-reality app rebuilds them as 3-D objects floating in your real room: reach out, pinch, pick one up, and turn the carving in your hands.
+            </p>
+            <p>
+              Six whorls hang in a 150&deg; arc at reach height through passthrough. Pinch thumb and index to grab the nearest disc, move and turn it freely, open your hand to release; ungrabbed discs spin slowly so the art stays visible. Each disc is gently domed with a real centre bore, so you can look through the hole at your own room.
+            </p>
+            <div class="case-sec">
+              <h4>The hand-tracking dead end</h4>
+              <p>
+                On the OpenXR backend, Meta's legacy OVRHand API silently delivers nothing: <code>IsTracked</code> stays false while the headset is plainly tracking hands. The working path is Unity's XRHandSubsystem, reading thumb-tip and index-tip poses directly. Pinch detection uses hysteresis (grab below 25&thinsp;mm, release above 40&thinsp;mm) so a disc doesn't stutter in and out of your grip at the threshold.
+              </p>
+            </div>
+            <div class="case-sec">
+              <h4>Geometry from code, not the modeller</h4>
+              <p>
+                The original Blender export had UVs on its top face only, so photos didn't wrap and the disc backs were blank. The disc is now generated procedurally in C#: a biconvex annulus with a real bore and inscribed UVs on both faces. A Python + OpenCV pipeline strips each source photo's painted-checkerboard background (keeping only background connected to the image border, so the carved interior survives), and a measured per-disc UV offset lands each artifact's painted hole exactly on the geometric bore.
+              </p>
+            </div>
+            <div class="case-sec">
+              <h4>Making it run on real hardware</h4>
+              <p>
+                On-device, the floor-origin setting was silently ignored, leaving discs a metre overhead; fixed at runtime through XRInputSubsystem. Builds run headless from the command line, and a scripted adb launch sequence beats the Quest's home-panel focus race that leaves sideloaded apps visible but never focused. Verified end to end on borrowed school hardware.
+              </p>
+            </div>
+            <ul class="project-bullets case-notes">
+              <li>One rule throughout: no AI-generated stand-in art. Placeholders are unlabeled UV grids, and AI only cleans real photographs; it never invents Coast Salish designs</li>
+            </ul>
+            <p class="case-results">
+              <strong>Where it stands:</strong> v0.5, a working hand-tracked six-whorl gallery on a Quest 3, with headless builds and a verified deploy pipeline.
+            </p>
+            <div class="project-stack">
+              <span>Unity 6</span><span>Meta Quest 3</span><span>Passthrough AR</span><span>OpenXR</span><span>XR Hands</span><span>C#</span><span>Python · OpenCV</span>
+            </div>
+            <div class="case-links">
+              <a class="link-arrow" href="https://github.com/reubenlavin08/spindle-whorl-ar" target="_blank" rel="noopener">View on GitHub &rarr;</a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+
+      <h3 class="proj-more">More builds</h3>
       <div class="proj-grid">
-
-        <article class="proj-card" data-project="vl53l8cx" tabindex="0" role="button" aria-label="Open assistive helmet project">
-          <figure class="proj-thumb proj-thumb--video">
-            <span class="proj-status">In progress</span>
-            <video src="assets/projects/pointcloud-demo.mp4" autoplay muted loop playsinline preload="metadata"></video>
-          </figure>
-          <div class="proj-body">
-            <span class="proj-tag">Robotics · Sensor Fusion</span>
-            <h3>Assistive Navigation Helmet &mdash; Dual ToF + IMU</h3>
-            <p>A wearable for blind users on an ESP32-S3: two VL53L8CX depth sensors fused with a BNO085 IMU, driving directional haptics across three head-mounted motors.</p>
-            <span class="proj-cta">View project &rarr;</span>
-          </div>
-        </article>
-
-        <article class="proj-card" data-project="spindlewhorl" tabindex="0" role="button" aria-label="Open Spindle Whorl AR project">
-          <figure class="proj-thumb proj-thumb--video proj-thumb--contain">
-            <span class="proj-status">In progress</span>
-            <video src="assets/projects/spindle-whorl-demo.mp4" poster="assets/projects/spindle-whorl-poster.jpg" autoplay muted loop playsinline preload="metadata"></video>
-          </figure>
-          <div class="proj-body">
-            <span class="proj-tag">AR / VR · Cultural Heritage</span>
-            <h3>Spindle Whorl AR &mdash; Quest 3 Heritage Preservation</h3>
-            <p>A Meta Quest 3 mixed-reality app that rebuilds Coast Salish spindle whorls as 3D discs you pick up and turn with your bare hands &mdash; preservation beyond a flat photograph.</p>
-            <span class="proj-cta">View project &rarr;</span>
-          </div>
-        </article>
 
         <article class="proj-card" data-project="bullseye" tabindex="0" role="button" aria-label="Open Bullseye project">
           <figure class="proj-thumb proj-thumb--video proj-thumb--contain">
