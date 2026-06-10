@@ -337,6 +337,100 @@
     });
   });
 
+  // --- Hero depth cloud: real VL53L8CX capture rendered live ---
+  (() => {
+    const canvas = document.getElementById('heroCanvas');
+    const data = window.DEPTH_CAPTURE;
+    if (!canvas || !data || !canvas.getContext) return;
+    const ctx = canvas.getContext('2d');
+    const hero = canvas.parentElement;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isNarrow = window.matchMedia('(max-width: 820px)').matches;
+    const animate = !reduceMotion && !isNarrow;
+
+    const N = data.rows * data.cols;
+    const v36 = ch => { const c = ch.charCodeAt(0); return c <= 57 ? c - 48 : c - 87; };
+    const all = new Int16Array(data.frames * N);
+    for (let i = 0; i < all.length; i++) all[i] = v36(data.b36[2 * i]) * 36 + v36(data.b36[2 * i + 1]);
+
+    // Per-zone ray directions for the sensor's square FoV (pinhole model)
+    const fov = (data.fovDeg * Math.PI) / 180;
+    const dirs = [];
+    for (let r = 0; r < data.rows; r++)
+      for (let c = 0; c < data.cols; c++)
+        dirs.push([Math.tan(((c + 0.5) / data.cols - 0.5) * fov), Math.tan(((r + 0.5) / data.rows - 0.5) * fov)]);
+
+    let w, h;
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = hero.clientWidth; h = hero.clientHeight;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    const CENTER_D = 95;   // cm: scene centroid depth in this capture
+    const CAM_D = 175;     // cm: virtual camera distance
+    const pts = new Array(N);
+
+    function draw(t) {
+      ctx.clearRect(0, 0, w, h);
+      const fi = (t * 0.01) % data.frames;          // ~10 Hz, the real capture rate
+      const i0 = Math.floor(fi), i1 = (i0 + 1) % data.frames, mix = fi - i0;
+      const yaw = 0.55 + Math.sin(t * 0.00011) * 0.3;
+      const pitch = -0.3 + Math.sin(t * 0.00007) * 0.05;
+      const cy = Math.cos(yaw), sy = Math.sin(yaw);
+      const cp = Math.cos(pitch), sp = Math.sin(pitch);
+      const f = Math.min(w, 1000) * 0.85;
+      const ax = w * 0.68, ay = h * 0.45;
+      for (let z = 0; z < N; z++) {
+        const d0 = all[i0 * N + z], d1 = all[i1 * N + z];
+        if (!d0 || !d1) { pts[z] = null; continue; }
+        const d = d0 + (d1 - d0) * mix;
+        const x = dirs[z][0] * d, y = dirs[z][1] * d, zz = d - CENTER_D;
+        const x2 = x * cy + zz * sy, z2 = -x * sy + zz * cy;
+        const y2 = y * cp - z2 * sp, z3 = y * sp + z2 * cp;
+        const depth = z3 + CAM_D;
+        if (depth < 20) { pts[z] = null; continue; }
+        pts[z] = [ax + (x2 / depth) * f, ay + (y2 / depth) * f, d];
+      }
+      ctx.strokeStyle = 'rgba(95, 208, 138, 0.07)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let r = 0; r < data.rows; r++) {
+        for (let c = 0; c < data.cols; c++) {
+          const a = pts[r * data.cols + c];
+          if (!a) continue;
+          const right = c < data.cols - 1 && pts[r * data.cols + c + 1];
+          const down = r < data.rows - 1 && pts[(r + 1) * data.cols + c];
+          if (right) { ctx.moveTo(a[0], a[1]); ctx.lineTo(right[0], right[1]); }
+          if (down)  { ctx.moveTo(a[0], a[1]); ctx.lineTo(down[0], down[1]); }
+        }
+      }
+      ctx.stroke();
+      for (const p of pts) {
+        if (!p) continue;
+        const near = Math.max(0, Math.min(1, (110 - p[2]) / 35));
+        ctx.fillStyle = `rgba(95, 208, 138, ${0.16 + near * 0.45})`;
+        ctx.beginPath();
+        ctx.arc(p[0], p[1], 1.5 + near * 1.7, 0, 6.2832);
+        ctx.fill();
+      }
+    }
+
+    resize();
+    if (!animate) { draw(40000); window.addEventListener('resize', () => { resize(); draw(40000); }); return; }
+
+    let running = false, rafId = 0;
+    const loop = t => { draw(t); rafId = requestAnimationFrame(loop); };
+    const start = () => { if (!running) { running = true; rafId = requestAnimationFrame(loop); } };
+    const stop = () => { if (running) { running = false; cancelAnimationFrame(rafId); } };
+    window.addEventListener('resize', resize);
+    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(es => es.forEach(e => (e.isIntersecting ? start() : stop()))).observe(hero);
+    } else start();
+  })();
+
   // --- Gallery lightbox ---
   (() => {
     const grid    = document.getElementById('galleryGrid');

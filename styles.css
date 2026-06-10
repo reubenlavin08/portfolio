@@ -8,8 +8,10 @@
   --text: #d8dde4;
   --text-dim: #8a929d;
   --text-mute: #7d8490;
-  --accent: #b6c2cf;
-  --accent-soft: rgba(182, 194, 207, 0.08);
+  --accent: #5fd08a;
+  --accent-bright: #7ce0a4;
+  --accent-ink: #0b130d;
+  --accent-soft: rgba(95, 208, 138, 0.09);
   --rule: 1px solid var(--line);
   --max-w: 960px;
   --gutter: clamp(20px, 5vw, 48px);
@@ -20,8 +22,8 @@
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
-  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  font-size: 15.5px;
+  font-family: 'Archivo', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-size: 16px;
   line-height: 1.7;
   color: var(--text-dim);
   background: var(--bg);
@@ -126,10 +128,33 @@ code {
 
 /* ---------- Hero ---------- */
 .hero {
+  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
   padding: 140px var(--gutter) 100px;
+  overflow: hidden;
+}
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.85;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 76%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 76%, transparent 100%);
+}
+.hero-inner { position: relative; z-index: 1; }
+.hero-data-note {
+  position: absolute;
+  bottom: 16px;
+  right: var(--gutter);
+  z-index: 1;
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  color: var(--text-mute);
+  letter-spacing: 0.05em;
 }
 .hero-inner {
   max-width: var(--max-w);
@@ -238,7 +263,7 @@ code {
   margin: 0 0 18px;
   color: var(--text);
 }
-.accent { color: var(--text); font-weight: 600; }
+.accent { color: var(--accent); font-weight: 600; }
 .hero-sub {
   font-size: clamp(15.5px, 1.4vw, 17.5px);
   color: var(--text-dim);
@@ -282,11 +307,12 @@ code {
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 .btn-primary {
-  border-color: var(--line-strong);
-  color: var(--text);
-  background: transparent;
+  border-color: transparent;
+  color: var(--accent-ink);
+  background: var(--accent);
+  font-weight: 600;
 }
-.btn-primary:hover { background: var(--accent-soft); border-color: var(--text-dim); }
+.btn-primary:hover { background: var(--accent-bright); }
 .btn-ghost {
   border-color: var(--line);
   color: var(--text-dim);
@@ -316,10 +342,10 @@ code {
   letter-spacing: 0.04em;
 }
 .section-head h2 {
-  font-size: clamp(20px, 2.4vw, 26px);
+  font-size: clamp(22px, 2.6vw, 30px);
   margin: 0;
-  font-weight: 500;
-  letter-spacing: -0.005em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   color: var(--text);
   white-space: nowrap;
 }
@@ -683,7 +709,7 @@ code {
   display: block;
   transition: color 0.15s ease;
 }
-.proj-card:hover .proj-cta { color: var(--text); }
+.proj-card:hover .proj-cta { color: var(--accent); }
 
 /* shared helpers kept for modal re-use */
 .project-bullets {
@@ -735,7 +761,7 @@ code {
   padding-bottom: 2px;
   transition: gap 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
-.link-arrow:hover { gap: 8px; border-color: var(--text); }
+.link-arrow:hover { gap: 8px; border-color: var(--accent); color: var(--accent); }
 
 /* ---------- Project Modal ---------- */
 .modal {
@@ -1295,6 +1321,8 @@ code {
   .nav-links a:last-child { border-bottom: none; }
   .nav-toggle { display: flex; }
   .hero { padding-top: 120px; padding-bottom: 70px; }
+  .hero-canvas { opacity: 0.45; }
+  .hero-data-note { display: none; }
   .hero-grid {
     grid-template-columns: 1fr;
     gap: 36px;
@@ -1318,7 +1346,7 @@ code {
 }
 
 /* ---------- Polish: scroll-spy nav, status chips, consistent thumbs ---------- */
-.nav-links a.active { color: var(--text); }
+.nav-links a.active { color: var(--accent); }
 
 /* Letterboxed thumbnails blend with the site bg instead of stark black */
 .proj-thumb--contain img,
@@ -1353,8 +1381,8 @@ code {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #5fd08a;
-  box-shadow: 0 0 6px #5fd08a;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
   animation: status-pulse 2s ease-in-out infinite;
 }
 @keyframes status-pulse {

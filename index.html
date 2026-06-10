@@ -18,7 +18,7 @@
   <meta name="theme-color" content="#0d1014" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -47,6 +47,8 @@
 
   <main id="top">
     <section class="hero">
+      <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
+      <p class="hero-data-note" aria-hidden="true">background: real depth capture &middot; VL53L8CX wall-tilt calibration &middot; 2026-05-25</p>
       <div class="hero-inner hero-grid">
         <div class="hero-text">
           <p class="eyebrow">Incoming UBC Science &mdash; Engineering transfer track</p>
@@ -214,7 +216,7 @@
             <div class="case-sec">
               <h4>Three stacked bugs, one IMU driver</h4>
               <p>
-                Every available BNO085 library for this setup was SPI-only, so I wrote the I&sup2;C SH-2/SHTP transport from scratch and hit three independent bugs, each hiding the next. The probe ACKed at 0x4B but the real address was 0x4A: an ACK can lie, and ground truth is which address returns valid protocol data. Then the handshake worked exactly once per physical power-up and never again, because the chip broadcasts its channel advertisement once, at power-on, and reflashing resets the ESP but not the IMU; the fix is forcing a hub reset on every boot. Finally, the ToF sensor's 84&thinsp;KB firmware upload blocked the bus for a full second, and an unserviced BNO085 starves and stops reporting. It now gets its own 500&thinsp;Hz service task and a shared-bus mutex.
+                Every available BNO085 library for this setup was SPI-only, so the I&sup2;C SH-2/SHTP transport had to be built from scratch. I build with Claude Code as an AI pair-programmer: it writes much of the code, while I own the architecture, the wiring, the bench debugging, and verifying every fix on real hardware. Getting this chip alive meant peeling back three independent bugs, each hiding the next. The probe ACKed at 0x4B but the real address was 0x4A: an ACK can lie, and ground truth is which address returns valid protocol data. Then the handshake worked exactly once per physical power-up and never again, because the chip broadcasts its channel advertisement once, at power-on, and reflashing resets the ESP but not the IMU; the fix is forcing a hub reset on every boot. Finally, the ToF sensor's 84&thinsp;KB firmware upload blocked the bus for a full second, and an unserviced BNO085 starves and stops reporting. It now gets its own 500&thinsp;Hz service task and a shared-bus mutex.
               </p>
             </div>
             <div class="case-sec">
@@ -597,6 +599,7 @@
     </div>
   </div>
 
+  <script src="pointcloud-frames.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
