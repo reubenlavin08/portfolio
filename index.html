@@ -92,9 +92,6 @@
           <p>
             Outside of academics I'm an MMA black belt and assistant instructor, a varsity tennis player, and a jazz band leader. I treat engineering the same way I treat training — precise, patient, and built up rep by rep.
           </p>
-          <p>
-            I build AI-augmented. <strong>Claude Code is my pair-programmer</strong>: it writes a lot of my firmware and software, and I supply the system architecture, the wiring and soldering, the bench debugging, and the verification on real hardware. Working this way is its own engineering skill, and it's how a high-school senior ships a dual-sensor fused wearable instead of a blinking LED.
-          </p>
         </div>
         <aside class="about-card">
           <h3>Quick facts</h3>
@@ -204,7 +201,7 @@
             <div class="case-sec">
               <h4>Three stacked bugs, one IMU driver</h4>
               <p>
-                Every available BNO085 library for this setup was SPI-only, so the I&sup2;C SH-2/SHTP transport had to be built from scratch. I build with Claude Code as an AI pair-programmer: it writes much of the code, while I own the architecture, the wiring, the bench debugging, and verifying every fix on real hardware. Getting this chip alive meant peeling back three independent bugs, each hiding the next. The probe ACKed at 0x4B but the real address was 0x4A: an ACK can lie, and ground truth is which address returns valid protocol data. Then the handshake worked exactly once per physical power-up and never again, because the chip broadcasts its channel advertisement once, at power-on, and reflashing resets the ESP but not the IMU; the fix is forcing a hub reset on every boot. Finally, the ToF sensor's 84&thinsp;KB firmware upload blocked the bus for a full second, and an unserviced BNO085 starves and stops reporting. It now gets its own 500&thinsp;Hz service task and a shared-bus mutex.
+                Every available BNO085 library for this setup was SPI-only, so the I&sup2;C SH-2/SHTP transport had to be built from scratch. Much of the code here is written with Claude Code; the architecture, wiring, bench debugging, and verification on real hardware are mine. Getting this chip alive meant peeling back three independent bugs, each hiding the next. The probe ACKed at 0x4B but the real address was 0x4A: an ACK can lie, and ground truth is which address returns valid protocol data. Then the handshake worked exactly once per physical power-up and never again, because the chip broadcasts its channel advertisement once, at power-on, and reflashing resets the ESP but not the IMU; the fix is forcing a hub reset on every boot. Finally, the ToF sensor's 84&thinsp;KB firmware upload blocked the bus for a full second, and an unserviced BNO085 starves and stops reporting. It now gets its own 500&thinsp;Hz service task and a shared-bus mutex.
               </p>
             </div>
             <div class="case-sec">
@@ -289,7 +286,7 @@
             <div class="case-sec">
               <h4>Making it run on real hardware</h4>
               <p>
-                On-device, the floor-origin setting was silently ignored, leaving discs a metre overhead; fixed at runtime through XRInputSubsystem. Builds run headless from the command line, and a scripted adb launch sequence beats the Quest's home-panel focus race that leaves sideloaded apps visible but never focused. Verified end to end on borrowed school hardware.
+                On-device, the floor-origin setting was silently ignored, leaving discs a metre overhead; fixed at runtime through XRInputSubsystem. Builds run headless from the command line, and a scripted adb launch sequence beats the Quest's home-panel focus race that leaves sideloaded apps visible but never focused. Written with Claude Code; tested and verified end to end on borrowed school hardware.
               </p>
             </div>
             <ul class="project-bullets case-notes">
@@ -545,7 +542,7 @@
   </main>
 
   <footer class="footer">
-    <p>&copy; <span id="year"></span> Reuben Lavin · Designed and built with Claude Code as pair-programmer. Plain HTML, CSS &amp; JS, no framework.</p>
+    <p>&copy; <span id="year"></span> Reuben Lavin · Plain HTML, CSS &amp; JS, built with Claude Code.</p>
   </footer>
 
   <!-- Gallery Lightbox -->
