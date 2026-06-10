@@ -99,7 +99,7 @@
             <li><span>Location</span><strong>Vancouver, BC</strong></li>
             <li><span>Now</span><strong>Grade 12 · WPGA</strong></li>
             <li><span>Next</span><strong>UBC Science · Sept 2026</strong></li>
-            <li><span>Goal</span><strong>Transfer to Engineering</strong></li>
+            <li><span>Then</span><strong>Engineering transfer</strong></li>
             <li><span>Focus</span><strong>Robotics &amp; Embedded</strong></li>
           </ul>
         </aside>
@@ -200,18 +200,21 @@
             </p>
             <div class="case-sec">
               <h4>Three stacked bugs, one IMU driver</h4>
+              <p class="case-key">0x4B ACKed. The real address was 0x4A: an ACK can lie.</p>
               <p>
                 Every available BNO085 library for this setup was SPI-only, so the I&sup2;C SH-2/SHTP transport had to be built from scratch. Much of the code here is written with Claude Code; the architecture, wiring, bench debugging, and verification on real hardware are mine. Getting this chip alive meant peeling back three independent bugs, each hiding the next. The probe ACKed at 0x4B but the real address was 0x4A: an ACK can lie, and ground truth is which address returns valid protocol data. Then the handshake worked exactly once per physical power-up and never again, because the chip broadcasts its channel advertisement once, at power-on, and reflashing resets the ESP but not the IMU; the fix is forcing a hub reset on every boot. Finally, the ToF sensor's 84&thinsp;KB firmware upload blocked the bus for a full second, and an unserviced BNO085 starves and stops reporting. It now gets its own 500&thinsp;Hz service task and a shared-bus mutex.
               </p>
             </div>
             <div class="case-sec">
               <h4>Measure, don't guess: dropping the magnetometer</h4>
+              <p class="case-key">Motors on: heading confidence 4.8&deg; &rarr; 39&deg;. The magnetometer had to go.</p>
               <p>
                 The motors sit ~5&thinsp;cm from the IMU, intuitively too far to disturb a magnetometer. An A/B test said otherwise: with motors running, the chip's own heading-confidence estimate collapsed from 4.8&deg; to 39&deg; and threw a 60&deg; heading jump, exactly when a real obstacle alert would fire. The physics agrees: Earth's horizontal field here is ~18&thinsp;&micro;T, and a spinning rotor magnet at 5&thinsp;cm adds a few &micro;T of time-varying field the fusion can't model. The helmet now runs the mag-free AR/VR-stabilized rotation vector, the mode the datasheet itself recommends for head tracking in disturbed fields, and calibration tuning cut dynamic yaw drift from +2.24&deg; to +0.82&deg; per run (~63%).
               </p>
             </div>
             <div class="case-sec">
               <h4>Haptics a person can actually read</h4>
+              <p class="case-key">Coin motors don't spin below half duty: the curve starts at a felt 51% floor.</p>
               <p>
                 Obstacle direction maps to motors through hard regions with a squared urgency curve and dominance weighting (the most urgent direction stays at full strength, others scale to 70%), choices taken from the vibrotactile literature rather than vibes. The first build exposed a gap the papers don't mention: coin ERM motors don't spin below roughly half duty, so a pure squared curve meant silence until 20&thinsp;cm and then sudden full power. The curve now maps onto the motor's usable band, starting at a just-perceptible 51% floor the instant an alert begins.
               </p>
@@ -273,18 +276,21 @@
             </p>
             <div class="case-sec">
               <h4>The hand-tracking dead end</h4>
+              <p class="case-key">Meta's legacy hand API delivers nothing on OpenXR. Unity's XR Hands does, with 25/40&thinsp;mm pinch hysteresis.</p>
               <p>
                 On the OpenXR backend, Meta's legacy OVRHand API silently delivers nothing: <code>IsTracked</code> stays false while the headset is plainly tracking hands. The working path is Unity's XRHandSubsystem, reading thumb-tip and index-tip poses directly. Pinch detection uses hysteresis (grab below 25&thinsp;mm, release above 40&thinsp;mm) so a disc doesn't stutter in and out of your grip at the threshold.
               </p>
             </div>
             <div class="case-sec">
               <h4>Geometry from code, not the modeller</h4>
+              <p class="case-key">A domed annulus with a real bore, generated in C#, photos aligned to it per disc.</p>
               <p>
                 The original Blender export had UVs on its top face only, so photos didn't wrap and the disc backs were blank. The disc is now generated procedurally in C#: a biconvex annulus with a real bore and inscribed UVs on both faces. A Python + OpenCV pipeline strips each source photo's painted-checkerboard background (keeping only background connected to the image border, so the carved interior survives), and a measured per-disc UV offset lands each artifact's painted hole exactly on the geometric bore.
               </p>
             </div>
             <div class="case-sec">
               <h4>Making it run on real hardware</h4>
+              <p class="case-key">Headless builds, and an adb launch sequence that beats the Quest's focus race.</p>
               <p>
                 On-device, the floor-origin setting was silently ignored, leaving discs a metre overhead; fixed at runtime through XRInputSubsystem. Builds run headless from the command line, and a scripted adb launch sequence beats the Quest's home-panel focus race that leaves sideloaded apps visible but never focused. Written with Claude Code; tested and verified end to end on borrowed school hardware.
               </p>
