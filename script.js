@@ -93,7 +93,7 @@
       gallery: [
         { type: 'image', src: 'assets/projects/claude-monitor-dashboard.png' },
         { type: 'image', src: 'assets/projects/claude-monitor-live.png' },
-        { type: 'image', src: 'assets/projects/claude-monitor-housing.jpg' },
+        { type: 'image', src: 'assets/projects/claude-monitor-housing.webp' },
       ],
     },
     sentinel: {
@@ -108,7 +108,7 @@
       stack: ['Python', 'YOLOv8-Pose', 'OpenVINO', 'OpenCV', 'SQLite', 'Streamlit', 'Pose estimation', 'Object tracking'],
       github: 'https://github.com/reubenlavin08/Sentinel-AI-Occupancy-Monitor',
       gallery: [
-        { type: 'image', src: 'assets/projects/sentinel-demo.png' },
+        { type: 'image', src: 'assets/projects/sentinel-demo.webp' },
       ],
     },
     cvcourse: {
@@ -139,7 +139,7 @@
       stack: ['Embedded', 'Ultrasonic sensors', 'Motor control', 'Obstacle avoidance'],
       github: null,
       gallery: [
-        { type: 'image', src: 'assets/projects/rc-car-photo.jpg' },
+        { type: 'image', src: 'assets/projects/rc-car-photo.webp' },
         { type: 'image', src: 'assets/projects/rc-car.jpg' },
         { type: 'video', src: 'assets/projects/rc-car-new.mp4',   poster: 'assets/projects/rc-car-thumb.jpg' },
         { type: 'video', src: 'assets/projects/rc-car-drive.mp4', poster: 'assets/projects/rc-car.jpg' },

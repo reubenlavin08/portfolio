@@ -1,9 +1,2 @@
-.DS_Store
-Thumbs.db
-desktop.ini
-*.swp
-.vscode/
-node_modules/
-.netlify/
-build/
-managed_components/
+.impeccable/
+build-logs/

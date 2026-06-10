@@ -397,6 +397,8 @@ code {
 .timeline {
   position: relative;
   padding-left: 24px;
+  list-style: none;
+  margin: 0;
 }
 .timeline::before {
   content: '';
