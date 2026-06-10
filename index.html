@@ -219,6 +219,27 @@
                 Obstacle direction maps to motors through hard regions with a squared urgency curve and dominance weighting (the most urgent direction stays at full strength, others scale to 70%), choices taken from the vibrotactile literature rather than vibes. The first build exposed a gap the papers don't mention: coin ERM motors don't spin below roughly half duty, so a pure squared curve meant silence until 20&thinsp;cm and then sudden full power. The curve now maps onto the motor's usable band, starting at a just-perceptible 51% floor the instant an alert begins.
               </p>
             </div>
+            <div class="haptic-demo" id="hapticDemo">
+              <p class="hd-title">Try the real mapping</p>
+              <p class="hd-hint">Drag the obstacle across the sensor's view, then bring it closer with the slider. Arrow keys work too.</p>
+              <div class="hd-wrap">
+                <div class="hd-grid" id="hdGrid" tabindex="0" role="application" aria-label="Haptic mapping demo. Use arrow keys to move the obstacle left and right, up and down to change distance.">
+                  <span class="hd-region-line" style="left: 25%"></span>
+                  <span class="hd-region-line" style="left: 75%"></span>
+                  <div class="hd-dot" id="hdDot"></div>
+                </div>
+                <div class="hd-motors" aria-hidden="true">
+                  <div class="hd-motor"><span id="hdmLeft"></span><b>L</b><em id="hdvLeft">off</em></div>
+                  <div class="hd-motor"><span id="hdmCenter"></span><b>C</b><em id="hdvCenter">off</em></div>
+                  <div class="hd-motor"><span id="hdmRight"></span><b>R</b><em id="hdvRight">off</em></div>
+                </div>
+              </div>
+              <label class="hd-slider">
+                <span>Distance <b id="hdDistVal">90 cm</b></span>
+                <input type="range" id="hdDist" min="25" max="200" value="90" aria-label="Obstacle distance in centimetres" />
+              </label>
+              <p class="hd-note" id="hdNote" aria-live="polite">This is the shipped firmware computation: column regions, squared urgency curve, 51% ERM floor, 0.7 dominance weighting. Alert threshold 150&thinsp;cm.</p>
+            </div>
             <ul class="project-bullets case-notes">
               <li>Also run to ground: a 2&thinsp;ms task delay that compiled to zero ticks at a 100&thinsp;Hz tick rate, silently starving the sensor loop on unlucky boots</li>
               <li>A debug switch that bridged 3.3&thinsp;V to ground mid-flip and browned out the board: logic-level switches should never carry a power rail</li>

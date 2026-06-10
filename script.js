@@ -367,6 +367,72 @@
     });
   });
 
+  // --- Haptic mapping playground (the shipped firmware computation) ---
+  (() => {
+    const grid = document.getElementById('hdGrid');
+    if (!grid) return;
+    const dot = document.getElementById('hdDot');
+    const slider = document.getElementById('hdDist');
+    const distVal = document.getElementById('hdDistVal');
+    const rings = { left: document.getElementById('hdmLeft'), center: document.getElementById('hdmCenter'), right: document.getElementById('hdmRight') };
+    const vals  = { left: document.getElementById('hdvLeft'), center: document.getElementById('hdvCenter'), right: document.getElementById('hdvRight') };
+
+    // Firmware constants (main.c): duty floor 130/255 = 51%, squared urgency
+    // curve mapped onto [MIN..MAX], dominance scales above-floor portion x0.7.
+    const DUTY_MIN = 130, DUTY_MAX = 255, THRESH = 150, BLOB = 0.85;
+    const region = c => (c < 2 ? 'left' : c > 5 ? 'right' : 'center');
+
+    let colF = 3.5, rowF = 0.5; // obstacle position: column 0..8, row fraction 0..1
+
+    function compute() {
+      const dist = +slider.value;
+      distVal.textContent = dist + ' cm';
+      const d = { left: 0, center: 0, right: 0 };
+      for (let c = Math.max(0, Math.ceil(colF - BLOB)); c <= Math.min(7, Math.floor(colF + BLOB)); c++) {
+        // off-axis zones see a longer slant range (the per-row/column cosine effect)
+        const lateral = Math.abs(c + 0.5 - colF) / BLOB;
+        const zoneDist = dist * (1 + 0.15 * lateral);
+        if (zoneDist >= THRESH) continue;
+        const ratio = zoneDist / THRESH;
+        const duty = DUTY_MIN + (DUTY_MAX - DUTY_MIN) * (1 - ratio) * (1 - ratio);
+        const r = region(c);
+        d[r] = Math.max(d[r], duty);
+      }
+      const top = Math.max(d.left, d.center, d.right);
+      for (const k in d) {
+        if (d[k] > 0 && d[k] < top) d[k] = DUTY_MIN + (d[k] - DUTY_MIN) * 0.7;
+        const pct = d[k] ? Math.round((d[k] / DUTY_MAX) * 100) : 0;
+        vals[k].textContent = pct ? pct + '%' : 'off';
+        rings[k].style.background = `rgba(95, 208, 138, ${d[k] / DUTY_MAX})`;
+        rings[k].style.boxShadow = d[k] ? `0 0 ${6 + (d[k] / DUTY_MAX) * 14}px rgba(95, 208, 138, 0.55)` : 'none';
+      }
+    }
+
+    function place() {
+      dot.style.left = (colF / 8) * 100 + '%';
+      dot.style.top = rowF * 100 + '%';
+      compute();
+    }
+
+    function dragTo(e) {
+      const r = grid.getBoundingClientRect();
+      colF = Math.max(0.2, Math.min(7.8, ((e.clientX - r.left) / r.width) * 8));
+      rowF = Math.max(0.08, Math.min(0.92, (e.clientY - r.top) / r.height));
+      place();
+    }
+    grid.addEventListener('pointerdown', e => { dragTo(e); try { grid.setPointerCapture(e.pointerId); } catch {} });
+    grid.addEventListener('pointermove', e => { if (e.buttons) dragTo(e); });
+    grid.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft')  { colF = Math.max(0.2, colF - 0.5); e.preventDefault(); }
+      if (e.key === 'ArrowRight') { colF = Math.min(7.8, colF + 0.5); e.preventDefault(); }
+      if (e.key === 'ArrowUp')    { slider.value = Math.min(200, +slider.value + 10); e.preventDefault(); }
+      if (e.key === 'ArrowDown')  { slider.value = Math.max(25, +slider.value - 10); e.preventDefault(); }
+      place();
+    });
+    slider.addEventListener('input', compute);
+    place();
+  })();
+
   // --- Pause autoplay videos while offscreen (battery + bandwidth) ---
   if ('IntersectionObserver' in window) {
     const vio = new IntersectionObserver(entries => {
@@ -414,12 +480,29 @@
     const CAM_D = 175;     // cm: virtual camera distance
     const pts = new Array(N);
 
+    // Pointer: parallax orbit + Gaussian lift (smoothed for a springy feel)
+    let tgtX = 0, tgtY = 0, curX = 0, curY = 0;       // -0.5..0.5 offsets
+    let tgtPx = -1e4, tgtPy = -1e4, curPx = -1e4, curPy = -1e4; // cursor in canvas px
+    const SIGMA = 90;       // px: Gaussian falloff radius
+    hero.addEventListener('pointermove', e => {
+      const r = hero.getBoundingClientRect();
+      tgtX = e.clientX / r.width - 0.5;
+      tgtY = e.clientY / r.height - 0.5;
+      tgtPx = e.clientX - r.left;
+      tgtPy = e.clientY - r.top;
+    });
+    hero.addEventListener('pointerleave', () => { tgtX = 0; tgtY = 0; tgtPx = tgtPy = -1e4; });
+
     function draw(t) {
       ctx.clearRect(0, 0, w, h);
+      curX += (tgtX - curX) * 0.045;
+      curY += (tgtY - curY) * 0.045;
+      curPx += (tgtPx - curPx) * 0.08;
+      curPy += (tgtPy - curPy) * 0.08;
       const fi = (t * 0.01) % data.frames;          // ~10 Hz, the real capture rate
       const i0 = Math.floor(fi), i1 = (i0 + 1) % data.frames, mix = fi - i0;
-      const yaw = 0.55 + Math.sin(t * 0.00011) * 0.3;
-      const pitch = -0.3 + Math.sin(t * 0.00007) * 0.05;
+      const yaw = 0.55 + Math.sin(t * 0.00011) * 0.3 + curX * 0.5;
+      const pitch = -0.3 + Math.sin(t * 0.00007) * 0.05 + curY * 0.16;
       const cy = Math.cos(yaw), sy = Math.sin(yaw);
       const cp = Math.cos(pitch), sp = Math.sin(pitch);
       const f = Math.min(w, 1000) * 0.85;
@@ -452,9 +535,11 @@
       for (const p of pts) {
         if (!p) continue;
         const near = Math.max(0, Math.min(1, (110 - p[2]) / 35));
-        ctx.fillStyle = `rgba(95, 208, 138, ${0.16 + near * 0.45})`;
+        const dx = p[0] - curPx, dy = p[1] - curPy;
+        const inf = Math.exp(-(dx * dx + dy * dy) / (2 * SIGMA * SIGMA));
+        ctx.fillStyle = `rgba(95, 208, 138, ${Math.min(1, 0.16 + near * 0.45 + inf * 0.5)})`;
         ctx.beginPath();
-        ctx.arc(p[0], p[1], 1.5 + near * 1.7, 0, 6.2832);
+        ctx.arc(p[0], p[1] - inf * 10, 1.5 + near * 1.7 + inf * 2.4, 0, 6.2832);
         ctx.fill();
       }
     }

@@ -575,6 +575,114 @@ code {
   line-height: 1.7;
 }
 .case-notes { margin-top: 18px; }
+
+/* ---------- Haptic mapping playground ---------- */
+.haptic-demo {
+  margin-top: 22px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--bg-2);
+  padding: 18px;
+}
+.hd-title {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+.hd-hint {
+  margin: 0 0 14px;
+  font-size: 12.5px;
+  color: var(--text-mute);
+  line-height: 1.5;
+}
+.hd-wrap {
+  display: flex;
+  gap: 18px;
+  align-items: stretch;
+}
+.hd-grid {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  aspect-ratio: 8 / 5;
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  background:
+    repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px calc(100% / 8)),
+    repeating-linear-gradient(0deg, var(--line) 0 1px, transparent 1px calc(100% / 5)),
+    var(--bg);
+  cursor: grab;
+  touch-action: none;
+}
+.hd-grid:active { cursor: grabbing; }
+.hd-grid:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.hd-region-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--line-strong);
+}
+.hd-dot {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 14px rgba(95, 208, 138, 0.55);
+  pointer-events: none;
+}
+.hd-motors {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+}
+.hd-motor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  color: var(--text-dim);
+}
+.hd-motor b { font-weight: 500; color: var(--text); width: 12px; }
+.hd-motor em { font-style: normal; color: var(--text-mute); width: 38px; text-align: right; }
+.hd-motor span {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: rgba(95, 208, 138, 0);
+  transition: background 0.12s linear, box-shadow 0.12s linear;
+}
+.hd-slider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: var(--text-dim);
+}
+.hd-slider b { color: var(--text); font-weight: 500; }
+.hd-slider span { white-space: nowrap; }
+.hd-slider input {
+  flex: 1;
+  accent-color: var(--accent);
+  min-width: 0;
+}
+.hd-note {
+  margin: 12px 0 0;
+  font-size: 11.5px;
+  color: var(--text-mute);
+  line-height: 1.55;
+}
+@media (max-width: 600px) {
+  .hd-wrap { flex-direction: column; }
+  .hd-motors { flex-direction: row; justify-content: flex-start; gap: 18px; }
+}
 .case-results {
   margin: 24px 0 0;
   padding-top: 16px;
