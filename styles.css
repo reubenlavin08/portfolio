@@ -720,31 +720,37 @@ code {
 }
 
 /* ---------- 3D project shelf (desktop) ---------- */
-.shelf {
-  position: relative;
-  height: 318px;
-  perspective: 1100px;
-  display: none;
-  margin-bottom: 4px;
-}
+.shelf { display: none; }
 @media (min-width: 821px) {
   .shelf { display: block; }
   .proj-grid.has-shelf { display: none; }
 }
+.shelf-stage {
+  position: relative;
+  height: 480px;
+  perspective: 900px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  overflow: visible;
+}
+.shelf-scene {
+  position: relative;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+}
 .shelf-panel {
   position: absolute;
-  top: 50px;
-  left: 0;
-  width: 188px;
-  height: 256px;
   padding: 0;
-  border: 1px solid var(--line-strong);
-  border-radius: 3px;
+  border: 0;
+  border-radius: 10px;
   overflow: hidden;
   background: var(--bg-2);
-  cursor: pointer;
+  pointer-events: none;
   transform-origin: bottom center;
-  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
 .shelf-panel img {
@@ -753,35 +759,38 @@ code {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: grayscale(0.3) brightness(0.85);
+  filter: grayscale(0.25) brightness(0.9);
   transition: filter 0.3s ease;
 }
 .shelf-panel.is-focus img { filter: none; }
-.shelf-panel:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-.shelf-label {
+.shelf-panel::after {
+  content: '';
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 30px 12px 10px;
-  background: linear-gradient(180deg, transparent, rgba(7, 9, 12, 0.94) 60%);
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  text-align: left;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.3) 100%);
+  border: 1px solid rgba(255,255,255,0.14);
 }
-.shelf-tag {
+.shelf-panel:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.shelf-caption {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+  min-height: 22px;
+  margin: 2px 0 10px;
+}
+.shelf-caption .shelf-tag {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9.5px;
+  font-size: 10px;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--text-mute);
 }
-.shelf-title {
-  font-size: 12.5px;
+.shelf-caption .shelf-title {
+  font-size: 14.5px;
   font-weight: 600;
   color: var(--text);
-  line-height: 1.3;
 }
 
 /* ---------- Project Cards ---------- */

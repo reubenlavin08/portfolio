@@ -375,56 +375,115 @@
   });
 
   // --- 3D project shelf for the non-featured builds (desktop only) ---
-  // Fanned panel stack with a Gaussian hover wave; falls back to the
-  // card grid below 821px or when JS is unavailable. Decided at load.
+  // Z-stacked panel scene with a cursor squash/stretch wave (same math as
+  // the stacked-panels reference: Gaussian influence, tilting scene).
+  // Falls back to the card grid below 821px, reduced-motion, or no JS.
   (() => {
     const grid = document.querySelector('.proj-grid');
     if (!grid || !window.matchMedia('(min-width: 821px)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
     const order = ['bullseye', 'claudemonitor', 'sentinel', 'cvcourse', 'rccar', 'rcplane', 'ccdiscord'];
-    const PW = 188, SIG = 1.5;
+    const N = order.length;
+    const Z_SPREAD = 120, SIGMA = 1.0, LIFT = 70, SQUASH = 0.35;
+    const ROT_Y = -42, ROT_X = 18;
 
     const shelf = document.createElement('div');
     shelf.className = 'shelf';
-    const panels = order.map(id => {
+    const stage = document.createElement('div');
+    stage.className = 'shelf-stage';
+    const scene = document.createElement('div');
+    scene.className = 'shelf-scene';
+    const caption = document.createElement('p');
+    caption.className = 'shelf-caption';
+    const HINT = '<span class="shelf-tag">7 more builds · move across the stack · click to open</span>';
+    caption.innerHTML = HINT;
+
+    const panels = order.map((id, i) => {
       const p = PROJECTS[id];
+      const t = i / (N - 1);
+      const w = 210 + t * 90, h = 290 + t * 130;
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'shelf-panel';
       b.setAttribute('aria-label', 'Open ' + p.title);
+      b.style.width = w + 'px';
+      b.style.height = h + 'px';
+      b.style.marginLeft = -w / 2 + 'px';
+      b.style.marginTop = -h / 2 + 'px';
+      b.style.opacity = (0.3 + t * 0.7).toFixed(2);
       const img = document.createElement('img');
       img.src = p.thumb; img.alt = ''; img.loading = 'lazy';
-      const label = document.createElement('span');
-      label.className = 'shelf-label';
-      label.innerHTML = `<span class="shelf-tag">${p.tag}</span><span class="shelf-title">${p.title.split('—')[0].trim()}</span>`;
-      b.append(img, label);
+      b.appendChild(img);
       b.addEventListener('click', () => openModal(id));
-      shelf.appendChild(b);
+      b.addEventListener('focus', () => { setWave(i); showCaption(i); });
+      scene.appendChild(b);
       return b;
     });
+
+    stage.appendChild(scene);
+    shelf.append(stage, caption);
     grid.before(shelf);
     grid.classList.add('has-shelf');
 
-    function layout(focus) {
-      const step = (shelf.clientWidth - PW) / (panels.length - 1);
-      panels.forEach((el, i) => {
-        const d = focus < 0 ? 99 : Math.abs(i - focus);
-        const inf = focus < 0 ? 0 : Math.exp(-(d * d) / (2 * SIG * SIG));
-        el.style.transform =
-          `translate3d(${i * step}px, ${-inf * 44}px, 0) rotateY(${-26 + inf * 22}deg) scale(${1 + inf * 0.06})`;
-        el.style.zIndex = focus < 0 ? i : 100 - Math.round(d * 10);
-        el.classList.toggle('is-focus', focus >= 0 && Math.round(focus) === i);
+    // Spring-lerp state: per-panel lift/scaleY plus scene tilt.
+    const cur = { y: panels.map(() => 0), s: panels.map(() => 1), ry: ROT_Y, rx: ROT_X };
+    const tgt = { y: panels.map(() => 0), s: panels.map(() => 1), ry: ROT_Y, rx: ROT_X };
+    let focusIdx = -1, raf = 0;
+
+    function setWave(pos) {
+      panels.forEach((_, i) => {
+        const d = Math.abs(i - pos);
+        const inf = Math.exp(-(d * d) / (2 * SIGMA * SIGMA));
+        tgt.y[i] = -inf * LIFT;
+        tgt.s[i] = SQUASH + inf * (1 - SQUASH);
       });
+      focusIdx = Math.round(pos);
+      panels.forEach((el, i) => el.classList.toggle('is-focus', i === focusIdx));
+      kick();
     }
-    shelf.addEventListener('pointermove', e => {
-      const r = shelf.getBoundingClientRect();
-      const step = (r.width - PW) / (panels.length - 1);
-      layout(Math.max(0, Math.min(panels.length - 1, (e.clientX - r.left - PW / 2) / step)));
+    function clearWave() {
+      panels.forEach((el, i) => { tgt.y[i] = 0; tgt.s[i] = 1; el.classList.remove('is-focus'); });
+      tgt.ry = ROT_Y; tgt.rx = ROT_X;
+      focusIdx = -1;
+      caption.innerHTML = HINT;
+      kick();
+    }
+    function showCaption(i) {
+      const p = PROJECTS[order[i]];
+      caption.innerHTML = `<span class="shelf-tag">${p.tag}</span><span class="shelf-title">${p.title.split('—')[0].trim()}</span>`;
+    }
+
+    function step() {
+      let live = false;
+      const ease = (c, t, k) => { const n = c + (t - c) * k; return Math.abs(t - n) < 0.001 ? t : (live = true, n); };
+      panels.forEach((el, i) => {
+        cur.y[i] = ease(cur.y[i], tgt.y[i], 0.18);
+        cur.s[i] = ease(cur.s[i], tgt.s[i], 0.18);
+        const z = (i - (N - 1)) * Z_SPREAD;
+        el.style.transform = `translateZ(${z}px) translateY(${cur.y[i].toFixed(2)}px) scaleY(${cur.s[i].toFixed(3)})`;
+      });
+      cur.ry = ease(cur.ry, tgt.ry, 0.1);
+      cur.rx = ease(cur.rx, tgt.rx, 0.1);
+      scene.style.transform = `rotateY(${cur.ry.toFixed(2)}deg) rotateX(${cur.rx.toFixed(2)}deg)`;
+      raf = live ? requestAnimationFrame(step) : 0;
+    }
+    function kick() { if (!raf) raf = requestAnimationFrame(step); }
+
+    stage.addEventListener('pointermove', e => {
+      const r = stage.getBoundingClientRect();
+      const cx = (e.clientX - r.left) / r.width;
+      const cy = (e.clientY - r.top) / r.height;
+      tgt.ry = ROT_Y + (cx - 0.5) * 14;
+      tgt.rx = ROT_X + (cy - 0.5) * -10;
+      const pos = Math.max(0, Math.min(N - 1, cx * (N - 1)));
+      setWave(pos);
+      showCaption(Math.round(pos));
     });
-    shelf.addEventListener('pointerleave', () => layout(-1));
-    panels.forEach((el, i) => el.addEventListener('focus', () => layout(i)));
-    shelf.addEventListener('focusout', e => { if (!shelf.contains(e.relatedTarget)) layout(-1); });
-    window.addEventListener('resize', () => layout(-1));
-    layout(-1);
+    stage.addEventListener('pointerleave', clearWave);
+    stage.addEventListener('click', () => { if (focusIdx >= 0) openModal(order[focusIdx]); });
+    shelf.addEventListener('focusout', e => { if (!shelf.contains(e.relatedTarget)) clearWave(); });
+    kick();
   })();
 
   // --- Haptic mapping playground (the shipped firmware computation) ---
