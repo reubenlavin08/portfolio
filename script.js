@@ -61,6 +61,7 @@
   // (Featured case studies — helmet, spindle whorl — live directly in index.html.)
   const PROJECTS = {
     bullseye: {
+      thumb: 'assets/projects/bullseye-poster.jpg',
       tag: 'Product · Open Source',
       title: 'Bullseye — Marketplace Deal Scorer',
       desc: 'Open-source Windows desktop app that scores Facebook Marketplace listings against real eBay sold-comp data in real time. Deterministic percentile-rank scoring with confidence bands and honesty guards — no LLM in the scoring path, same listing always produces the same score. Free forever for 3 saved searches, Pro for unlimited.',
@@ -80,6 +81,7 @@
       ],
     },
     claudemonitor: {
+      thumb: 'assets/projects/claude-monitor-dashboard.png',
       tag: 'Embedded · Dashboards',
       title: 'Claude Monitor — Live Pi Usage Dashboard',
       desc: 'A wall-mounted 7" Raspberry Pi screen that shows live Claude Code usage: exact 5-hour and weekly window percentages, reset countdowns, per-session context %, cost, and every active session on the desktop. Built because Anthropic doesn\'t expose any of this through an API — the numbers are only rendered to the terminal.',
@@ -97,6 +99,7 @@
       ],
     },
     sentinel: {
+      thumb: 'assets/projects/sentinel-demo.webp',
       tag: 'AI · Computer Vision',
       title: 'Sentinel — AI Occupancy Monitor',
       desc: 'Connects to an IP camera, uses a YOLOv8-Pose model to detect and track people, and counts entries and exits as they cross a virtual tripwire. Every event is logged to SQLite and visualized in a live Streamlit dashboard that refreshes every 2 seconds.',
@@ -112,6 +115,7 @@
       ],
     },
     cvcourse: {
+      thumb: 'assets/projects/cv-course-home.png',
       tag: 'Learning · Experiment',
       title: 'Sensor Fusion — A Personalized Learning Experiment',
       desc: 'A self-paced course on computer vision, sensor calibration, and multi-sensor fusion, designed around AI as a first-class learning collaborator. The artifact is a working static-site course; the point is the experiment — testing whether structured AI collaboration helps a single learner cover college-level technical material faster and deeper than passive content or solo grinding.',
@@ -128,6 +132,7 @@
       ],
     },
     rccar: {
+      thumb: 'assets/projects/rc-car-thumb.jpg',
       tag: 'Robotics',
       title: 'Autonomous RC Car',
       desc: 'Built a small autonomous driving car using ultrasonic sensors for obstacle detection and basic navigation — the "see, decide, drive" loop that sits at the heart of every mobile robot. Designed, wired, coded, and debugged entirely from scratch.',
@@ -146,6 +151,7 @@
       ],
     },
     rcplane: {
+      thumb: 'assets/projects/rc-plane-thumb.jpg',
       tag: 'Aerospace · Hardware',
       title: 'RC Plane Build',
       desc: 'Designed and assembled a remote-controlled airplane from scratch — a hands-on dive into aerodynamics, control surfaces, and radio link tuning. Took it from a pile of parts on a workbench to flying hardware.',
@@ -166,6 +172,7 @@
       ],
     },
     ccdiscord: {
+      thumb: 'assets/projects/cc-discord-remote-phone.jpg',
       tag: 'Automation · Windows API',
       title: 'cc-discord-remote — Drive Claude Code from Discord',
       desc: 'A Discord bot that lets you drive a Claude Code session running on your laptop from anywhere — typed prompts go in over Win32 console APIs, and responses stream back by tailing Claude\'s session JSONL. Built because Claude Code\'s official /remote-control requires same-account auth between the phone and the laptop; this works across accounts.',
@@ -367,6 +374,59 @@
     });
   });
 
+  // --- 3D project shelf for the non-featured builds (desktop only) ---
+  // Fanned panel stack with a Gaussian hover wave; falls back to the
+  // card grid below 821px or when JS is unavailable. Decided at load.
+  (() => {
+    const grid = document.querySelector('.proj-grid');
+    if (!grid || !window.matchMedia('(min-width: 821px)').matches) return;
+    const order = ['bullseye', 'claudemonitor', 'sentinel', 'cvcourse', 'rccar', 'rcplane', 'ccdiscord'];
+    const PW = 188, SIG = 1.5;
+
+    const shelf = document.createElement('div');
+    shelf.className = 'shelf';
+    const panels = order.map(id => {
+      const p = PROJECTS[id];
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'shelf-panel';
+      b.setAttribute('aria-label', 'Open ' + p.title);
+      const img = document.createElement('img');
+      img.src = p.thumb; img.alt = ''; img.loading = 'lazy';
+      const label = document.createElement('span');
+      label.className = 'shelf-label';
+      label.innerHTML = `<span class="shelf-tag">${p.tag}</span><span class="shelf-title">${p.title.split('—')[0].trim()}</span>`;
+      b.append(img, label);
+      b.addEventListener('click', () => openModal(id));
+      shelf.appendChild(b);
+      return b;
+    });
+    grid.before(shelf);
+    grid.classList.add('has-shelf');
+
+    function layout(focus) {
+      const step = (shelf.clientWidth - PW) / (panels.length - 1);
+      panels.forEach((el, i) => {
+        const d = focus < 0 ? 99 : Math.abs(i - focus);
+        const inf = focus < 0 ? 0 : Math.exp(-(d * d) / (2 * SIG * SIG));
+        el.style.transform =
+          `translate3d(${i * step}px, ${-inf * 44}px, 0) rotateY(${-26 + inf * 22}deg) scale(${1 + inf * 0.06})`;
+        el.style.zIndex = focus < 0 ? i : 100 - Math.round(d * 10);
+        el.classList.toggle('is-focus', focus >= 0 && Math.round(focus) === i);
+      });
+    }
+    shelf.addEventListener('pointermove', e => {
+      const r = shelf.getBoundingClientRect();
+      const step = (r.width - PW) / (panels.length - 1);
+      layout(Math.max(0, Math.min(panels.length - 1, (e.clientX - r.left - PW / 2) / step)));
+    });
+    shelf.addEventListener('pointerleave', () => layout(-1));
+    panels.forEach((el, i) => el.addEventListener('focus', () => layout(i)));
+    shelf.addEventListener('focusout', e => { if (!shelf.contains(e.relatedTarget)) layout(-1); });
+    window.addEventListener('resize', () => layout(-1));
+    layout(-1);
+  })();
+
   // --- Haptic mapping playground (the shipped firmware computation) ---
   (() => {
     const grid = document.getElementById('hdGrid');
@@ -506,7 +566,7 @@
       const cy = Math.cos(yaw), sy = Math.sin(yaw);
       const cp = Math.cos(pitch), sp = Math.sin(pitch);
       const f = Math.min(w, 1000) * 0.85;
-      const ax = w * 0.68, ay = h * 0.45;
+      const ax = w * 0.42, ay = h * 0.6;
       for (let z = 0; z < N; z++) {
         const d0 = all[i0 * N + z], d1 = all[i1 * N + z];
         if (!d0 || !d1) { pts[z] = null; continue; }
