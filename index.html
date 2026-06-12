@@ -47,7 +47,7 @@
     <section class="hero">
       <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
       <p class="hero-data-note" aria-hidden="true">background: real depth capture &middot; VL53L8CX wall-tilt calibration &middot; 2026-05-25</p>
-      <div class="hero-inner hero-grid">
+      <div class="hero-inner">
         <div class="hero-text">
           <p class="eyebrow">Incoming UBC Science &mdash; Engineering transfer track</p>
           <h1 class="hero-title">
@@ -58,20 +58,8 @@
           </p>
           <div class="hero-cta">
             <a href="#projects" class="btn btn-primary">View projects</a>
-            <a href="#contact" class="btn btn-ghost">Get in touch</a>
           </div>
-          <p class="hero-now">
-            <span class="hero-now-label">Next up</span>
-            taking the <strong>assistive helmet</strong> into Phase 2 (camera + computer vision), launching <strong>Bullseye</strong> to real users, and training a model on <strong>USGS seismic data</strong>.
-          </p>
         </div>
-        <figure class="hero-photo">
-          <div class="hero-photo-frame">
-            <img src="assets/headshot.jpg" alt="Reuben Lavin" onerror="this.parentElement.classList.add('no-photo'); this.remove();" width="615" height="768" />
-            <span class="hero-photo-fallback" aria-hidden="true">RL</span>
-          </div>
-          <figcaption class="hero-photo-caption">Vancouver, BC</figcaption>
-        </figure>
       </div>
     </section>
 
@@ -87,8 +75,20 @@
           <p>
             Outside of academics I'm an MMA black belt and assistant instructor, a varsity tennis player, and a jazz band leader. I treat engineering the same way I treat training — precise, patient, and built up rep by rep.
           </p>
+          <p class="hero-now">
+            <span class="hero-now-label">Next up</span>
+            taking the <strong>assistive helmet</strong> into Phase 2 (camera + computer vision), launching <strong>Bullseye</strong> to real users, and training a model on <strong>USGS seismic data</strong>.
+          </p>
         </div>
-        <aside class="about-card">
+        <aside class="about-side">
+          <figure class="about-photo">
+            <div class="hero-photo-frame">
+              <img src="assets/headshot.jpg" alt="Reuben Lavin" loading="lazy" onerror="this.parentElement.classList.add('no-photo'); this.remove();" width="615" height="768" />
+              <span class="hero-photo-fallback" aria-hidden="true">RL</span>
+            </div>
+            <figcaption class="hero-photo-caption">Vancouver, BC</figcaption>
+          </figure>
+          <div class="about-card">
           <h3>Quick facts</h3>
           <ul>
             <li><span>Location</span><strong>Vancouver, BC</strong></li>
@@ -97,6 +97,7 @@
             <li><span>Then</span><strong>Engineering transfer</strong></li>
             <li><span>Focus</span><strong>Robotics &amp; Embedded</strong></li>
           </ul>
+          </div>
         </aside>
       </div>
     </section>

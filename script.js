@@ -599,29 +599,27 @@
     const CAM_D = 175;     // cm: virtual camera distance
     const pts = new Array(N);
 
-    // Pointer: parallax orbit + Gaussian lift (smoothed for a springy feel)
+    // Pointer: parallax orbit + Gaussian lift. The field is STILL at rest;
+    // capture playback and orbit run only while the pointer is in the hero,
+    // so all motion is caused by the visitor.
     let tgtX = 0, tgtY = 0, curX = 0, curY = 0;       // -0.5..0.5 offsets
     let tgtPx = -1e4, tgtPy = -1e4, curPx = -1e4, curPy = -1e4; // cursor in canvas px
+    let inside = false, playMs = 0, lastT = 0;
     const SIGMA = 130;      // px: Gaussian falloff radius
-    hero.addEventListener('pointermove', e => {
-      const r = hero.getBoundingClientRect();
-      tgtX = e.clientX / r.width - 0.5;
-      tgtY = e.clientY / r.height - 0.5;
-      tgtPx = e.clientX - r.left;
-      tgtPy = e.clientY - r.top;
-    });
-    hero.addEventListener('pointerleave', () => { tgtX = 0; tgtY = 0; tgtPx = tgtPy = -1e4; });
 
     function draw(t) {
       ctx.clearRect(0, 0, w, h);
-      curX += (tgtX - curX) * 0.045;
-      curY += (tgtY - curY) * 0.045;
-      curPx += (tgtPx - curPx) * 0.08;
-      curPy += (tgtPy - curPy) * 0.08;
-      const fi = (t * 0.01) % data.frames;          // ~10 Hz, the real capture rate
+      const dt = lastT ? Math.min(t - lastT, 100) : 0;
+      lastT = t;
+      if (inside) playMs += dt;
+      curX += (tgtX - curX) * 0.09;
+      curY += (tgtY - curY) * 0.09;
+      curPx += (tgtPx - curPx) * 0.12;
+      curPy += (tgtPy - curPy) * 0.12;
+      const fi = (playMs * 0.01) % data.frames;     // ~10 Hz, the real capture rate
       const i0 = Math.floor(fi), i1 = (i0 + 1) % data.frames, mix = fi - i0;
-      const yaw = 0.55 + Math.sin(t * 0.00011) * 0.3 + curX * 0.5;
-      const pitch = -0.3 + Math.sin(t * 0.00007) * 0.05 + curY * 0.16;
+      const yaw = 0.55 + curX * 0.6;
+      const pitch = -0.3 + curY * 0.2;
       const cy = Math.cos(yaw), sy = Math.sin(yaw);
       const cp = Math.cos(pitch), sp = Math.sin(pitch);
       const f = w * 1.45;
@@ -667,10 +665,29 @@
     if (!animate) { draw(40000); window.addEventListener('resize', () => { resize(); draw(40000); }); return; }
 
     let running = false, rafId = 0;
-    const loop = t => { draw(t); rafId = requestAnimationFrame(loop); };
-    const start = () => { if (!running) { running = true; rafId = requestAnimationFrame(loop); } };
-    const stop = () => { if (running) { running = false; cancelAnimationFrame(rafId); } };
-    window.addEventListener('resize', resize);
+    const settled = () =>
+      !inside &&
+      Math.abs(tgtX - curX) < 0.001 && Math.abs(tgtY - curY) < 0.001 &&
+      curPx < -5000;
+    const loop = t => {
+      draw(t);
+      if (settled()) { running = false; lastT = 0; return; } // rest: hold one still frame
+      rafId = requestAnimationFrame(loop);
+    };
+    const start = () => { if (!running) { running = true; lastT = 0; rafId = requestAnimationFrame(loop); } };
+    const stop = () => { if (running) { running = false; lastT = 0; cancelAnimationFrame(rafId); } };
+
+    hero.addEventListener('pointermove', e => {
+      const r = hero.getBoundingClientRect();
+      inside = true;
+      tgtX = e.clientX / r.width - 0.5;
+      tgtY = e.clientY / r.height - 0.5;
+      tgtPx = e.clientX - r.left;
+      tgtPy = e.clientY - r.top;
+      start();
+    });
+    hero.addEventListener('pointerleave', () => { inside = false; tgtX = 0; tgtY = 0; tgtPx = tgtPy = -1e4; start(); });
+    window.addEventListener('resize', () => { resize(); start(); });
     document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(es => es.forEach(e => (e.isIntersecting ? start() : stop()))).observe(hero);
