@@ -384,10 +384,11 @@
     if (!grid) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+    // i=0 (strongest project) is the big front panel; later items recede.
     const order = ['bullseye', 'claudemonitor', 'sentinel', 'cvcourse', 'rccar', 'rcplane', 'ccdiscord'];
     const N = order.length;
-    const Z_SPREAD = 120, SIGMA = 1.0, LIFT = 70, SQUASH = 0.35;
-    const ROT_Y = -42, ROT_X = 18;
+    const Z_SPREAD = 110;   // depth gap between panels
+    const X_STEP = 74;      // lateral staircase so every panel stays reachable
 
     const shelf = document.createElement('div');
     shelf.className = 'shelf';
@@ -397,12 +398,13 @@
     scene.className = 'shelf-scene';
     const caption = document.createElement('p');
     caption.className = 'shelf-caption';
-    const HINT = '<span class="shelf-tag">7 more builds · move across the stack · click to open</span>';
+    const HINT = '<span class="shelf-tag">7 more builds · hover to browse · click to open</span>';
     caption.innerHTML = HINT;
 
+    const baseOp = [];
     const panels = order.map((id, i) => {
       const p = PROJECTS[id];
-      const t = i / (N - 1);
+      const t = 1 - i / (N - 1);
       const w = 210 + t * 90, h = 290 + t * 130;
       const b = document.createElement('button');
       b.type = 'button';
@@ -412,12 +414,14 @@
       b.style.height = h + 'px';
       b.style.marginLeft = -w / 2 + 'px';
       b.style.marginTop = -h / 2 + 'px';
-      b.style.opacity = (0.3 + t * 0.7).toFixed(2);
+      baseOp[i] = (0.35 + t * 0.65).toFixed(2);
+      b.style.opacity = baseOp[i];
       const img = document.createElement('img');
       img.src = p.thumb; img.alt = ''; img.loading = 'lazy';
       b.appendChild(img);
+      b.addEventListener('pointerenter', () => setFocus(i));
+      b.addEventListener('focus', () => setFocus(i));
       b.addEventListener('click', () => openModal(id));
-      b.addEventListener('focus', () => { setWave(i); showCaption(i); });
       scene.appendChild(b);
       return b;
     });
@@ -427,71 +431,37 @@
     grid.before(shelf);
     grid.classList.add('has-shelf');
 
-    // Spring-lerp state: per-panel lift/scaleY plus scene tilt.
-    const cur = { y: panels.map(() => 0), s: panels.map(() => 1), ry: ROT_Y, rx: ROT_X };
-    const tgt = { y: panels.map(() => 0), s: panels.map(() => 1), ry: ROT_Y, rx: ROT_X };
-    let focusIdx = -1, raf = 0;
-
-    function setWave(pos) {
-      panels.forEach((_, i) => {
-        const d = Math.abs(i - pos);
-        const inf = Math.exp(-(d * d) / (2 * SIGMA * SIGMA));
-        tgt.y[i] = -inf * LIFT;
-        tgt.s[i] = SQUASH + inf * (1 - SQUASH);
+    // The browser hit-tests the 3D-transformed buttons directly, so the
+    // hover target is always the panel visually under the cursor. Focus is
+    // cleared only when the pointer leaves the stage (prevents flicker as
+    // panels animate under a stationary cursor).
+    function transformFor(j, focus) {
+      const x = (j - (N - 1) / 2) * X_STEP;
+      const z = -j * Z_SPREAD;
+      if (j === focus) return `translate3d(${x}px, -18px, ${z + 140}px) rotateY(22deg)`;
+      if (focus < 0) return `translate3d(${x}px, 0, ${z}px)`;
+      const d = Math.abs(j - focus), s = Math.sign(j - focus);
+      return `translate3d(${(x + s * 52 * Math.pow(0.68, d - 1)).toFixed(1)}px, 0, ${z}px)`;
+    }
+    function apply(focus) {
+      panels.forEach((el, j) => {
+        el.style.transform = transformFor(j, focus);
+        el.style.opacity = j === focus ? '1' : baseOp[j];
+        el.classList.toggle('is-focus', j === focus);
       });
-      focusIdx = Math.round(pos);
-      panels.forEach((el, i) => el.classList.toggle('is-focus', i === focusIdx));
-      kick();
     }
-    function clearWave() {
-      panels.forEach((el, i) => { tgt.y[i] = 0; tgt.s[i] = 1; el.classList.remove('is-focus'); });
-      tgt.ry = ROT_Y; tgt.rx = ROT_X;
-      focusIdx = -1;
-      caption.innerHTML = HINT;
-      kick();
-    }
-    function showCaption(i) {
+    function setFocus(i) {
+      apply(i);
       const p = PROJECTS[order[i]];
       caption.innerHTML = `<span class="shelf-tag">${p.tag}</span><span class="shelf-title">${p.title.split('—')[0].trim()}</span>`;
     }
-
-    function step() {
-      let live = false;
-      const ease = (c, t, k) => { const n = c + (t - c) * k; return Math.abs(t - n) < 0.001 ? t : (live = true, n); };
-      panels.forEach((el, i) => {
-        cur.y[i] = ease(cur.y[i], tgt.y[i], 0.18);
-        cur.s[i] = ease(cur.s[i], tgt.s[i], 0.18);
-        const z = (i - (N - 1)) * Z_SPREAD;
-        el.style.transform = `translateZ(${z}px) translateY(${cur.y[i].toFixed(2)}px) scaleY(${cur.s[i].toFixed(3)})`;
-      });
-      cur.ry = ease(cur.ry, tgt.ry, 0.1);
-      cur.rx = ease(cur.rx, tgt.rx, 0.1);
-      scene.style.transform = `rotateY(${cur.ry.toFixed(2)}deg) rotateX(${cur.rx.toFixed(2)}deg)`;
-      raf = live ? requestAnimationFrame(step) : 0;
+    function clearFocus() {
+      apply(-1);
+      caption.innerHTML = HINT;
     }
-    function kick() { if (!raf) raf = requestAnimationFrame(step); }
-
-    stage.addEventListener('pointermove', e => {
-      const r = stage.getBoundingClientRect();
-      const cx = (e.clientX - r.left) / r.width;
-      const cy = (e.clientY - r.top) / r.height;
-      tgt.ry = ROT_Y + (cx - 0.5) * 14;
-      tgt.rx = ROT_X + (cy - 0.5) * -10;
-      const pos = Math.max(0, Math.min(N - 1, cx * (N - 1)));
-      setWave(pos);
-      showCaption(Math.round(pos));
-    });
-    stage.addEventListener('pointerleave', clearWave);
-    stage.addEventListener('click', e => {
-      // No hover beforehand (touch, stylus): focus whatever was tapped.
-      if (focusIdx < 0) {
-        const r = stage.getBoundingClientRect();
-        focusIdx = Math.round(Math.max(0, Math.min(N - 1, (e.clientX - r.left) / r.width * (N - 1))));
-      }
-      openModal(order[focusIdx]);
-    });
-    shelf.addEventListener('focusout', e => { if (!shelf.contains(e.relatedTarget)) clearWave(); });
-    kick();
+    stage.addEventListener('pointerleave', clearFocus);
+    shelf.addEventListener('focusout', e => { if (!shelf.contains(e.relatedTarget)) clearFocus(); });
+    apply(-1);
   })();
 
   // --- Haptic mapping playground (the shipped firmware computation) ---
