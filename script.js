@@ -602,7 +602,7 @@
     // Pointer: parallax orbit + Gaussian lift (smoothed for a springy feel)
     let tgtX = 0, tgtY = 0, curX = 0, curY = 0;       // -0.5..0.5 offsets
     let tgtPx = -1e4, tgtPy = -1e4, curPx = -1e4, curPy = -1e4; // cursor in canvas px
-    const SIGMA = 90;       // px: Gaussian falloff radius
+    const SIGMA = 130;      // px: Gaussian falloff radius
     hero.addEventListener('pointermove', e => {
       const r = hero.getBoundingClientRect();
       tgtX = e.clientX / r.width - 0.5;
@@ -624,8 +624,8 @@
       const pitch = -0.3 + Math.sin(t * 0.00007) * 0.05 + curY * 0.16;
       const cy = Math.cos(yaw), sy = Math.sin(yaw);
       const cp = Math.cos(pitch), sp = Math.sin(pitch);
-      const f = Math.min(w, 1000) * 0.85;
-      const ax = w * 0.42, ay = h * 0.6;
+      const f = w * 1.45;
+      const ax = w * 0.5, ay = h * 0.52;
       for (let z = 0; z < N; z++) {
         const d0 = all[i0 * N + z], d1 = all[i1 * N + z];
         if (!d0 || !d1) { pts[z] = null; continue; }
@@ -637,7 +637,7 @@
         if (depth < 20) { pts[z] = null; continue; }
         pts[z] = [ax + (x2 / depth) * f, ay + (y2 / depth) * f, d];
       }
-      ctx.strokeStyle = 'rgba(95, 208, 138, 0.07)';
+      ctx.strokeStyle = 'rgba(95, 208, 138, 0.045)';
       ctx.lineWidth = 1;
       ctx.beginPath();
       for (let r = 0; r < data.rows; r++) {
@@ -656,9 +656,9 @@
         const near = Math.max(0, Math.min(1, (110 - p[2]) / 35));
         const dx = p[0] - curPx, dy = p[1] - curPy;
         const inf = Math.exp(-(dx * dx + dy * dy) / (2 * SIGMA * SIGMA));
-        ctx.fillStyle = `rgba(95, 208, 138, ${Math.min(1, 0.16 + near * 0.45 + inf * 0.5)})`;
+        ctx.fillStyle = `rgba(95, 208, 138, ${Math.min(1, 0.1 + near * 0.28 + inf * 0.55)})`;
         ctx.beginPath();
-        ctx.arc(p[0], p[1] - inf * 10, 1.5 + near * 1.7 + inf * 2.4, 0, 6.2832);
+        ctx.arc(p[0], p[1] - inf * 12, 1.8 + near * 1.9 + inf * 2.6, 0, 6.2832);
         ctx.fill();
       }
     }
