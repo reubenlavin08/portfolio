@@ -1,4 +1,4 @@
-(() => {
+﻿(() => {
   // --- Nav ---
   const nav = document.getElementById('nav');
   const toggle = document.getElementById('navToggle');
@@ -58,15 +58,15 @@
   }
 
   // --- Project data ---
-  // (Featured case studies — helmet, spindle whorl — live directly in index.html.)
+  // (Featured case studies, helmet and spindle whorl, live directly in index.html.)
   const PROJECTS = {
     bullseye: {
       thumb: 'assets/projects/bullseye-poster.jpg',
       tag: 'Product · Open Source',
-      title: 'Bullseye — Marketplace Deal Scorer',
-      desc: 'Open-source Windows desktop app that scores Facebook Marketplace listings against real eBay sold-comp data in real time. Deterministic percentile-rank scoring with confidence bands and honesty guards — no LLM in the scoring path, same listing always produces the same score. Free forever for 3 saved searches, Pro for unlimited.',
+      title: 'Bullseye: Marketplace Deal Scorer',
+      desc: 'Open-source Windows desktop app that scores Facebook Marketplace listings against real eBay sold-comp data in real time. Deterministic percentile-rank scoring with confidence bands and honesty guards: no LLM in the scoring path, same listing always produces the same score. Free forever for 3 saved searches, Pro for unlimited.',
       bullets: [
-        'Tukey-trimmed median + IQR over the eBay Browse API (last 90 days) drives the percentile rank — not "estimated value" or Marketplace-vs-Marketplace',
+        'Tukey-trimmed median + IQR over the eBay Browse API (last 90 days) drives the percentile rank, not "estimated value" or Marketplace-vs-Marketplace',
         'Four-layer adaptive scanner: exponential rate-limit cooldown, slow-start ramp (60s → 20s floor), half-open circuit breaker with cheap HTML probe, round-robin coordinator across watches',
         'Lineage: evolved from salvage-radar → bullseye → bullseye-app over three rewrites',
       ],
@@ -83,12 +83,12 @@
     claudemonitor: {
       thumb: 'assets/projects/claude-monitor-dashboard.png',
       tag: 'Embedded · Dashboards',
-      title: 'Claude Monitor — Live Pi Usage Dashboard',
-      desc: 'A wall-mounted 7" Raspberry Pi screen that shows live Claude Code usage: exact 5-hour and weekly window percentages, reset countdowns, per-session context %, cost, and every active session on the desktop. Built because Anthropic doesn\'t expose any of this through an API — the numbers are only rendered to the terminal.',
+      title: 'Claude Monitor: Live Pi Usage Dashboard',
+      desc: 'A wall-mounted 7" Raspberry Pi screen that shows live Claude Code usage: exact 5-hour and weekly window percentages, reset countdowns, per-session context %, cost, and every active session on the desktop. Built because Anthropic doesn\'t expose any of this through an API; the numbers are only rendered to the terminal.',
       bullets: [
         'Scrapes the CLI\'s /usage dialog by spawning a hidden claude.cmd via pywinpty, types the command, and parses the dialog text every 90s',
         'FastAPI + watchdog server streams updates over WebSocket; static dashboard sized for a fixed 800×480 canvas with a CRT-terminal aesthetic',
-        'If a scrape fails, bars render as — rather than approximated numbers; what\'s on screen is always either real or visibly absent',
+        'If a scrape fails, bars render as "—" rather than approximated numbers; what\'s on screen is always either real or visibly absent',
       ],
       stack: ['Python', 'FastAPI', 'pywinpty', 'Raspberry Pi', 'WebSocket', 'Computer vision', 'Voice control'],
       github: 'https://github.com/reubenlavin08/claude-monitor',
@@ -101,10 +101,10 @@
     sentinel: {
       thumb: 'assets/projects/sentinel-demo.webp',
       tag: 'AI · Computer Vision',
-      title: 'Sentinel — AI Occupancy Monitor',
+      title: 'Sentinel: AI Occupancy Monitor',
       desc: 'Connects to an IP camera, uses a YOLOv8-Pose model to detect and track people, and counts entries and exits as they cross a virtual tripwire. Every event is logged to SQLite and visualized in a live Streamlit dashboard that refreshes every 2 seconds.',
       bullets: [
-        'Shoulder-midpoint tripwire logic — more robust than bounding-box centre across different camera angles and partial occlusions',
+        'Shoulder-midpoint tripwire logic, more robust than bounding-box centre across different camera angles and partial occlusions',
         'Per-person state machine with an 80 px buffer zone prevents double-counting at the line',
         'Model accelerated with Intel OpenVINO for faster CPU inference; occupancy can never go below zero',
       ],
@@ -117,10 +117,10 @@
     cvcourse: {
       thumb: 'assets/projects/cv-course-home.png',
       tag: 'Learning · Experiment',
-      title: 'Sensor Fusion — A Personalized Learning Experiment',
-      desc: 'A self-paced course on computer vision, sensor calibration, and multi-sensor fusion, designed around AI as a first-class learning collaborator. The artifact is a working static-site course; the point is the experiment — testing whether structured AI collaboration helps a single learner cover college-level technical material faster and deeper than passive content or solo grinding.',
+      title: 'Sensor Fusion: A Personalized Learning Experiment',
+      desc: 'A self-paced course on computer vision, sensor calibration, and multi-sensor fusion, designed around AI as a first-class learning collaborator. The artifact is a working static-site course; the point is the experiment: testing whether structured AI collaboration helps a single learner cover college-level technical material faster and deeper than passive content or solo grinding.',
       bullets: [
-        '"Ask Claude" and "Stuck?" buttons on every lesson and quiz — each click copies a topic-specific, pre-engineered Socratic prompt to the clipboard and opens claude.ai',
+        '"Ask Claude" and "Stuck?" buttons on every lesson and quiz; each click copies a topic-specific, pre-engineered Socratic prompt to the clipboard and opens claude.ai',
         'A portable BRIEFING.md handoff document reloads full project context into any fresh Claude chat in under 30 seconds',
         'Built to support a three-phase assistive-helmet project: Phase 1 (shipped) = ToF + 6-DOF pose, Phase 2 = camera CV, Phase 3 = ToF + camera + IMU fused into a unified state estimator',
       ],
@@ -135,7 +135,7 @@
       thumb: 'assets/projects/rc-car-thumb.jpg',
       tag: 'Robotics',
       title: 'Autonomous RC Car',
-      desc: 'Built a small autonomous driving car using ultrasonic sensors for obstacle detection and basic navigation — the "see, decide, drive" loop that sits at the heart of every mobile robot. Designed, wired, coded, and debugged entirely from scratch.',
+      desc: 'Built a small autonomous driving car using ultrasonic sensors for obstacle detection and basic navigation: the "see, decide, drive" loop that sits at the heart of every mobile robot. Designed, wired, coded, and debugged entirely from scratch.',
       bullets: [
         'Ultrasonic distance sensing for real-time obstacle detection and avoidance',
         'Microcontroller-driven steering and motor control loop',
@@ -154,7 +154,7 @@
       thumb: 'assets/projects/rc-plane-thumb.jpg',
       tag: 'Aerospace · Hardware',
       title: 'RC Plane Build',
-      desc: 'Designed and assembled a remote-controlled airplane from scratch — a hands-on dive into aerodynamics, control surfaces, and radio link tuning. Took it from a pile of parts on a workbench to flying hardware.',
+      desc: 'Designed and assembled a remote-controlled airplane from scratch: a hands-on dive into aerodynamics, control surfaces, and radio link tuning. Took it from a pile of parts on a workbench to flying hardware.',
       bullets: [
         'Airframe assembly, CG balancing, and control surface alignment',
         'Servo, ESC, and receiver wiring with proper cable routing',
@@ -174,11 +174,11 @@
     ccdiscord: {
       thumb: 'assets/projects/cc-discord-remote-phone.jpg',
       tag: 'Automation · Windows API',
-      title: 'cc-discord-remote — Drive Claude Code from Discord',
-      desc: 'A Discord bot that lets you drive a Claude Code session running on your laptop from anywhere — typed prompts go in over Win32 console APIs, and responses stream back by tailing Claude\'s session JSONL. Built because Claude Code\'s official /remote-control requires same-account auth between the phone and the laptop; this works across accounts.',
+      title: 'cc-discord-remote: Drive Claude Code from Discord',
+      desc: 'A Discord bot that lets you drive a Claude Code session running on your laptop from anywhere: typed prompts go in over Win32 console APIs, and responses stream back by tailing Claude\'s session JSONL. Built because Claude Code\'s official /remote-control requires same-account auth between the phone and the laptop; this works across accounts.',
       bullets: [
         'Live attach to a running terminal via ctypes: AttachConsole + WriteConsoleInput against the Claude Code process',
-        'Response capture without screen scraping — tails the session JSONL Claude writes to disk and streams new turns back to Discord',
+        'Response capture without screen scraping: tails the session JSONL Claude writes to disk and streams new turns back to Discord',
         'Supervised by a Windows Scheduled Task with an ensure-running watchdog (PowerShell + VBScript) so the bot survives restarts',
       ],
       stack: ['Python', 'discord.py', 'Win32 console APIs', 'ctypes', 'Claude Agent SDK', 'PowerShell · Scheduled Task'],
@@ -456,7 +456,7 @@
     function setFocus(i) {
       apply(i);
       const p = PROJECTS[order[i]];
-      caption.innerHTML = `<span class="shelf-tag">${p.tag}</span><span class="shelf-title">${p.title.split('—')[0].trim()}</span>`;
+      caption.innerHTML = `<span class="shelf-tag">${p.tag}</span><span class="shelf-title">${p.title.split(':')[0].trim()}</span>`;
     }
     function clearFocus() {
       apply(-1);
