@@ -435,13 +435,16 @@
     // hover target is always the panel visually under the cursor. Focus is
     // cleared only when the pointer leaves the stage (prevents flicker as
     // panels animate under a stationary cursor).
+    // The focused panel moves only within its own plane (lift + scale, no Z
+    // travel, no rotation): parallel planes at distinct depths can never
+    // intersect, so nothing phases through anything mid-transition.
     function transformFor(j, focus) {
       const x = (j - (N - 1) / 2) * X_STEP;
       const z = -j * Z_SPREAD;
-      if (j === focus) return `translate3d(${x}px, -18px, ${z + 140}px) rotateY(22deg)`;
+      if (j === focus) return `translate3d(${x}px, -76px, ${z}px) scale(1.07)`;
       if (focus < 0) return `translate3d(${x}px, 0, ${z}px)`;
       const d = Math.abs(j - focus), s = Math.sign(j - focus);
-      return `translate3d(${(x + s * 52 * Math.pow(0.68, d - 1)).toFixed(1)}px, 0, ${z}px)`;
+      return `translate3d(${(x + s * 60 * Math.pow(0.68, d - 1)).toFixed(1)}px, 0, ${z}px)`;
     }
     function apply(focus) {
       panels.forEach((el, j) => {
