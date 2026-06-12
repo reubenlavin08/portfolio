@@ -454,7 +454,7 @@ code {
   margin: 4px 0;
 }
 .t-bullets li::before {
-  content: 'â€”';
+  content: '—';
   position: absolute;
   left: 0;
   color: var(--text-mute);
@@ -876,7 +876,7 @@ code {
   line-height: 1.55;
 }
 .project-bullets li::before {
-  content: 'â€”';
+  content: '—';
   position: absolute;
   left: 0;
   color: var(--text-mute);
@@ -894,7 +894,7 @@ code {
   padding: 2px 0;
 }
 .project-stack span:not(:last-child)::after {
-  content: 'Â·';
+  content: '·';
   margin-left: 6px;
   color: var(--text-mute);
 }
@@ -1197,7 +1197,7 @@ code {
   font-size: 14px;
   line-height: 1.65;
 }
-/* Masonry layout via CSS columns â€” preserves each photo's native aspect ratio */
+/* Masonry layout via CSS columns — preserves each photo's native aspect ratio */
 .gallery-grid {
   column-count: 4;
   column-gap: 14px;
