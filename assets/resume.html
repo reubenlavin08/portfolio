@@ -3,25 +3,32 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Reuben Lavin — Curriculum Vitae</title>
+<title>Reuben Lavin · Resume</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
 :root {
   --ink:        #1a1d22;
-  --dim:        #4a4f56;
-  --mute:       #7a8089;
+  --dim:        #3d424a;
+  --mute:       #5d636c;
   --line:       #d0cfc9;
   --line-faint: #e6e5df;
   --accent:     #2a3744;
   --paper:      #fbfaf6;
-  --paper-edge: #efede5;
   --shadow:     0 1px 3px rgba(0,0,0,0.04), 0 14px 36px rgba(0,0,0,0.10);
 
   --serif: 'EB Garamond', 'Garamond', Georgia, serif;
-  --sans:  'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --sans:  'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Type scale: readable on screen; @media print compresses to keep one page */
+  --fs-body: 13px;
+  --fs-meta: 12px;
+  --fs-title: 13.5px;
+  --fs-section: 19px;
+  --fs-name: 52px;
+  --fs-tagline: 17px;
 }
 
 * { box-sizing: border-box; }
@@ -35,10 +42,7 @@ html, body {
   text-rendering: optimizeLegibility;
 }
 
-.viewer {
-  padding: 32px 16px 80px;
-  min-height: 100vh;
-}
+.viewer { padding: 32px 16px 80px; min-height: 100vh; }
 
 .toolbar {
   position: sticky;
@@ -62,7 +66,6 @@ html, body {
   font-family: var(--serif);
   font-style: italic;
   font-size: 13px;
-  letter-spacing: 0.01em;
 }
 .toolbar-actions { display: flex; gap: 10px; }
 .btn {
@@ -100,7 +103,6 @@ html, body {
   box-shadow: var(--shadow);
   border-radius: 3px;
 }
-.sheet + .sheet { margin-top: 24px; }
 
 /* ===== Header ===== */
 .r-header {
@@ -115,20 +117,20 @@ html, body {
   margin: 0 0 4px;
   font-family: var(--serif);
   font-weight: 600;
-  font-size: 56px;
+  font-size: var(--fs-name);
   line-height: 0.95;
   letter-spacing: -0.012em;
   color: var(--ink);
 }
 .r-tagline {
-  margin: 8px 0 18px;
+  margin: 8px 0 16px;
   font-family: var(--serif);
   font-style: italic;
   font-weight: 400;
-  font-size: 16.5px;
-  line-height: 1.35;
+  font-size: var(--fs-tagline);
+  line-height: 1.4;
   color: var(--dim);
-  max-width: 5.5in;
+  max-width: 5.6in;
 }
 .r-contact {
   list-style: none;
@@ -136,29 +138,16 @@ html, body {
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 18px;
-  font-size: 11.5px;
+  gap: 4px 16px;
+  font-size: var(--fs-meta);
   color: var(--ink);
 }
-.r-contact li {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
+.r-contact li { display: inline-flex; align-items: center; }
 .r-contact li + li::before {
   content: '·';
   color: var(--mute);
-  margin-right: 6px;
+  margin-right: 16px;
 }
-.r-contact .label {
-  font-family: var(--sans);
-  font-size: 10px;
-  font-weight: 500;
-  color: var(--mute);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.r-contact .value { color: var(--ink); }
 .r-contact a { color: inherit; text-decoration: none; }
 .r-contact a:hover { color: var(--accent); text-decoration: underline; }
 
@@ -173,11 +162,10 @@ html, body {
 /* ===== Sections ===== */
 .r-section { margin-top: 18px; }
 .r-section h2 {
-  margin: 0 0 8px;
+  margin: 0 0 9px;
   font-family: var(--serif);
-  font-size: 18px;
+  font-size: var(--fs-section);
   font-weight: 600;
-  letter-spacing: 0.01em;
   color: var(--ink);
   padding-bottom: 5px;
   border-bottom: 0.5px solid var(--line);
@@ -187,74 +175,49 @@ html, body {
 }
 .r-section h2 .h-meta {
   font-family: var(--sans);
-  font-size: 9.5px;
+  font-size: var(--fs-meta);
   font-weight: 500;
   color: var(--mute);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
 }
-.r-section p { margin: 0; font-size: 11.5px; line-height: 1.55; color: var(--ink); }
 
 /* ===== Layout grids ===== */
-.r-row {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 8px;
-}
-.r-row + .r-row { margin-top: 10px; }
+.r-two   { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.r-three { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 22px; }
 
-.r-two {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 28px;
-}
-.r-three {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 22px;
-}
-
-/* ===== Entry (used for education, experience) ===== */
+/* ===== Entry (education, experience) ===== */
 .entry {
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: baseline;
-  gap: 4px 16px;
+  gap: 3px 16px;
   margin: 0;
 }
 .entry-title {
   margin: 0;
   font-family: var(--sans);
-  font-size: 12.5px;
+  font-size: var(--fs-title);
   font-weight: 600;
   color: var(--ink);
 }
 .entry-meta {
   font-family: var(--sans);
-  font-size: 11px;
+  font-size: var(--fs-meta);
   color: var(--mute);
-  font-weight: 400;
+  font-weight: 500;
   white-space: nowrap;
 }
 .entry-sub {
   grid-column: 1 / -1;
-  margin: 1px 0 2px;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 12px;
+  margin: 0 0 2px;
+  font-family: var(--sans);
+  font-size: var(--fs-meta);
+  font-weight: 500;
   color: var(--dim);
 }
-.entry-body {
-  grid-column: 1 / -1;
-  margin: 0;
-  padding: 0;
-  font-size: 11.5px;
-  line-height: 1.5;
-  color: var(--ink);
-}
-.entry + .entry { margin-top: 8px; }
+.entry + .entry { margin-top: 10px; }
 
-/* Bullets inside entries */
 .entry-bullets {
   grid-column: 1 / -1;
   margin: 2px 0 0;
@@ -264,89 +227,82 @@ html, body {
 .entry-bullets li {
   position: relative;
   padding-left: 14px;
-  font-size: 11.5px;
-  line-height: 1.5;
+  font-size: var(--fs-body);
+  line-height: 1.55;
   color: var(--ink);
+  max-width: 72ch;
 }
 .entry-bullets li::before {
   content: '';
   position: absolute;
   left: 4px;
-  top: 0.6em;
+  top: 0.62em;
   width: 3px; height: 3px;
   background: var(--mute);
   border-radius: 50%;
 }
-.entry-bullets li + li { margin-top: 1px; }
+.entry-bullets li + li { margin-top: 2px; }
 
-/* Two-column simple list */
+/* Two/three-column simple lists */
 .simple {
   margin: 0;
   padding: 0;
   list-style: none;
-  font-size: 11.5px;
+  font-size: var(--fs-body);
   line-height: 1.55;
 }
 .simple li {
   position: relative;
   padding-left: 12px;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
 .simple li::before {
   content: '';
   position: absolute;
   left: 4px;
-  top: 0.6em;
+  top: 0.62em;
   width: 3px; height: 3px;
   background: var(--mute);
   border-radius: 50%;
 }
 .r-col-head {
   font-family: var(--sans);
-  font-size: 9.5px;
-  font-weight: 500;
-  color: var(--mute);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: var(--fs-meta);
+  font-weight: 600;
+  color: var(--ink);
   margin: 0 0 6px;
 }
 
 /* ===== Project compact ===== */
-.proj-compact { margin-top: 6px; }
-.proj-compact + .proj-compact { margin-top: 6px; }
+.proj-compact + .proj-compact { margin-top: 9px; }
 .proj-head {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: 14px;
-  margin-bottom: 1px;
+  margin-bottom: 2px;
 }
 .proj-name {
   margin: 0;
   font-family: var(--sans);
-  font-size: 12px;
+  font-size: var(--fs-title);
   font-weight: 600;
   color: var(--ink);
 }
 .proj-tag {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 11px;
+  font-family: var(--sans);
+  font-size: var(--fs-meta);
+  font-weight: 500;
   color: var(--mute);
+  white-space: nowrap;
 }
 .proj-desc {
   margin: 0;
-  font-size: 11px;
-  line-height: 1.5;
+  font-size: var(--fs-body);
+  line-height: 1.55;
   color: var(--dim);
+  max-width: 72ch;
 }
-.proj-link {
-  font-family: var(--sans);
-  font-size: 10px;
-  color: var(--accent);
-  text-decoration: none;
-}
-.proj-link:hover { text-decoration: underline; }
 
 /* Footer */
 .r-foot {
@@ -357,46 +313,54 @@ html, body {
   justify-content: space-between;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 10px;
+  font-size: var(--fs-meta);
   color: var(--mute);
 }
 
 /* ============ Print ============ */
-@page {
-  size: Letter;
-  margin: 0;
-}
+@page { size: Letter; margin: 0; }
 @media print {
+  :root {
+    --fs-body: 11px;
+    --fs-meta: 10px;
+    --fs-title: 11.5px;
+    --fs-section: 16px;
+    --fs-name: 40px;
+    --fs-tagline: 13px;
+  }
   html, body { background: #fff !important; }
   .viewer { padding: 0; min-height: auto; background: #fff; }
   .toolbar { display: none !important; }
+  /* Paper economy: full measure, tighter rhythm */
+  .entry-bullets li, .proj-desc { max-width: none; line-height: 1.42; }
+  .simple { line-height: 1.42; }
+  .simple li { margin-bottom: 2px; }
+  .entry-bullets li + li { margin-top: 1px; }
+  .r-section { margin-top: 9px; }
+  .r-section h2 { margin-bottom: 5px; padding-bottom: 2px; }
+  .entry + .entry { margin-top: 5px; }
+  .proj-compact + .proj-compact { margin-top: 5px; }
+  .r-header { padding-bottom: 8px; }
+  .r-tagline { margin: 5px 0 6px; }
+  .r-photo { width: 1.05in; height: 1.36in; }
+  .r-foot { display: none; }
   .sheet {
     box-shadow: none;
     border-radius: 0;
     width: 8.5in;
     max-width: 8.5in;
-    min-height: 11in;
+    min-height: auto;
     margin: 0;
-    padding: 0.5in 0.6in 0.4in;
-    page-break-after: always;
+    padding: 0.38in 0.55in 0.2in;
     background-color: #fff;
   }
-  .sheet:last-child { page-break-after: auto; }
   a { color: inherit; text-decoration: none; }
-  .r-section { break-inside: avoid; page-break-inside: avoid; }
-  .entry      { break-inside: avoid; page-break-inside: avoid; }
-  /* Lock the header grid so the photo stays right of the name on print */
-  .r-header {
-    display: grid;
-    grid-template-columns: 1fr 1.25in;
-    gap: 0.25in;
-  }
-  .r-name { font-size: 48px; }
-  .r-tagline { font-size: 14px; margin: 6px 0 14px; }
+  .r-section, .entry { break-inside: avoid; page-break-inside: avoid; }
+  .r-header { display: grid; grid-template-columns: 1fr 1.25in; gap: 0.25in; }
 }
 
-/* ============ Responsive ============ */
-@media (max-width: 760px) {
+/* ============ Responsive (screen only; must never restyle print) ============ */
+@media screen and (max-width: 760px) {
   .viewer { padding: 18px 10px 60px; }
   .toolbar { margin: -18px auto 16px; flex-direction: column; align-items: stretch; }
   .toolbar-actions { justify-content: stretch; }
@@ -405,7 +369,7 @@ html, body {
   .r-header { grid-template-columns: 1fr; }
   .r-photo { width: 1.1in; height: 1.43in; justify-self: start; }
   .r-two, .r-three { grid-template-columns: 1fr; gap: 14px; }
-  .r-name { font-size: 44px; }
+  :root { --fs-name: 42px; }
 }
 </style>
 </head>
@@ -413,7 +377,7 @@ html, body {
 <div class="viewer">
 
   <div class="toolbar" role="toolbar" aria-label="Resume actions">
-    <span class="toolbar-info">Reuben Lavin — Curriculum Vitae, 2026</span>
+    <span class="toolbar-info">Reuben Lavin · Resume, 2026</span>
     <span class="toolbar-actions">
       <a class="btn btn-ghost" href="../index.html">&larr; Back to site</a>
       <button class="btn" onclick="window.print()">Save as PDF / Print</button>
@@ -427,14 +391,17 @@ html, body {
       <div>
         <h1 class="r-name">Reuben Lavin</h1>
         <p class="r-tagline">
-          High-school senior heading to UBC Science with plans to transfer into Engineering &mdash;
-          robotics, embedded systems, and software.
+          Incoming UBC Science student (Sept 2026), planning the transfer into Engineering.
+          Robotics, embedded systems, and software.
         </p>
         <ul class="r-contact">
+          <li><a href="mailto:reubenlavin08@gmail.com">reubenlavin08@gmail.com</a></li>
           <li><a href="mailto:reubenlavin@outlook.com">reubenlavin@outlook.com</a></li>
           <li><span>604-773-1250</span></li>
-          <li><a href="https://github.com/reubenlavin08" target="_blank" rel="noopener">github.com/reubenlavin08</a></li>
           <li><span>Vancouver, BC</span></li>
+          <li><a href="https://reubenlavin08.github.io/portfolio/" target="_blank" rel="noopener">reubenlavin08.github.io/portfolio</a></li>
+          <li><a href="https://github.com/reubenlavin08" target="_blank" rel="noopener">github.com/reubenlavin08</a></li>
+          <li><a href="https://www.linkedin.com/in/reuben-lavin-4bb2712ba/" target="_blank" rel="noopener">linkedin.com/in/reuben-lavin</a></li>
         </ul>
       </div>
       <img class="r-photo" src="cv-portrait.jpg" alt="Reuben Lavin" width="120" height="156" />
@@ -445,47 +412,67 @@ html, body {
       <h2>Education</h2>
 
       <div class="entry">
-        <h3 class="entry-title">University of British Columbia &mdash; Vancouver, BC</h3>
+        <h3 class="entry-title">University of British Columbia · Vancouver, BC</h3>
         <span class="entry-meta">Sept 2026 (incoming)</span>
         <p class="entry-sub">Bachelor of Science · Engineering transfer planned after first year</p>
-        <ul class="entry-bullets">
-          <li>Foundational coursework in calculus, physics, chemistry, and computer science</li>
-          <li>Continuing self-directed work in embedded systems and robotics</li>
-        </ul>
       </div>
 
       <div class="entry">
-        <h3 class="entry-title">West Point Grey Academy &mdash; Vancouver, BC</h3>
-        <span class="entry-meta">2020 — June 2026</span>
+        <h3 class="entry-title">West Point Grey Academy · Vancouver, BC</h3>
+        <span class="entry-meta">2020&ndash;June 2026</span>
         <p class="entry-sub">Grade 12 · 97% average · Honor Roll all years</p>
         <ul class="entry-bullets">
-          <li>AP coursework: Computer Science · Calculus BC · Statistics · English Language · Human Geography</li>
+          <li>AP coursework: Computer Science A · Calculus BC · Statistics · English Language · Human Geography</li>
         </ul>
       </div>
 
-      <div class="entry">
-        <h3 class="entry-title">Kumon Math</h3>
-        <span class="entry-meta">2018 — 2023</span>
-        <p class="entry-sub">Graduated full program · Outstanding Academics recognition</p>
+    </section>
+
+    <!-- ===== 2. SELECTED PROJECTS ===== -->
+    <section class="r-section">
+      <h2>Selected Projects <span class="h-meta">full portfolio: reubenlavin08.github.io/portfolio</span></h2>
+
+      <div class="proj-compact">
+        <div class="proj-head">
+          <h3 class="proj-name">Assistive Navigation Helmet</h3>
+          <span class="proj-tag">Robotics · Embedded</span>
+        </div>
+        <p class="proj-desc">
+          Wearable that maps obstacles to directional haptic feedback. Dual VL53L8CX time-of-flight
+          sensors on independent I&sup2;C buses and a BNO085 IMU at 100&nbsp;Hz feed ESP32 firmware that
+          converts an 8&times;8 depth grid into a three-motor haptic array with a distance-weighted urgency
+          curve; verified on hardware with live desktop and phone point-cloud visualizers.
+        </p>
+      </div>
+
+      <div class="proj-compact">
+        <div class="proj-head">
+          <h3 class="proj-name">Spindle Whorl AR</h3>
+          <span class="proj-tag">Unity · Meta Quest 3</span>
+        </div>
+        <p class="proj-desc">
+          Mixed-reality preservation of a Coast Salish spindle whorl: photo-textured discs presented in a
+          Unity 6 passthrough-AR gallery scene, built end to end and verified on Meta Quest hardware
+          through a school device program.
+        </p>
       </div>
     </section>
 
-    <!-- ===== 2. EXPERIENCE & LEADERSHIP ===== -->
+    <!-- ===== 3. EXPERIENCE & LEADERSHIP ===== -->
     <section class="r-section">
       <h2>Experience &amp; Leadership</h2>
 
       <div class="entry">
-        <h3 class="entry-title">Head of Technical Maintenance &mdash; Windsor Market</h3>
-        <span class="entry-meta">2021 — 2024</span>
+        <h3 class="entry-title">Head of Technical Maintenance · Windsor Market</h3>
+        <span class="entry-meta">2021&ndash;2024</span>
         <p class="entry-sub">On-call technician for a small commercial grocer</p>
         <ul class="entry-bullets">
-          <li>Repaired industrial refrigeration, HVAC, electrical circuitry, and structural systems &mdash; STEM applied to facility operations and safety</li>
-          <li>Also ran till, stock, and back-office operations across three years</li>
+          <li>Repaired industrial refrigeration, HVAC, electrical circuitry, and structural systems; also ran till, stock, and back-office operations across three years</li>
         </ul>
       </div>
 
       <div class="entry">
-        <h3 class="entry-title">Black Belt &amp; Assistant Instructor &mdash; Ken Shin Dojo / Kerrisdale CC</h3>
+        <h3 class="entry-title">Black Belt &amp; Assistant Instructor · Ken Shin Dojo / Kerrisdale CC</h3>
         <span class="entry-meta">Ongoing</span>
         <p class="entry-sub">Youngest black belt and assistant instructor in the dojo's history</p>
         <ul class="entry-bullets">
@@ -494,8 +481,8 @@ html, body {
       </div>
 
       <div class="entry">
-        <h3 class="entry-title">Founder &amp; Rhythm-Section Leader &mdash; WPGA Jazz Combo / R&amp;B Band</h3>
-        <span class="entry-meta">2023 — 2026</span>
+        <h3 class="entry-title">Founder &amp; Rhythm-Section Leader · WPGA Jazz Combo / R&amp;B Band</h3>
+        <span class="entry-meta">2023&ndash;2026</span>
         <ul class="entry-bullets">
           <li>Founded the WPGA Jazz Combo (2023); grew from 4 to 7 members across 10+ performances</li>
           <li>Co-founded and led the rhythm section of the WPGA R&amp;B band; performed for Special Olympics Canada</li>
@@ -503,75 +490,40 @@ html, body {
       </div>
 
       <div class="entry">
-        <h3 class="entry-title">Grad Committee Treasurer &mdash; WPGA Class of 2026</h3>
-        <span class="entry-meta">2025 — 2026</span>
+        <h3 class="entry-title">Grad Committee Treasurer · WPGA Class of 2026</h3>
+        <span class="entry-meta">2025&ndash;2026</span>
         <ul class="entry-bullets">
           <li>Managed the budget, vendor payments, and fundraising bookkeeping for the graduating class</li>
         </ul>
       </div>
     </section>
 
-    <!-- ===== 3. AWARDS & CERTIFICATIONS ===== -->
+    <!-- ===== 4. AWARDS & CERTIFICATIONS ===== -->
     <section class="r-section">
       <h2>Awards &amp; Certifications</h2>
       <div class="r-two">
         <div>
           <p class="r-col-head">Awards</p>
           <ul class="simple">
+            <li>UBC Physics Olympics · Bronze Medal, lab event (2026)</li>
             <li>WPGA Citizenship Award</li>
             <li>Alfred Lu Spirit Award</li>
             <li>WPGA Merit Award (&times;2)</li>
             <li>WPGA Music Program Hall of Fame</li>
             <li>AP Scholars Award</li>
-            <li>Honor Roll, West Point Grey Academy</li>
-            <li>Kumon Math · Outstanding Academics (2018 — 2023)</li>
+            <li>Kumon Math · Outstanding Academics (2018&ndash;2023)</li>
           </ul>
         </div>
         <div>
           <p class="r-col-head">Certifications</p>
           <ul class="simple">
-            <li>Google AI Professional</li>
+            <li>Google AI Professional Certificate</li>
             <li>Core Connectors Mental Health Literacy Certificate · Adam&rsquo;s Apples Foundation</li>
             <li>CPRC First Aid Certificate</li>
             <li>MMA Black Belt · Jiu Jitsu &amp; Kickboxing</li>
             <li>BC Novice Driver&rsquo;s Licence</li>
           </ul>
         </div>
-      </div>
-    </section>
-
-    <!-- ===== 4. SELECTED PROJECTS (condensed) ===== -->
-    <section class="r-section">
-      <h2>Selected Projects <span class="h-meta">full portfolio at github.com/reubenlavin08</span></h2>
-
-      <div class="proj-compact">
-        <div class="proj-head">
-          <h3 class="proj-name">VL53L8CX Live Point Cloud &amp; 6-DOF Pose</h3>
-          <span class="proj-tag">Robotics · Perception</span>
-        </div>
-        <p class="proj-desc">
-          ESP-IDF firmware streaming an 8×8 ToF depth grid at 15&nbsp;Hz; Python visualiser renders a live point cloud with Kabsch-SVD 6-DOF pose estimation — no IMU required.
-        </p>
-      </div>
-
-      <div class="proj-compact">
-        <div class="proj-head">
-          <h3 class="proj-name">Bullseye — Marketplace Deal Scorer</h3>
-          <span class="proj-tag">Product · Open source</span>
-        </div>
-        <p class="proj-desc">
-          Windows desktop app scoring Facebook Marketplace listings against real eBay sold comps. Deterministic percentile-rank scoring; four-layer adaptive scanner.
-        </p>
-      </div>
-
-      <div class="proj-compact">
-        <div class="proj-head">
-          <h3 class="proj-name">Claude Monitor — Live Pi Usage Dashboard</h3>
-          <span class="proj-tag">Embedded · Dashboards</span>
-        </div>
-        <p class="proj-desc">
-          Wall-mounted Raspberry Pi screen showing live Claude Code usage scraped from the CLI dialog. FastAPI + WebSocket; CRT-terminal aesthetic.
-        </p>
       </div>
     </section>
 
@@ -583,7 +535,6 @@ html, body {
           <p class="r-col-head">Activities</p>
           <ul class="simple">
             <li>Varsity Tennis · WPGA · Vancouver Lawn Tennis &amp; Badminton Club</li>
-            <li>UBC Physics Olympics 2026</li>
             <li>Euclid Mathematics Contest 2026</li>
             <li>Volunteer · Kerrisdale Community Centre, Camp Jubilee restoration, WPGA productions</li>
           </ul>
@@ -602,15 +553,15 @@ html, body {
           <ul class="simple">
             <li>ESP32 · Arduino · ESP-IDF</li>
             <li>Soldering · breadboarding · I&sup2;C wiring</li>
-            <li>RC platforms — servos, ESCs, foam-board airframes</li>
+            <li>RC platforms: servos, ESCs, foam-board airframes</li>
           </ul>
         </div>
       </div>
     </section>
 
     <div class="r-foot">
-      <span>Reuben Lavin · Curriculum Vitae · 2026</span>
-      <span>reubenlavin@outlook.com</span>
+      <span>Reuben Lavin · Resume · 2026</span>
+      <span>reubenlavin08@gmail.com</span>
     </div>
   </article>
 </div>
