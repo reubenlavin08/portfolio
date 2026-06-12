@@ -377,10 +377,11 @@
   // --- 3D project shelf for the non-featured builds (desktop only) ---
   // Z-stacked panel scene with a cursor squash/stretch wave (same math as
   // the stacked-panels reference: Gaussian influence, tilting scene).
-  // Falls back to the card grid below 821px, reduced-motion, or no JS.
+  // Always built; the 821px media query alone decides shelf vs card grid,
+  // so resizing/zooming after load can't strand the user with neither.
   (() => {
     const grid = document.querySelector('.proj-grid');
-    if (!grid || !window.matchMedia('(min-width: 821px)').matches) return;
+    if (!grid) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const order = ['bullseye', 'claudemonitor', 'sentinel', 'cvcourse', 'rccar', 'rcplane', 'ccdiscord'];
@@ -481,7 +482,14 @@
       showCaption(Math.round(pos));
     });
     stage.addEventListener('pointerleave', clearWave);
-    stage.addEventListener('click', () => { if (focusIdx >= 0) openModal(order[focusIdx]); });
+    stage.addEventListener('click', e => {
+      // No hover beforehand (touch, stylus): focus whatever was tapped.
+      if (focusIdx < 0) {
+        const r = stage.getBoundingClientRect();
+        focusIdx = Math.round(Math.max(0, Math.min(N - 1, (e.clientX - r.left) / r.width * (N - 1))));
+      }
+      openModal(order[focusIdx]);
+    });
     shelf.addEventListener('focusout', e => { if (!shelf.contains(e.relatedTarget)) clearWave(); });
     kick();
   })();
