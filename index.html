@@ -252,6 +252,61 @@
           </div>
         </article>
 
+        <article class="case" id="sunrise-mask">
+          <div class="case-media">
+            <figure class="case-video case-video--contain">
+              <span class="proj-status">In progress</span>
+              <video src="assets/projects/sunrise-mask-demo.mp4" poster="assets/projects/sunrise-mask-poster.jpg" controls preload="metadata" style="aspect-ratio: 9 / 16;" aria-label="Walkthrough of the sunrise wake-up mask"></video>
+              <figcaption>A walkthrough of the build, hardware, and app</figcaption>
+            </figure>
+          </div>
+          <div class="case-body">
+            <span class="proj-tag">Embedded · Wearable · Case Study</span>
+            <h3>Sunrise Wake-Up Mask</h3>
+            <p class="case-lede">
+              Loud alarms wake you with a jolt. This is a sleep mask that wakes you the way morning light does: a strip of LEDs behind the fabric fades up like a real sunrise over your chosen window, with haptic motors easing in at the end. You set the wake time, color, and length from a small desktop app over USB.
+            </p>
+            <p>
+              An <strong>ESP32-C6</strong> drives a cut strip of <strong>WS2812</strong> addressable LEDs behind a foam diffuser, with coin haptic motors switched by a <strong>2N3904</strong> transistor. A 1000&thinsp;mAh LiPo powers it and charges over USB. The firmware takes its settings over USB serial &mdash; no reflashing to change an alarm &mdash; and a companion desktop app (a Web Serial page wrapped in Electron) sends the wake time, color, and sunrise curve. The firmware and app were written with Claude Code; the hardware, wiring, and the debugging below are mine.
+            </p>
+            <div class="case-sec">
+              <h4>The bug that reset the whole board</h4>
+              <p class="case-key">Motors on the logic rail browned out the MCU mid-buzz.</p>
+              <p>
+                The haptic motors ran off the same 3.3&thinsp;V rail as the ESP32-C6. At full power they pulled enough current to sag that rail past the brown-out threshold, and the chip reset mid-sequence &mdash; which froze the LED strip on its last frame, because WS2812s hold their last color the instant the data signal stops. The tell was a single serial line: <code>Brownout detector was triggered</code>. At low duty the motors didn't draw enough to spin at all; at high duty they crashed the board. With the case already sealed, the fix was firmware: clamp the motor duty to a ceiling that stays under the brown-out point, so the lights and motors run together without taking the brain down.
+              </p>
+            </div>
+            <div class="case-sec">
+              <h4>Coin motors that won't start, but will keep going</h4>
+              <p class="case-key">A full-power kick breaks stiction, then it settles to a low hum.</p>
+              <p>
+                Ramping the motor's PWM up from zero never worked: a coin motor needs a sharp push to overcome static friction, and a slow ramp just creeps through values too weak to ever start it, so the motor stayed silent through the whole sunrise. The fix is a kickstart &mdash; a brief full-power pulse on the rising edge that breaks the motor free, then drops to the low level it can sustain once it's already spinning. That one trick is what lets the buzz arrive gently instead of snapping from silence to full.
+              </p>
+            </div>
+            <div class="case-sec">
+              <h4>A clock it can't forget</h4>
+              <p class="case-key">It re-learns the time over WiFi, so the alarm survives a power cut.</p>
+              <p>
+                An ESP32 loses track of time the moment it loses power, which is fatal for an alarm. The mask connects to WiFi and syncs the real time over <strong>SNTP</strong>, then stores the alarm in non-volatile memory. The app sends the wake time as an absolute timestamp, so the device itself needs no notion of time zones &mdash; the laptop already knows your local time and just hands over the exact moment to fire. Unplug it, plug it back in, and within seconds it has resynced and the alarm still goes off when it should.
+              </p>
+            </div>
+            <ul class="project-bullets case-notes">
+              <li>Addressable LEDs run from the battery rail, not the regulated 3.3&thinsp;V: at low voltage the blue and green channels starve and the color shifts</li>
+              <li>Settings are sent, not flashed: the firmware is a small state machine that takes JSON over USB, so a new alarm is one serial message, not a reflash</li>
+              <li>Every dead end and fix, including a 10-bit HDR export that wouldn't play and a swapped data/ground line that killed the strip, is written up in the repo's devlog</li>
+            </ul>
+            <p class="case-results">
+              <strong>Where it stands:</strong> the full sunrise-and-haptic wake sequence runs on the bench, configured live from the desktop app, with WiFi time sync working. Next is the battery enclosure and a dedicated haptic driver.
+            </p>
+            <div class="project-stack">
+              <span>C · ESP-IDF 5.4</span><span>ESP32-C6</span><span>WS2812B LEDs</span><span>Haptics</span><span>FreeRTOS</span><span>WiFi · SNTP</span><span>Web Serial</span><span>Electron</span>
+            </div>
+            <div class="case-links">
+              <a class="link-arrow" href="https://github.com/reubenlavin08/sunrise-mask" target="_blank" rel="noopener">View on GitHub &rarr;</a>
+            </div>
+          </div>
+        </article>
+
         <article class="case" id="spindle-whorl">
           <div class="case-media">
             <figure class="case-video case-video--contain">
