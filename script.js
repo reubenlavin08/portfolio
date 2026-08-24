@@ -577,8 +577,45 @@
     }
 
     const CENTER_D = 95;   // cm: scene centroid depth in this capture
-    const CAM_D = 175;     // cm: virtual camera distance
+    const PIVOT = 46;      // cm: orbit centre, midway between helmet and wall
+    const CAM_D = 205;     // cm: virtual camera distance
     const pts = new Array(N);
+
+    // --- The helmet, built once, in the same sensor frame as the capture.
+    // Units are cm, +y is down, +z points at the wall. The camera sits on the
+    // -z side, so this is an over-the-shoulder view: you see the back of the
+    // helmet and the cone leaving its face, which is what the wearer "sees".
+    // The dome is placed so its front surface passes through the origin of the
+    // ray fan, i.e. the sensor really is mounted on the helmet's face.
+    const R = 13.5, SZ = -PIVOT, DOME_Y = -2.5, DOME_Z = SZ - R, VMAX = 1.9;
+    const dome = (u, v) => [
+      R * Math.sin(v) * Math.sin(u),
+      DOME_Y - R * Math.cos(v),
+      DOME_Z + R * Math.sin(v) * Math.cos(u),
+    ];
+    const helmet = [];
+    for (const v of [0.38, 0.72, 1.06, 1.4, 1.72, VMAX]) {
+      const ring = [];
+      for (let i = 0; i <= 48; i++) ring.push(dome((i / 48) * 6.2832, v));
+      helmet.push(ring);
+    }
+    for (let k = 0; k < 12; k++) {
+      const u = (k / 12) * 6.2832, arc = [];
+      for (let i = 0; i <= 20; i++) arc.push(dome(u, (i / 20) * VMAX));
+      helmet.push(arc);
+    }
+    // A flared brim at the rim: the line that stops it reading as a wire globe.
+    const brim = [];
+    for (let i = 0; i <= 48; i++) {
+      const u = (i / 48) * 6.2832, q = dome(u, VMAX);
+      brim.push([q[0] * 1.09, q[1] + 1.1, DOME_Z + (q[2] - DOME_Z) * 1.09]);
+    }
+    helmet.push(brim);
+    // Three coin motors, where they actually sit: forehead, left and right temple.
+    const motors = [dome(0, 1.34), dome(-1.5708, 1.62), dome(1.5708, 1.62)];
+    // Grid corners, for the FoV cone.
+    const CORNERS = [0, data.cols - 1, N - 1, N - data.cols];
+    const BANDS = 6;   // depth-fade buckets, so the wireframe strokes in 6 passes
 
     // Pointer: parallax orbit + Gaussian lift. The field is STILL at rest;
     // capture playback and orbit run only while the pointer is in the hero,
@@ -599,23 +636,38 @@
       curPy += (tgtPy - curPy) * 0.12;
       const fi = (playMs * 0.01) % data.frames;     // ~10 Hz, the real capture rate
       const i0 = Math.floor(fi), i1 = (i0 + 1) % data.frames, mix = fi - i0;
-      const yaw = 0.55 + curX * 0.6;
-      const pitch = -0.3 + curY * 0.2;
+      const yaw = 0.42 + curX * 0.5;
+      const pitch = -0.22 + curY * 0.18;
       const cy = Math.cos(yaw), sy = Math.sin(yaw);
       const cp = Math.cos(pitch), sp = Math.sin(pitch);
-      const f = w * 1.45;
-      const ax = w * 0.5, ay = h * 0.52;
+      const f = w * (w > 900 ? 1.06 : 1.9);
+      // Sit the scene right of centre so it never fights the headline.
+      const wide = w > 900;
+      const ax = w * (wide ? 0.69 : 0.52), ay = h * (wide ? 0.48 : 0.72);
+
+      // One projector for everything in the scene: cloud, cone, and helmet.
+      const proj = (x, y, z) => {
+        const x2 = x * cy + z * sy, z2 = -x * sy + z * cy;
+        const y2 = y * cp - z2 * sp, z3 = y * sp + z2 * cp;
+        const depth = z3 + CAM_D;
+        return depth < 20 ? null : [ax + (x2 / depth) * f, ay + (y2 / depth) * f, depth];
+      };
+
+      let sum = 0, nValid = 0;
+      const nearest = [1e4, 1e4, 1e4];   // centre, left, right: the firmware's regions
       for (let z = 0; z < N; z++) {
         const d0 = all[i0 * N + z], d1 = all[i1 * N + z];
         if (!d0 || !d1) { pts[z] = null; continue; }
         const d = d0 + (d1 - d0) * mix;
-        const x = dirs[z][0] * d, y = dirs[z][1] * d, zz = d - CENTER_D;
-        const x2 = x * cy + zz * sy, z2 = -x * sy + zz * cy;
-        const y2 = y * cp - z2 * sp, z3 = y * sp + z2 * cp;
-        const depth = z3 + CAM_D;
-        if (depth < 20) { pts[z] = null; continue; }
-        pts[z] = [ax + (x2 / depth) * f, ay + (y2 / depth) * f, d];
+        const p = proj(dirs[z][0] * d, dirs[z][1] * d, d - PIVOT);
+        if (!p) { pts[z] = null; continue; }
+        pts[z] = [p[0], p[1], d];
+        sum += d; nValid++;
+        const col = z % data.cols;
+        const reg = col < data.cols / 3 ? 1 : col < (2 * data.cols) / 3 ? 0 : 2;
+        if (d < nearest[reg]) nearest[reg] = d;
       }
+      const meanD = nValid ? sum / nValid : CENTER_D;
       ctx.strokeStyle = 'rgba(141, 164, 245, 0.1)';
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -638,6 +690,84 @@
         ctx.fillStyle = `rgba(141, 164, 245, ${Math.min(1, 0.16 + near * 0.32 + inf * 0.5)})`;
         ctx.beginPath();
         ctx.arc(p[0], p[1] - inf * 12, 1.8 + near * 1.9 + inf * 2.6, 0, 6.2832);
+        ctx.fill();
+      }
+
+      // --- The FoV cone leaving the sensor, reaching to the frame's mean range
+      const src = proj(0, 0, SZ + R * 0.02);
+      const far = CORNERS.map(z =>
+        proj(dirs[z][0] * meanD, dirs[z][1] * meanD, meanD - PIVOT));
+      if (src && far.every(Boolean)) {
+        ctx.lineWidth = 1;
+        for (const q of far) {
+          const g = ctx.createLinearGradient(src[0], src[1], q[0], q[1]);
+          g.addColorStop(0, 'rgba(141, 164, 245, 0.4)');
+          g.addColorStop(1, 'rgba(141, 164, 245, 0.05)');
+          ctx.strokeStyle = g;
+          ctx.beginPath();
+          ctx.moveTo(src[0], src[1]);
+          ctx.lineTo(q[0], q[1]);
+          ctx.stroke();
+        }
+        // A wavefront leaving the emitter, one every 1.6 s of pointer time.
+        const s01 = (playMs % 1600) / 1600;
+        ctx.strokeStyle = `rgba(141, 164, 245, ${0.45 * Math.sin(s01 * Math.PI)})`;
+        ctx.beginPath();
+        far.forEach((q, k) => {
+          const px = src[0] + (q[0] - src[0]) * s01;
+          const py = src[1] + (q[1] - src[1]) * s01;
+          k ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+        });
+        ctx.closePath();
+        ctx.stroke();
+      }
+
+      // --- Helmet wireframe. Depth fade stands in for the occlusion a
+      // wireframe cannot do, and it is batched into six passes so the whole
+      // dome costs six strokes rather than four hundred.
+      const bands = [];
+      for (let b = 0; b < BANDS; b++) bands.push(new Path2D());
+      for (const line of helmet) {
+        let prev = null;
+        for (const vtx of line) {
+          const p = proj(vtx[0], vtx[1], vtx[2]);
+          if (prev && p) {
+            const dep = (prev[2] + p[2]) * 0.5;
+            const t01 = Math.max(0, Math.min(0.999, 1 - (dep - 130) / 50));
+            const path = bands[Math.floor(t01 * BANDS)];
+            path.moveTo(prev[0], prev[1]);
+            path.lineTo(p[0], p[1]);
+          }
+          prev = p;
+        }
+      }
+      ctx.lineWidth = 1;
+      for (let b = 0; b < BANDS; b++) {
+        ctx.strokeStyle = `rgba(202, 210, 242, ${0.1 + (b / (BANDS - 1)) * 0.52})`;
+        ctx.stroke(bands[b]);
+      }
+
+      // The emitter itself, so the cone visibly leaves a piece of hardware.
+      if (src) {
+        ctx.fillStyle = 'rgba(214, 221, 250, 0.9)';
+        ctx.fillRect(src[0] - 3.5, src[1] - 3.5, 7, 7);
+        ctx.strokeStyle = 'rgba(141, 164, 245, 0.5)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(src[0] - 6.5, src[1] - 6.5, 13, 13);
+      }
+
+      // --- Coin motors. Vermilion when their region has something close,
+      // using the same three-region split the firmware uses.
+      for (let m = 0; m < 3; m++) {
+        const p = proj(motors[m][0], motors[m][1], motors[m][2]);
+        if (!p) continue;
+        const lit = Math.max(0, Math.min(1, 1 - nearest[m] / 150));
+        const dep = Math.max(0.25, Math.min(1, 1 - (p[2] - 130) / 54));
+        ctx.fillStyle = lit > 0.02
+          ? `rgba(236, 142, 108, ${(0.4 + lit * 0.6) * dep})`
+          : `rgba(202, 210, 242, ${0.4 * dep})`;
+        ctx.beginPath();
+        ctx.arc(p[0], p[1], 2.3 + lit * 2.2, 0, 6.2832);
         ctx.fill();
       }
     }
