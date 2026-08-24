@@ -593,32 +593,47 @@
     // helmet and the cone leaving its face, which is what the wearer "sees".
     // The dome is placed so its front surface passes through the origin of the
     // ray fan, i.e. the sensor really is mounted on the helmet's face.
-    const R = 13.5, SZ = -PIVOT, DOME_Y = -2.5, DOME_Z = SZ - R, VMAX = 1.9;
-    const dome = (u, v) => [
-      R * Math.sin(v) * Math.sin(u),
-      DOME_Y - R * Math.cos(v),
-      DOME_Z + R * Math.sin(v) * Math.cos(u),
-    ];
+    // A head is longer front to back than it is wide, and flatter on top than
+    // a sphere, so the shell is an ellipsoid with the crown eased off. u = 0
+    // faces the wall. The rim drops lower at the back and lifts at the ears,
+    // which is what stops it reading as a wire globe.
+    const HW = 9.8, HH = 11.4, HL = 12.6;   // half width, height, length
+    const SZ = -PIVOT, DOME_Y = -2.5, DOME_Z = SZ - HL * 0.99;
+    const dome = (u, v) => {
+      const cv = Math.cos(v), sv = Math.sin(v);
+      return [
+        HW * sv * Math.sin(u),
+        DOME_Y - HH * Math.sign(cv) * Math.pow(Math.abs(cv), 0.78),
+        DOME_Z + HL * sv * Math.cos(u),
+      ];
+    };
+    const rimV = u => 1.84 + 0.12 * (1 - Math.cos(u)) - 0.16 * Math.sin(u) * Math.sin(u);
+    const R = HL;   // the scene's rough half-size, used for the emitter offset
+
     const helmet = [];
-    for (const v of [0.38, 0.72, 1.06, 1.4, 1.72, VMAX]) {
+    // Rings follow the shell, so they ride the rim instead of cutting across it.
+    for (const frac of [0.2, 0.38, 0.56, 0.74, 0.88, 1]) {
       const ring = [];
-      for (let i = 0; i <= 48; i++) ring.push(dome((i / 48) * 6.2832, v));
+      for (let i = 0; i <= 56; i++) {
+        const u = (i / 56) * 6.2832;
+        ring.push(dome(u, frac * rimV(u)));
+      }
       helmet.push(ring);
     }
     for (let k = 0; k < 12; k++) {
-      const u = (k / 12) * 6.2832, arc = [];
-      for (let i = 0; i <= 20; i++) arc.push(dome(u, (i / 20) * VMAX));
+      const u = (k / 12) * 6.2832, top = rimV(u), arc = [];
+      for (let i = 0; i <= 20; i++) arc.push(dome(u, (i / 20) * top));
       helmet.push(arc);
     }
-    // A flared brim at the rim: the line that stops it reading as a wire globe.
+    // A flared lip at the rim.
     const brim = [];
-    for (let i = 0; i <= 48; i++) {
-      const u = (i / 48) * 6.2832, q = dome(u, VMAX);
-      brim.push([q[0] * 1.09, q[1] + 1.1, DOME_Z + (q[2] - DOME_Z) * 1.09]);
+    for (let i = 0; i <= 56; i++) {
+      const u = (i / 56) * 6.2832, q = dome(u, rimV(u));
+      brim.push([q[0] * 1.07, q[1] + 1.0, DOME_Z + (q[2] - DOME_Z) * 1.07]);
     }
     helmet.push(brim);
     // Three coin motors, where they actually sit: forehead, left and right temple.
-    const motors = [dome(0, 1.34), dome(-1.5708, 1.62), dome(1.5708, 1.62)];
+    const motors = [dome(0, 1.42), dome(-1.5708, 1.6), dome(1.5708, 1.6)];
     // Grid corners, for the FoV cone.
     const CORNERS = [0, data.cols - 1, N - 1, N - data.cols];
 
@@ -635,7 +650,7 @@
       const b = frac(Math.sin(z * 78.233) * 12345.6789);
       zPhase[z] = a * 6.2832;
       zRate[z] = 0.55 + b * 1.5;
-      zAmp[z] = 3.5 + a * 5.5;
+      zAmp[z] = 1.1 + a * 1.6;
     }
     const BANDS = 6;   // depth-fade buckets, so the wireframe strokes in 6 passes
 
@@ -666,16 +681,14 @@
       // which is the wearer turning their head and sweeping the cone with it;
       // the camera only drifts, because orbiting it far enough to read as a
       // rotation flings the helmet and the wall apart on screen.
-      // One continuous gesture, every term monotonic. The back-and-forth
-      // sine that was here read as jitter, because reversing direction
-      // partway through looks like a correction rather than a movement.
-      // The roll carries most of it: it turns about the axis the sensor
-      // looks down, so the whole rig banks in place without anything
-      // sliding out of frame. The head turn and the drift are support.
-      const roll = prog * 0.92;
-      const head = -0.22 + prog * 0.5;
-      const yaw = 0.32 + prog * 0.25;
-      const pitch = -0.26 + prog * 0.14;
+      // Yaw: the rig turns about its own vertical axis, through the sensor.
+      // The helmet sits on that axis so it spins in place while the cone and
+      // the wall sweep around it, and the camera stays almost still so the
+      // helmet holds its spot on screen. Starts at zero, so the first frame
+      // is the composed view and the whole turn is in one direction.
+      const head = prog * 0.75;
+      const yaw = 0.34 + prog * 0.06;
+      const pitch = -0.26 + prog * 0.12;
       if (hintBar) {
         hintBar.style.width = (prog * 100).toFixed(1) + '%';
         hint.classList.toggle('on', prog < 0.98);
@@ -683,23 +696,19 @@
       const cy = Math.cos(yaw), sy = Math.sin(yaw);
       const cp = Math.cos(pitch), sp = Math.sin(pitch);
       const chd = Math.cos(head), shd = Math.sin(head);
-      const crl = Math.cos(roll), srl = Math.sin(roll);
-      const f = w * (w > 900 ? 0.98 : 1.6);
+      const f = w * (w > 900 ? 0.85 : 1.5);
       // Sit the scene right of centre so it never fights the headline.
       const wide = w > 900;
-      const ax = w * (wide ? 0.72 - prog * 0.02 : 0.52), ay = h * (wide ? 0.48 + prog * 0.05 : 0.7);
+      const ax = w * (wide ? 0.72 - prog * 0.08 : 0.52), ay = h * (wide ? 0.48 + prog * 0.04 : 0.7);
 
       // One projector for everything in the scene: cloud, cone, and helmet.
-      // Roll about the sensor's forward axis, then the head turn about its
-      // vertical axis, then the camera.
+      // Yaw about the vertical axis through the sensor, then the camera.
       const proj = (x, y, z) => {
-        const rx = x * crl - y * srl;
-        const ry = x * srl + y * crl;
         const dz = z - SZ;
-        const hx = rx * chd + dz * shd;
-        const hz = SZ - rx * shd + dz * chd;
+        const hx = x * chd + dz * shd;
+        const hz = SZ - x * shd + dz * chd;
         const x2 = hx * cy + hz * sy, z2 = -hx * sy + hz * cy;
-        const y2 = ry * cp - z2 * sp, z3 = ry * sp + z2 * cp;
+        const y2 = y * cp - z2 * sp, z3 = y * sp + z2 * cp;
         const depth = z3 + CAM_D;
         return depth < 20 ? null : [ax + (x2 / depth) * f, ay + (y2 / depth) * f, depth];
       };
