@@ -663,7 +663,7 @@
       const f = w * (w > 900 ? 0.98 : 1.6);
       // Sit the scene right of centre so it never fights the headline.
       const wide = w > 900;
-      const ax = w * (wide ? 0.73 : 0.52), ay = h * (wide ? 0.46 : 0.7);
+      const ax = w * (wide ? 0.69 : 0.52), ay = h * (wide ? 0.5 : 0.7);
 
       // One projector for everything in the scene: cloud, cone, and helmet.
       // Head turn first, about the vertical axis through the sensor, then camera.

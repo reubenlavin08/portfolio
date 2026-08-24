@@ -251,15 +251,31 @@ h1, h2, h3, h4, .hd-title, .certs-head, .proj-more {
   position: relative;
   height: 260vh;
 }
+/* The name sits high and left, against the viewport rather than the content
+   column: the hero is full bleed and has no nav above it to line up with. */
 .hero {
   position: sticky;
   top: 0;
   height: 100vh;
   height: 100svh;
   display: flex;
-  align-items: center;
-  padding: 0 var(--gutter);
+  align-items: flex-start;
+  padding: 16vh clamp(28px, 5vw, 88px) 0;
   overflow: hidden;
+}
+
+/* Bottom right: what the scene actually is. */
+.hero-note {
+  position: absolute;
+  right: clamp(28px, 5vw, 88px);
+  bottom: 38px;
+  z-index: 1;
+  margin: 0;
+  max-width: 52ch;
+  text-align: right;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-4);
 }
 
 /* A quiet line that fills as the rotation plays, so the hold reads as
@@ -304,11 +320,9 @@ h1, h2, h3, h4, .hd-title, .certs-head, .proj-more {
 .hero-inner {
   position: relative;
   z-index: 1;
-  /* Sections are --col wide *including* their gutter, so the hero's inner
-     box has to subtract it or the h1 sits left of every section heading. */
-  max-width: calc(var(--col) - var(--gutter) * 2);
+  max-width: 100%;
   width: 100%;
-  margin: 0 auto;
+  margin: 0;
 }
 .hero-text { min-width: 0; }
 .hero-data-note {
@@ -1582,8 +1596,9 @@ h1, h2, h3, h4, .hd-title, .certs-head, .proj-more {
 
   /* Text on top, the scene in the lower half, rather than one over the other. */
   .hero-track { height: 230vh; }
-  .hero { padding: 14vh var(--gutter) 0; align-items: flex-start; }
-  .hero-hint { bottom: 28px; }
+  .hero { padding: 13vh var(--gutter) 0; }
+  .hero-hint { bottom: 26px; }
+  .hero-note { right: var(--gutter); left: var(--gutter); bottom: 48px; max-width: none; }
   .hero-canvas { opacity: 0.85; }
   .hero-data-note { display: none; }
   .hero-sub { max-width: none; font-size: 19px; }
