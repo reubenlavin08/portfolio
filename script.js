@@ -699,7 +699,7 @@
       const f = w * (w > 900 ? 0.85 : 1.5);
       // Sit the scene right of centre so it never fights the headline.
       const wide = w > 900;
-      const ax = w * (wide ? 0.72 - prog * 0.08 : 0.52), ay = h * (wide ? 0.48 + prog * 0.04 : 0.7);
+      const ax = w * (wide ? 0.66 - prog * 0.08 : 0.52), ay = h * (wide ? 0.48 + prog * 0.04 : 0.7);
 
       // One projector for everything in the scene: cloud, cone, and helmet.
       // Yaw about the vertical axis through the sensor, then the camera.
