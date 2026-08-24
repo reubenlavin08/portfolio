@@ -648,11 +648,16 @@
       // which is the wearer turning their head and sweeping the cone with it;
       // the camera only drifts, because orbiting it far enough to read as a
       // rotation flings the helmet and the wall apart on screen.
-      // A full scan, right then left and back, so the first and last frames
-      // are both the composed view and the turn is watchable in between.
-      const head = Math.sin(prog * 6.2832) * 0.62;
-      const yaw = 0.3 + prog * 0.4;
-      const pitch = -0.24 + Math.sin(prog * 3.1416) * 0.24;
+      // One continuous gesture, every term monotonic. The back-and-forth
+      // sine that was here read as jitter, because reversing direction
+      // partway through looks like a correction rather than a movement.
+      // The roll carries most of it: it turns about the axis the sensor
+      // looks down, so the whole rig banks in place without anything
+      // sliding out of frame. The head turn and the drift are support.
+      const roll = prog * 0.92;
+      const head = -0.22 + prog * 0.5;
+      const yaw = 0.32 + prog * 0.25;
+      const pitch = -0.26 + prog * 0.14;
       if (hintBar) {
         hintBar.style.width = (prog * 100).toFixed(1) + '%';
         hint.classList.toggle('on', prog < 0.98);
@@ -660,19 +665,23 @@
       const cy = Math.cos(yaw), sy = Math.sin(yaw);
       const cp = Math.cos(pitch), sp = Math.sin(pitch);
       const chd = Math.cos(head), shd = Math.sin(head);
+      const crl = Math.cos(roll), srl = Math.sin(roll);
       const f = w * (w > 900 ? 0.98 : 1.6);
       // Sit the scene right of centre so it never fights the headline.
       const wide = w > 900;
-      const ax = w * (wide ? 0.69 : 0.52), ay = h * (wide ? 0.5 : 0.7);
+      const ax = w * (wide ? 0.72 - prog * 0.02 : 0.52), ay = h * (wide ? 0.48 + prog * 0.05 : 0.7);
 
       // One projector for everything in the scene: cloud, cone, and helmet.
-      // Head turn first, about the vertical axis through the sensor, then camera.
+      // Roll about the sensor's forward axis, then the head turn about its
+      // vertical axis, then the camera.
       const proj = (x, y, z) => {
+        const rx = x * crl - y * srl;
+        const ry = x * srl + y * crl;
         const dz = z - SZ;
-        const hx = x * chd + dz * shd;
-        const hz = SZ - x * shd + dz * chd;
+        const hx = rx * chd + dz * shd;
+        const hz = SZ - rx * shd + dz * chd;
         const x2 = hx * cy + hz * sy, z2 = -hx * sy + hz * cy;
-        const y2 = y * cp - z2 * sp, z3 = y * sp + z2 * cp;
+        const y2 = ry * cp - z2 * sp, z3 = ry * sp + z2 * cp;
         const depth = z3 + CAM_D;
         return depth < 20 ? null : [ax + (x2 / depth) * f, ay + (y2 / depth) * f, depth];
       };
