@@ -245,14 +245,45 @@ h1, h2, h3, h4, .hd-title, .certs-head, .proj-more {
 }
 
 /* ---------- Hero ---------- */
-.hero {
+/* The track is the scroll budget; the hero pins to the top of it and stays
+   put while the helmet turns. When the track runs out, the page moves on. */
+.hero-track {
   position: relative;
+  height: 260vh;
+}
+.hero {
+  position: sticky;
+  top: 0;
   height: 100vh;
   height: 100svh;
   display: flex;
   align-items: center;
   padding: 0 var(--gutter);
   overflow: hidden;
+}
+
+/* A quiet line that fills as the rotation plays, so the hold reads as
+   progress rather than as a page that has stopped responding. */
+.hero-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 40px;
+  width: 120px;
+  height: 2px;
+  transform: translateX(-50%);
+  background: var(--fill-2);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity var(--t-slow) var(--ease-slow);
+}
+.hero-hint.on { opacity: 1; }
+.hero-hint span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--indigo-lt);
+  border-radius: inherit;
 }
 .hero-canvas {
   position: absolute;
@@ -410,7 +441,7 @@ h1, h2, h3, h4, .hd-title, .certs-head, .proj-more {
   padding: var(--section-y) var(--gutter);
 }
 /* The hero already ends in open space; it does not need a second helping. */
-.hero + .section { padding-top: 20px; }
+.hero-track + .section { padding-top: 20px; }
 .section-head {
   display: flex;
   align-items: baseline;
@@ -1550,7 +1581,9 @@ h1, h2, h3, h4, .hd-title, .certs-head, .proj-more {
   .nav-cta { display: none; }
 
   /* Text on top, the scene in the lower half, rather than one over the other. */
-  .hero { padding: 16vh var(--gutter) 0; align-items: flex-start; }
+  .hero-track { height: 230vh; }
+  .hero { padding: 14vh var(--gutter) 0; align-items: flex-start; }
+  .hero-hint { bottom: 28px; }
   .hero-canvas { opacity: 0.85; }
   .hero-data-note { display: none; }
   .hero-sub { max-width: none; font-size: 19px; }

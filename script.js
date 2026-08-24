@@ -7,10 +7,14 @@
 
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  const heroEl = document.querySelector('.hero');
-  // The bar stays out of the way until the hero has mostly gone by.
-  const onScroll = () =>
-    nav.classList.toggle('scrolled', window.scrollY > (heroEl ? heroEl.offsetHeight * 0.55 : 24));
+  const heroTrack = document.getElementById('heroTrack');
+  // The bar stays out of the way until the pinned rotation has played out.
+  const onScroll = () => {
+    const gate = heroTrack
+      ? (heroTrack.offsetHeight - window.innerHeight) * 0.82
+      : 24;
+    nav.classList.toggle('scrolled', window.scrollY > gate);
+  };
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
 
@@ -623,9 +627,15 @@
     // wavefront. The scene is STILL at rest, so all motion is the visitor's.
     // Scrolling the hero scrubs the real recording from first frame to last.
     let tgtP = 0, curP = 0;
+    const track = document.getElementById('heroTrack') || hero;
+    const hint = hero.querySelector('.hero-hint');
+    const hintBar = hint && hint.firstElementChild;
+    // The hero is pinned to the top of the track, so the track's remaining
+    // travel is exactly the scroll budget the rotation gets.
     const progress = () => {
-      const hh = hero.offsetHeight || 1;
-      return Math.max(0, Math.min(1, window.scrollY / (hh * 0.9)));
+      const span = track.offsetHeight - window.innerHeight;
+      if (span <= 0) return 0;
+      return Math.max(0, Math.min(1, -track.getBoundingClientRect().top / span));
     };
 
     function draw() {
@@ -634,18 +644,34 @@
       const prog = curP;
       const fi = prog * (data.frames - 1);
       const i0 = Math.floor(fi), i1 = Math.min(i0 + 1, data.frames - 1), mix = fi - i0;
-      const yaw = 0.34 + prog * 0.8;
-      const pitch = -0.2 + prog * 0.28;
+      // Two rotations. The rig turns about the sensor's own vertical axis,
+      // which is the wearer turning their head and sweeping the cone with it;
+      // the camera only drifts, because orbiting it far enough to read as a
+      // rotation flings the helmet and the wall apart on screen.
+      // A full scan, right then left and back, so the first and last frames
+      // are both the composed view and the turn is watchable in between.
+      const head = Math.sin(prog * 6.2832) * 0.62;
+      const yaw = 0.3 + prog * 0.4;
+      const pitch = -0.24 + Math.sin(prog * 3.1416) * 0.24;
+      if (hintBar) {
+        hintBar.style.width = (prog * 100).toFixed(1) + '%';
+        hint.classList.toggle('on', prog < 0.98);
+      }
       const cy = Math.cos(yaw), sy = Math.sin(yaw);
       const cp = Math.cos(pitch), sp = Math.sin(pitch);
-      const f = w * (w > 900 ? 1.34 : 2.0);
+      const chd = Math.cos(head), shd = Math.sin(head);
+      const f = w * (w > 900 ? 0.98 : 1.6);
       // Sit the scene right of centre so it never fights the headline.
       const wide = w > 900;
-      const ax = w * (wide ? 0.68 : 0.52), ay = h * (wide ? 0.45 : 0.7);
+      const ax = w * (wide ? 0.73 : 0.52), ay = h * (wide ? 0.46 : 0.7);
 
       // One projector for everything in the scene: cloud, cone, and helmet.
+      // Head turn first, about the vertical axis through the sensor, then camera.
       const proj = (x, y, z) => {
-        const x2 = x * cy + z * sy, z2 = -x * sy + z * cy;
+        const dz = z - SZ;
+        const hx = x * chd + dz * shd;
+        const hz = SZ - x * shd + dz * chd;
+        const x2 = hx * cy + hz * sy, z2 = -hx * sy + hz * cy;
         const y2 = y * cp - z2 * sp, z3 = y * sp + z2 * cp;
         const depth = z3 + CAM_D;
         return depth < 20 ? null : [ax + (x2 / depth) * f, ay + (y2 / depth) * f, depth];
