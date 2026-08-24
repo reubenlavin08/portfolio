@@ -76,7 +76,7 @@
           </p>
           <p class="hero-now">
             <span class="hero-now-label">Next up:</span>
-            taking the <strong>assistive helmet</strong> into Phase 2 (camera + computer vision) and launching <strong>Bullseye</strong> to real users.
+            the field walk test of the <strong>assistive helmet</strong>, and the 360&deg; dewarp&rsquo;s first accuracy measurement on a real site.
           </p>
         </div>
         <aside class="about-side">
@@ -159,9 +159,13 @@
         <article class="case" id="helmet">
           <div class="case-media">
             <figure class="case-video">
-              <span class="proj-status">In progress</span>
-              <video src="assets/projects/pointcloud-demo.mp4" poster="assets/projects/pointcloud-poster.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Live 3D point cloud from the helmet's depth sensors"></video>
-              <figcaption>Live point cloud streamed from the helmet over WiFi</figcaption>
+              <span class="proj-status">Field testing</span>
+              <video src="assets/projects/pointcloud-demo.mp4" poster="assets/projects/pointcloud-poster.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Live 3D point cloud from the helmet depth sensors"></video>
+              <figcaption>Live depth streamed from the helmet over WiFi</figcaption>
+            </figure>
+            <figure class="case-video case-video--contain">
+              <img src="assets/projects/helmet-pod-explode.gif" alt="Exploded view animation of the 3D-printed sensor pod, showing the two time-of-flight boards and the camera in their mounts." loading="lazy" width="990" height="770" />
+              <figcaption>The sensor pod, exploded. Both depth boards sit at a designed &plusmn;22.5&deg;</figcaption>
             </figure>
             <div class="case-stills">
               <figure>
@@ -175,69 +179,107 @@
             </div>
           </div>
           <div class="case-body">
-            <span class="proj-tag">Robotics · Sensor Fusion · Case Study</span>
+            <span class="proj-tag">Assistive Tech &middot; Sensor Fusion &middot; Case Study</span>
             <h3>Assistive Navigation Helmet</h3>
             <p class="case-lede">
-              A friend built a cane that vibrates when something is ahead. This is the same idea with a far richer signal: a wearable for blind and low-vision users that turns two 8&times;8 depth grids and head orientation into directional vibration, so an obstacle on your left buzzes your left temple before you reach it.
+              A helmet that answers what the white cane cannot: what is at head height, what is approaching, and where exactly the thing you want is. It is not a mobility aid and not a substitute for a cane, a guide dog, or O&amp;M training.
             </p>
             <p>
-              An <strong>ESP32-S3</strong> runs two ST <strong>VL53L8CX</strong> time-of-flight sensors on independent I&sup2;C buses (both ship fixed at address 0x29; separate buses sidestep the collision). The bottom sensor angles ~30&deg; down for ground-level obstacles, with a per-row cosine table converting slant range to true forward distance; the top sensor watches for head-height overhangs. A <strong>BNO085 IMU</strong> tracks head orientation at 100&thinsp;Hz, and three coin motors (forehead, left temple, right temple) render direction. Firmware ships over the air with bootloader rollback, and live data streams to a desktop 3-D point cloud and a phone heatmap viewer.
+              Two <strong>$6 ST VL53L8CX</strong> time-of-flight sensors sit on a bike helmet, yawed &plusmn;22.5&deg; and seam-abutted into a ~90&deg; &times; 45&deg; depth field at 15&thinsp;Hz, next to a fisheye camera and a <strong>BNO085</strong> IMU. An <strong>ESP32-S3</strong> streams depth and attitude over WiFi to a laptop in a backpack, which fuses them: segmentation and tracking name what is in frame, and the depth grid ranges it. Output is speech, spatialised earcons, and three coin motors at the temples and forehead. An assistant called <strong>Iris</strong> answers to its name, and a phone app shows the annotated feed.
+            </p>
+            <p>
+              The design rule the whole system rests on: <strong>CV names things; the depth grid never misses things.</strong> A detection&rsquo;s range is the <em>minimum</em> over the depth zones it claims, never the mean, and any near zone that no detection claims is still announced as an obstacle. The classifier is allowed to be ignorant; it is not allowed to be the reason something goes unreported.
             </p>
             <div class="case-sec">
-              <h4>Three stacked bugs, one IMU driver</h4>
-              <p class="case-key">0x4B ACKed. The real address was 0x4A: an ACK can lie.</p>
+              <h4>An 8&thinsp;mm error that no rigid transform could remove</h4>
+              <p class="case-key">A residual that survives rotation, translation and scale is telling you the forward model is wrong, not the parameters.</p>
               <p>
-                Every available BNO085 library for this setup was SPI-only, so the I&sup2;C SH-2/SHTP transport had to be built from scratch. Much of the code here is written with Claude Code; the architecture, wiring, bench debugging, and verification on real hardware are mine. Getting this chip alive meant peeling back three independent bugs, each hiding the next. The probe ACKed at 0x4B but the real address was 0x4A: an ACK can lie, and ground truth is which address returns valid protocol data. Then the handshake worked exactly once per physical power-up and never again, because the chip broadcasts its channel advertisement once, at power-on, and reflashing resets the ESP but not the IMU; the fix is forcing a hub reset on every boot. Finally, the ToF sensor's 84&thinsp;KB firmware upload blocked the bus for a full second, and an unserviced BNO085 starves and stops reporting. It now gets its own 500&thinsp;Hz service task and a shared-bus mutex.
+                Solving the depth-to-camera transform left a systematic ~8&thinsp;mm residual against a sensor noise floor of 3.1&thinsp;mm. Two signatures identified it: the error was per-pose rather than per-zone, and its size tracked how far the calibration board was tilted. A lateral ray error is invisible on a face-on board and leaks in proportionally as you tilt it. Root cause: a zone&rsquo;s reported distance is a <em>signal-weighted</em> average over its cone, and the illuminator is brighter on the inner side of the outer zones, so their effective centre ray is pulled inward &mdash; fitted at &plusmn;13.4&deg; where the geometry says &plusmn;16.9&deg;. Two earlier measurements had been fighting over 34&deg; versus 45&deg; for a week; both were right, because one measured the zone&rsquo;s bounds and the other its signal-weighted centroid.
               </p>
             </div>
             <div class="case-sec">
-              <h4>Measure, don't guess: dropping the magnetometer</h4>
-              <p class="case-key">Motors on: heading confidence 4.8&deg; &rarr; 39&deg;. The magnetometer had to go.</p>
+              <h4>Distance is perpendicular, not slant</h4>
+              <p class="case-key">A radially symmetric residual is a geometry-model signature, not a hardware defect.</p>
               <p>
-                The motors sit ~5&thinsp;cm from the IMU, intuitively too far to disturb a magnetometer. An A/B test said otherwise: with motors running, the chip's own heading-confidence estimate collapsed from 4.8&deg; to 39&deg; and threw a 60&deg; heading jump, exactly when a real obstacle alert would fire. The physics agrees: Earth's horizontal field here is ~18&thinsp;&micro;T, and a spinning rotor magnet at 5&thinsp;cm adds a few &micro;T of time-varying field the fusion can't model. The helmet now runs the mag-free AR/VR-stabilized rotation vector, the mode the datasheet itself recommends for head tracking in disturbed fields, and calibration tuning cut dynamic yaw drift from +2.24&deg; to +0.82&deg; per run (~63%).
+                Residuals showed corners &minus;14&thinsp;mm and centre +14&thinsp;mm across poses. I chased a warped board, a radial sensor bias and crosstalk before testing the obvious: the sensor reports <em>perpendicular</em> distance, and I was treating it as slant range along the zone ray. On the same 23 poses, the slant reading gives 12.02&thinsp;mm plane rms and a false 36&thinsp;mm dome; the perpendicular reading gives <strong>3.83&thinsp;mm</strong>, which is noise. The same mistake was live in the firmware&rsquo;s row-cosine table, biasing the outer rows about 8% while the haptics were running off it.
               </p>
             </div>
             <div class="case-sec">
-              <h4>Haptics a person can actually read</h4>
-              <p class="case-key">Coin motors don't spin below half duty: the curve starts at a felt 51% floor.</p>
+              <h4>The research said the product was 30&times; too chatty</h4>
+              <p class="case-key">Chatter is the most cited reason people abandon devices like this, so silence is the default state.</p>
               <p>
-                Obstacle direction maps to motors through hard regions with a squared urgency curve and dominance weighting (the most urgent direction stays at full strength, others scale to 70%), choices taken from the vibrotactile literature rather than vibes. The first build exposed a gap the papers don't mention: coin ERM motors don't spin below roughly half duty, so a pure squared curve meant silence until 20&thinsp;cm and then sudden full power. The curve now maps onto the motor's usable band, starting at a just-perceptible 51% floor the instant an alert begins.
+                The first callout engine narrated every 2 seconds. Reading the primary sources, including the actual constants in Microsoft Soundscape&rsquo;s open-source callout generator, said that was badly wrong: never repeat an object inside 60&thinsp;s, and treat silence as the resting state. No shipped product speaks distances while you walk, because proximity belongs in a repetition rate, and there is a two-item recall ceiling while walking. Person detection, which I had assumed was the point, is the <em>least</em>-wanted feature in user studies. So routine narration was deleted, distance moved into the tempo of a tick that speeds up as time-to-contact falls, and head-height obstacles became the product.
               </p>
-            </div>
-            <div class="haptic-demo" id="hapticDemo">
-              <p class="hd-title">Try the real mapping</p>
-              <p class="hd-hint">Drag the obstacle across the sensor's view, then bring it closer with the slider. Arrow keys work too.</p>
-              <div class="hd-wrap">
-                <div class="hd-grid" id="hdGrid" tabindex="0" role="application" aria-label="Haptic mapping demo. Use arrow keys to move the obstacle left and right, up and down to change distance.">
-                  <span class="hd-region-line" style="left: 25%"></span>
-                  <span class="hd-region-line" style="left: 75%"></span>
-                  <div class="hd-dot" id="hdDot"></div>
-                </div>
-                <div class="hd-motors" aria-hidden="true">
-                  <div class="hd-motor"><span id="hdmLeft"></span><b>L</b><em id="hdvLeft">off</em></div>
-                  <div class="hd-motor"><span id="hdmCenter"></span><b>C</b><em id="hdvCenter">off</em></div>
-                  <div class="hd-motor"><span id="hdmRight"></span><b>R</b><em id="hdvRight">off</em></div>
-                </div>
-              </div>
-              <label class="hd-slider">
-                <span>Distance <b id="hdDistVal">90 cm</b></span>
-                <input type="range" id="hdDist" min="25" max="200" value="90" aria-label="Obstacle distance in centimetres" />
-              </label>
-              <p class="hd-note" id="hdNote" aria-live="polite">This is the shipped firmware computation: column regions, squared urgency curve, 51% ERM floor, 0.7 dominance weighting. Alert threshold 150&thinsp;cm.</p>
             </div>
             <ul class="project-bullets case-notes">
-              <li>Also run to ground: a 2&thinsp;ms task delay that compiled to zero ticks at a 100&thinsp;Hz tick rate, silently starving the sensor loop on unlucky boots</li>
-              <li>A debug switch that bridged 3.3&thinsp;V to ground mid-flip and browned out the board: logic-level switches should never carry a power rail</li>
-              <li>Every fix, dead end, and root cause is written up in the repo's engineering devlog</li>
+              <li>Joint calibration ships at <strong>5.5&thinsp;mm rms</strong> across 39 poses and <strong>1.15&deg;</strong> from CAD, against a sensor noise floor of 3.1&thinsp;mm</li>
+              <li>Camera intrinsics at <strong>0.30&thinsp;px</strong> rms over 19 views; measured field of view 119.58&deg; &times; 63.12&deg;, which replaced an estimate that was 10&deg; out</li>
+              <li>A frame-convention error put the solve <strong>179&deg;</strong> from the CAD prior. Image-right is the wearer&rsquo;s right, which is &minus;X. Naming the observer rather than the side removed a whole class of sign errors</li>
+              <li>Black foam at 756&thinsp;mm read all 16 zones at 9.4% reflectance; a white wall at 958&thinsp;mm lost 3 zones to specular glare. Visible colour does not predict near-infrared behaviour</li>
+              <li>Every alert is logged, and hushing the audio within ten seconds of one counts as a vote that it was a false positive &mdash; directives excluded, since hushing during &ldquo;stop&rdquo; is panic, not a judgment</li>
             </ul>
             <p class="case-results">
-              <strong>Where it stands:</strong> both depth streams and the IMU run concurrently (~30&thinsp;Hz ranging, 100&thinsp;Hz orientation) with directional haptics live on the bench. Phase 1 shipped; Phase 2 adds a camera; Phase 3 fuses all three.
+              <strong>Where it stands:</strong> the full stack is built and runs end to end &mdash; dual depth, IMU, camera, fusion, speech, haptics, voice control and the phone app. Measured on the field laptop: <strong>~10&thinsp;fps</strong> segmentation with tracking, and a <strong>104&thinsp;ms</strong> median open-vocabulary door scan over 20 runs. The safety loop runs no neural inference at all; it is geometry at sensor rate. The false-positive instrumentation is built and verified synthetically, but <strong>no number from a real walk exists yet</strong> &mdash; the field walk test and the demo video are the next step.
             </p>
             <div class="project-stack">
-              <span>C · ESP-IDF 5.4</span><span>ESP32-S3</span><span>VL53L8CX ToF &times;2</span><span>BNO085 IMU</span><span>SH-2/SHTP</span><span>FreeRTOS</span><span>Haptics</span>
+              <span>C &middot; ESP-IDF</span><span>ESP32-S3</span><span>VL53L8CX ToF &times;2</span><span>BNO085 IMU</span><span>Fisheye camera</span><span>Python &middot; OpenCV</span><span>YOLO26n-seg &middot; ByteTrack</span><span>YOLO-World</span><span>Vosk voice</span><span>Haptics</span><span>PWA</span>
             </div>
             <div class="case-links">
               <a class="link-arrow" href="https://github.com/reubenlavin08/vl53l8cx-pointcloud-esp32" target="_blank" rel="noopener">View on GitHub &rarr;</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="case" id="dewarp">
+          <div class="case-media">
+            <figure class="case-video case-video--contain">
+              <img src="assets/projects/dewarp-verify.webp" alt="Top: a synthetic equirectangular frame with four coloured great circles, visibly bent. Bottom: the same circles after dewarping, dead straight." loading="lazy" width="1600" height="1200" />
+              <figcaption>The test: great circles go in bent, come out straight to 0.82&thinsp;px RMS</figcaption>
+            </figure>
+            <figure class="case-video case-video--contain">
+              <img src="assets/projects/dewarp-fov.webp" alt="The same scene rendered at several fields of view and scaled to equal size, showing where narrowing stops recovering real detail." loading="lazy" width="1140" height="962" />
+              <figcaption>Narrowing the view only helps until the camera runs out of detail</figcaption>
+            </figure>
+          </div>
+          <div class="case-body">
+            <span class="proj-tag">Computer Vision &middot; UBC Research &middot; Case Study</span>
+            <h3>360&deg; Camera Dewarping</h3>
+            <p class="case-lede">
+              A 360&deg; camera flattens the world the way a map flattens the globe, and object detectors trained on ordinary photographs fall apart on the result. This re-projects the panorama into virtual pinhole cameras on the GPU, so any off-the-shelf detector works on it unmodified.
+            </p>
+            <p>
+              An equirectangular frame stretches horizontally by <code>1/cos(latitude)</code>: 1.0&times; at the horizon, 2.0&times; at 60&deg;, 3.9&times; at 75&deg;, and at the pole a single point smears across an entire row. It also has a seam, where the left and right edges are the same physical place, so a person walking past is cut in half and rendered at opposite ends of the image. Published trackers show the cost: one recent method scores 73.4 HOTA on ordinary video and 18.2 on panoramic footage. Built for a construction-site safety project in UBC Civil Engineering's Smart Structures group, where the camera has to watch a whole site at once but the detector still needs to see normal pictures.
+            </p>
+            <div class="case-sec">
+              <h4>The map is computed once, not every frame</h4>
+              <p class="case-key">The virtual cameras never move, so dewarping is a gather, not a computation.</p>
+              <p>
+                Each virtual view uses a gnomonic tangent-plane projection: build a ray for every output pixel, rotate it into world space, convert to longitude and latitude, and read the source pixel there. Because the views are fixed, that mapping is identical on every frame, so it is computed once at startup into a lookup table and each frame becomes a single batched <code>grid_sample</code>. Four 640&thinsp;px views take <strong>10.6&thinsp;ms</strong> on a laptop GTX 1650 and 37&thinsp;MB of VRAM, and the output stays on the GPU so the detector never waits for a copy back.
+              </p>
+            </div>
+            <div class="case-sec">
+              <h4>Checking it geometrically instead of by eye</h4>
+              <p class="case-key">&ldquo;It looks right&rdquo; is not evidence. A gnomonic projection maps every great circle to a straight line, so that can be tested.</p>
+              <p>
+                Synthetic frames containing known great circles are pushed through the real pipeline, and the output lines are fitted by total least squares. Nothing is compared against the library's own forward maths, so an error in that maths cannot hide inside the test. Great circles come out straight to <strong>0.82&thinsp;px RMS</strong>, angular scale is isotropic to <strong>1.0000</strong>, and known angles land within <strong>0.65&thinsp;px</strong> of prediction, all on a 640&thinsp;px view.
+              </p>
+            </div>
+            <div class="case-sec">
+              <h4>Three things that were wrong</h4>
+              <p class="case-key">Hardware decode was slower than software, and the first &ldquo;optimal&rdquo; field of view was measuring the wrong thing.</p>
+              <p>
+                Turning on hardware decode took a frame from 21&thinsp;ms to 54&thinsp;ms, because the capture path forces a GPU-to-CPU copy back. Anti-aliasing was destroying real detail to suppress aliasing that measured 37&thinsp;dB down, so it now defaults off. And the first field-of-view answer, 90&deg;, came from Laplacian variance, which rewards aliasing rather than detail; measuring the frequency content instead put the answer at 70&ndash;75&deg;, and a second independent method agreed.
+              </p>
+            </div>
+            <ul class="project-bullets case-notes">
+              <li>The sampling grid stays in fp32: at fp16 the error reaches about 2&thinsp;px, worst exactly at the seam</li>
+              <li>The viewer reports two resolution numbers side by side, where the real detail ends and where the pixel grid ends, because the second one flatters the camera</li>
+            </ul>
+            <p class="case-results">
+              <strong>Where it stands:</strong> the dewarp is built and verified geometrically, and runs live on the camera at 32.7&thinsp;fps with no dropped frames. Detection accuracy on site has <strong>not</strong> been measured yet; the improvement is expected from the geometry and from the literature, not demonstrated on this camera. That experiment is the next step.
+            </p>
+            <div class="project-stack">
+              <span>Python</span><span>PyTorch &middot; CUDA</span><span>OpenCV</span><span>PyAV &middot; RTSP</span><span>YOLO11</span><span>Projective geometry</span>
             </div>
           </div>
         </article>
