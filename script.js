@@ -686,12 +686,31 @@
         return depth < 20 ? null : [ax + (x2 / depth) * f, ay + (y2 / depth) * f, depth];
       };
 
+      // The recorded scene is a flat wall, so on its own the field barely
+      // moves. An obstacle is synthesised on top of it: a soft blob crossing
+      // the grid that pulls the zones it covers much closer, which is exactly
+      // what the sensor sees when something passes in front of the wearer.
+      // The wall underneath is the real capture; the obstacle is not.
+      const obsX = Math.sin(prog * 8.4) * 0.44 + Math.sin(prog * 3.1) * 0.1;
+      const obsY = Math.cos(prog * 5.6) * 0.26;
+      const obsD = 38 + Math.sin(prog * 12.7) * 16;
+      const OBS_S2 = 2 * 0.19 * 0.19;
+      // Absent on the first screen, so the page opens on the clean wall and
+      // the obstacle is something the visitor's scroll brings into the field.
+      const obsAmt = Math.min(1, prog * 5);
+
       let sum = 0, nValid = 0;
       const nearest = [1e4, 1e4, 1e4];   // centre, left, right: the firmware's regions
       for (let z = 0; z < N; z++) {
         const d0 = all[i0 * N + z], d1 = all[i1 * N + z];
         if (!d0 || !d1) { pts[z] = null; continue; }
-        const d = d0 + (d1 - d0) * mix;
+        const col0 = z % data.cols, row0 = (z / data.cols) | 0;
+        const nx = (col0 + 0.5) / data.cols - 0.5;
+        const ny = (row0 + 0.5) / data.rows - 0.5;
+        const g = obsAmt * Math.exp(-((nx - obsX) * (nx - obsX) + (ny - obsY) * (ny - obsY)) / OBS_S2);
+        let d = d0 + (d1 - d0) * mix;
+        d = d * (1 - g) + obsD * g;
+        d += Math.sin(z * 1.73 + prog * 46) * 1.4 * obsAmt;   // per-zone shimmer
         const p = proj(dirs[z][0] * d, dirs[z][1] * d, d - PIVOT);
         if (!p) { pts[z] = null; continue; }
         pts[z] = [p[0], p[1], d];
@@ -700,7 +719,7 @@
         const reg = col < data.cols / 3 ? 1 : col < (2 * data.cols) / 3 ? 0 : 2;
         if (d < nearest[reg]) nearest[reg] = d;
       }
-      const meanD = nValid ? sum / nValid : CENTER_D;
+      const meanD = nValid ? Math.max(sum / nValid, CENTER_D * 0.85) : CENTER_D;
       ctx.strokeStyle = 'rgba(141, 164, 245, 0.1)';
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -717,10 +736,10 @@
       ctx.stroke();
       for (const p of pts) {
         if (!p) continue;
-        const near = Math.max(0, Math.min(1, (110 - p[2]) / 35));
-        ctx.fillStyle = `rgba(141, 164, 245, ${Math.min(1, 0.2 + near * 0.38)})`;
+        const near = Math.max(0, Math.min(1, (110 - p[2]) / 62));
+        ctx.fillStyle = `rgba(141, 164, 245, ${Math.min(1, 0.18 + near * 0.62)})`;
         ctx.beginPath();
-        ctx.arc(p[0], p[1], 1.9 + near * 2.2, 0, 6.2832);
+        ctx.arc(p[0], p[1], 1.7 + near * 3.4, 0, 6.2832);
         ctx.fill();
       }
 
