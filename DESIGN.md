@@ -1,136 +1,113 @@
 # DESIGN.md
 
-Mercury's **demo dashboard** system (demo.mercury.com/dashboard), measured off computed styles on 2026-08-23, rebuilt on a warm Danish-modern ground. Marketing-site values from mercury.com/about are noted where they differ.
+Mercury's **dark** system, measured off `demo.mercury.com/dashboard` with `data-theme="dark"` on 2026-08-24. The nav follows Mercury's marketing bar; surfaces and controls follow the dashboard. Every value below came from computed styles, not from guessing.
 
-## The concept
+## Two rules that override everything else
 
-The site is an **operator dashboard for one person's work**. Persistent left rail, a single 968px content column, cards that hold readouts. That is the honest reading of "form follows function": a hardware portfolio should look like the instrument panel for the hardware, not like a brochure about it. Bauhaus and Danish modern show up as the strict grid, visible ordering, warm paper, and color that encodes meaning instead of mood.
+1. **The type floor is 14px.** Nothing on this page is smaller. The tracked all-caps micro-labels Mercury uses at 10px are not reproduced; they are illegible at real reading distance and they made the page look busier than it is.
+2. **Copy states facts.** No metaphors, no "I build with a soldering iron", no "want to talk robots". If a sentence would embarrass him in an interview, it is out.
 
-## What was measured on the demo page
+## Measured: dark theme
 
-### Layout
-| Property | Mercury's value |
-|---|---|
-| Sidebar | 220px wide, ground `#FBFCFD`, no shadow, hairline right edge |
-| Main area | `#FFFFFF`, content column **968px** |
-| Row-group gap | 40px |
-| Card grids | `472px 472px` gap 24px (2-up); `306.66px × 3` gap 24px (3-up) |
-| Sidebar item | 30px tall, radius **8px**, padding `2px 8px 2px 2px`, gap 6px |
-| Sidebar item, active | fill `rgba(112,115,147,0.10)`, text colour unchanged |
-| Sidebar group label | padding `8px 16px` |
+### Grounds
+Dark elevation is a **lighter surface**, not a shadow. Mercury steps three grounds:
 
-### The neutral fill scale
-One hue at four alphas does nearly all the work — chips, active states, hovers, tracks, hairlines:
+| Role | Mercury | Token |
+|---|---|---|
+| Page | `#171721` | `--ground` |
+| Card face | `#272735` | `--card` |
+| Wells, footer, media | `#10101A` | `--well` |
 
-```
-rgba(112, 115, 147, 0.02)   faintest wash
-rgba(112, 115, 147, 0.10)   standard fill: chips, active nav, tracks
-rgba(112, 115, 147, 0.16)   hover, progress track
-rgba(112, 115, 147, 0.22)   hairline on the marketing site
-rgba(112, 115, 147, 0.10)   hairline on the dashboard (softer)
-```
-
-Hairlines are **0.8px**, never 1px. That sub-pixel value is a real Mercury signature.
-
-### Elevation
-The marketing site has zero shadows. The dashboard has exactly one, on 18 elements, four layers and tinted lavender rather than grey:
+### The fill scale
+One hue at four alphas does chips, active states, hovers, tracks, and hairlines. In light mode Mercury uses `rgba(112,115,147,α)`; in dark it flips to a light neutral:
 
 ```
-rgba(183,187,219,0.14) 0  1px  4px,
-rgba(175,178,206,0.90) 0  0    1px,
-rgba( 14, 14, 45,0.08) 0  8px 12px,
-rgba(  4,  4, 52,0.02) 0 14px 20px
+rgba(180, 183, 200, 0.08)   faint wash
+rgba(180, 183, 200, 0.12)   standard fill and hairline
+rgba(180, 183, 200, 0.20)   hover
+rgba(180, 183, 200, 0.36)   strongest
 ```
 
-Copied verbatim, in Mercury's own rgba, because translating four layers to OKLCH risks drift and fidelity is the point. Nothing else on the page gets a shadow.
+Hairlines are **0.8px**, never 1px. That sub-pixel value is a genuine Mercury signature.
 
-### Chips and buttons
+### Text
+`#FFFFFF` primary, `#DDDDE5` secondary, `#9D9DA8` tertiary, `#70707D` faintest. Light type on dark reads lighter than it measures, so body line-height goes to 1.65 rather than the 1.5 the light theme used.
+
+### Accents lighten in dark mode
+This is the part most dark themes get wrong, and Mercury gets right:
+
+| Role | Light | Dark |
+|---|---|---|
+| Brand fill | `#5266EB` | `#5266EB` (unchanged) |
+| **Link** | `#465BD1` | **`#8DA4F5`** |
+| Positive | `#036E43` | `#77C599` |
+
+The saturated brand indigo stays put as a *fill*; as *text* it would fail on a dark ground, so links and marks move to the lightened cut.
+
+### Controls
 | | Value |
 |---|---|
-| Height | 32px |
-| Radius | 16px (pill) |
-| Padding | `4px 16px 4px 12px` — asymmetric, tighter on the icon side |
-| Primary | fill `#5266EB`, text white |
-| Secondary | fill `rgba(112,115,147,0.10)`, text `#363644`, **no border** |
-| Type | 16px, weight 360 |
-
-### Color
-| Role | Value |
-|---|---|
-| Primary ink | `#1E1E2A` (dashboard) / `#272735` (marketing) |
-| Secondary ink | `#363644` |
-| Tertiary ink | `#70707D` |
-| Brand indigo | `#5266EB` |
-| **Link indigo** | `#465BD1` — darker than the brand colour |
-| Indigo wash | `rgba(82,102,235,0.10)` |
-| Positive | `#036E43` |
-| Lavender | `#A7B6F8` |
-| Teal | `#CCE8EA` |
-| Dark strip | `#1E1E2A` |
-
-### Type
-| Step | Value |
-|---|---|
-| Text face | `Arcadia Text`, variable 360–500 |
-| Display face | `Arcadia Display`, variable 320–480 |
-| Big readout | Display, **28px / 36px, weight 380, tracking −0.03em** |
-| Card title | 15px / 24px, weight 400, in `#363644` |
-| Body | 16px / 16px, weight 360 |
-| Row text | 13px / 20px and 14px / 20px, weight 400 |
-| Caption | 12px / 20px, weight 400 |
-| Micro label | 10px / 24px, weight 480 |
-
-Note the big readout's **negative** tracking (−0.84px at 28px) — the dashboard tightens numbers, while the marketing site's headings use slightly *positive* tracking (+0.24px at 48px). Both are copied to the surface they belong on.
-
-### Other components
-- Progress bar: 8px tall, radius 4px, track `rgba(112,115,147,0.16)`
-- Icon button: 24px, radius 4px, transparent until hover
-- Radius census: 4px (106 uses), 8px (63), 16px (32), 50% (29), 12px (10)
+| Nav | 72px tall, `16px var(--gutter)` padding, transparent until scrolled |
+| Button | 40px tall, `0 20px` padding, pill radius, 16px text |
+| Primary | fill `#5266EB` |
+| Secondary | fill `rgba(180,183,200,0.12)`, **no border** |
+| Radius census | 4px, 8px, 12px, 16px; pill on buttons and chips |
+| Grid gap | 24px |
 
 ### Motion
+Mercury's own two curves, copied:
+
 ```
 --ease       cubic-bezier(0, 0, 0.2, 1)   0.28s   hovers, interactives
 --ease-slow  cubic-bezier(0, 0, 0.6, 1)   0.5s    colour and surface shifts
 ```
-Mercury's own two curves. No bounce, no elastic.
 
-## Where this site departs, and why
-
-Arcadia is proprietary. The substitutes match the skeleton — variable, low contrast, tall x-height, two families from one visual world — and add the Scandinavian pedigree the Danish-modern brief asks for:
-
-- **Display: Familjen Grotesk** (Letters from Sweden), variable 400–700, used at 500.
-- **Text: Schibsted Grotesk** (Norway), variable 400–900, used at 400–500.
-- **Mono: JetBrains Mono**, restricted to measured values, identifiers, and the section indices. Never as "technical" costume.
-
-Mercury's ground is a cool white. This site's is **warm bone**, hue 85, while the inks stay on Mercury's cool purple hue 285. That warm-paper / cool-ink tension is the whole palette, and it is what keeps this from being a Mercury clone.
+No bounce, no elastic. Everything collapses to 0.01ms under `prefers-reduced-motion`.
 
 ## Tokens
 
-Color strategy: **Committed**. Indigo carries interaction across the page; the paper carries the warmth.
-
 ```
---shell        oklch(97.2% 0.007 85)       sidebar ground
---paper        oklch(98.8% 0.004 85)       main area
---card         oklch(99.5% 0.002 85)       card face
---ink          oklch(24.5% 0.026 285)      ≈ #1E1E2A
---ink-2        oklch(34.5% 0.022 285)      ≈ #363644
---ink-3        oklch(55%   0.012 285)      ≈ #70707D
---fill-1       oklch(52% 0.03 285 / 0.02)
---fill-2       oklch(52% 0.03 285 / 0.10)  chips, active nav
---fill-3       oklch(52% 0.03 285 / 0.16)  hover, tracks
---line         oklch(52% 0.03 285 / 0.12)  the 0.8px hairline
---line-strong  oklch(52% 0.03 285 / 0.22)
---indigo       oklch(55.5% 0.196 272)      ≈ #5266EB
---indigo-link  oklch(50%   0.185 272)      ≈ #465BD1
---vermilion    oklch(58%   0.185 33)       live / in-progress only
---positive     oklch(46%   0.115 158)      ≈ #036E43
---deep         oklch(24.5% 0.026 285)      closing block and footer
+--ground      oklch(20.5% 0.017 285)      page
+--card        oklch(28.5% 0.021 285)      card face
+--card-hi     oklch(31.5% 0.022 285)      card hover
+--well        oklch(16.5% 0.018 285)      wells, footer
+--ink         oklch(98%   0.004 285)
+--ink-2       oklch(88.5% 0.008 285)
+--ink-3       oklch(69%   0.011 285)
+--ink-4       oklch(56%   0.012 285)
+--fill-1..3   oklch(76% 0.02 285 / .08 | .12 | .20)
+--line        oklch(76% 0.02 285 / .12)   the 0.8px hairline
+--indigo      oklch(55.5% 0.196 272)      fill only
+--indigo-lt   oklch(72%   0.125 272)      links and marks
+--positive    oklch(75%   0.105 155)
+--vermilion   oklch(72%   0.155 33)
 ```
 
-**Color is functional, and that is the Bauhaus part.** Indigo means "you can interact with this." Vermilion means "still being built." Positive green means a measured result. Nothing is coloured to look nice.
+**Colour is functional.** Indigo means interactive. Vermilion means still being built. Green means a measured result. Nothing is coloured for decoration.
 
-## Structure
+## Type
 
-Sidebar items and section heads are numbered by CSS counter, in mono. Ordering information doing visible work is the Bauhaus tell, and on a dashboard it is also just useful. Section padding is `56px 40px` inside a 968px column — dashboard rhythm, not brochure rhythm.
+Arcadia is proprietary, so the substitutes match the skeleton (variable, low contrast, tall x-height, two families from one visual world) and bring the Scandinavian pedigree the brief asked for:
 
-The page closes on a full-bleed `--deep` contact block and footer, which is Mercury's own ending move.
+- **Display: Familjen Grotesk** (Letters from Sweden), variable 400–700, used at 500.
+- **Text: Schibsted Grotesk** (Norway), variable 400–700, used at 400–500.
+- **Mono: JetBrains Mono**, only for measured values and identifiers. Never as "technical" costume.
+
+Display tracking is negative (−0.014em to −0.028em), matching the dashboard's own treatment of large numbers. Prose caps at 68ch.
+
+Scale, with the 14px floor enforced:
+
+```
+hero      clamp(42px, 5.4vw, 64px) / 1.08   -0.028em
+h2        clamp(30px, 3.4vw, 42px) / 1.16   -0.024em
+h3        19-24px
+lede      19-21px / 1.5-1.6
+body      17px / 1.65-1.7
+row       16px
+caption   15px
+smallest  14px
+```
+
+## Layout
+
+Top nav, one 1120px column, cards on a 24px grid. Section rhythm is `clamp(56px, 6.5vw, 88px)`. The rail experiment is gone; the hero's inner box subtracts the gutter so the h1 aligns with every section heading below it.
