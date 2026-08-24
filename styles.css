@@ -117,10 +117,20 @@ h1, h2, h3, h4, .hd-title, .certs-head, .proj-more {
   padding: 16px var(--gutter);
   z-index: 100;
   border-bottom: var(--hair) solid transparent;
-  transition: background var(--t-slow) var(--ease-slow),
+  /* Hidden over the hero. It drops in once you have scrolled past it. */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-100%);
+  transition: opacity var(--t-slow) var(--ease-slow),
+              transform var(--t-slow) var(--ease-slow),
+              visibility var(--t-slow) var(--ease-slow),
+              background var(--t-slow) var(--ease-slow),
               border-color var(--t-slow) var(--ease-slow);
 }
 .nav.scrolled {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
   background: oklch(20.5% 0.017 285 / 0.82);
   backdrop-filter: blur(14px) saturate(1.4);
   -webkit-backdrop-filter: blur(14px) saturate(1.4);
@@ -237,10 +247,11 @@ h1, h2, h3, h4, .hd-title, .certs-head, .proj-more {
 /* ---------- Hero ---------- */
 .hero {
   position: relative;
-  min-height: min(88vh, 760px);
+  height: 100vh;
+  height: 100svh;
   display: flex;
   align-items: center;
-  padding: calc(var(--nav-h) + 40px) var(--gutter) 64px;
+  padding: 0 var(--gutter);
   overflow: hidden;
 }
 .hero-canvas {
@@ -251,11 +262,11 @@ h1, h2, h3, h4, .hd-title, .certs-head, .proj-more {
   opacity: 1;
   /* The field lives to the right of the text and fades at every edge. */
   -webkit-mask-image:
-    linear-gradient(100deg, transparent 0%, #000 30%, #000 88%, transparent 100%),
-    linear-gradient(180deg, transparent 0%, #000 12%, #000 84%, transparent 100%);
+    linear-gradient(100deg, transparent 0%, #000 28%, #000 90%, transparent 100%),
+    linear-gradient(180deg, transparent 0%, #000 8%, #000 90%, transparent 100%);
   mask-image:
-    linear-gradient(100deg, transparent 0%, #000 30%, #000 88%, transparent 100%),
-    linear-gradient(180deg, transparent 0%, #000 12%, #000 84%, transparent 100%);
+    linear-gradient(100deg, transparent 0%, #000 28%, #000 90%, transparent 100%),
+    linear-gradient(180deg, transparent 0%, #000 8%, #000 90%, transparent 100%);
   -webkit-mask-composite: source-in;
   mask-composite: intersect;
 }
@@ -398,6 +409,8 @@ h1, h2, h3, h4, .hd-title, .certs-head, .proj-more {
   margin: 0 auto;
   padding: var(--section-y) var(--gutter);
 }
+/* The hero already ends in open space; it does not need a second helping. */
+.hero + .section { padding-top: 20px; }
 .section-head {
   display: flex;
   align-items: baseline;
@@ -1537,7 +1550,7 @@ h1, h2, h3, h4, .hd-title, .certs-head, .proj-more {
   .nav-cta { display: none; }
 
   /* Text on top, the scene in the lower half, rather than one over the other. */
-  .hero { min-height: 82vh; padding: calc(var(--nav-h) + 28px) var(--gutter) 48px; align-items: flex-start; }
+  .hero { padding: 16vh var(--gutter) 0; align-items: flex-start; }
   .hero-canvas { opacity: 0.85; }
   .hero-data-note { display: none; }
   .hero-sub { max-width: none; font-size: 19px; }

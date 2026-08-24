@@ -7,7 +7,10 @@
 
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 24);
+  const heroEl = document.querySelector('.hero');
+  // The bar stays out of the way until the hero has mostly gone by.
+  const onScroll = () =>
+    nav.classList.toggle('scrolled', window.scrollY > (heroEl ? heroEl.offsetHeight * 0.55 : 24));
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
 
@@ -553,8 +556,7 @@
     const ctx = canvas.getContext('2d');
     const hero = canvas.parentElement;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const isNarrow = window.matchMedia('(max-width: 820px)').matches;
-    const animate = !reduceMotion && !isNarrow;
+    const animate = !reduceMotion;
 
     const N = data.rows * data.cols;
     const v36 = ch => { const c = ch.charCodeAt(0); return c <= 57 ? c - 48 : c - 87; };
@@ -617,33 +619,29 @@
     const CORNERS = [0, data.cols - 1, N - 1, N - data.cols];
     const BANDS = 6;   // depth-fade buckets, so the wireframe strokes in 6 passes
 
-    // Pointer: parallax orbit + Gaussian lift. The field is STILL at rest;
-    // capture playback and orbit run only while the pointer is in the hero,
-    // so all motion is caused by the visitor.
-    let tgtX = 0, tgtY = 0, curX = 0, curY = 0;       // -0.5..0.5 offsets
-    let tgtPx = -1e4, tgtPy = -1e4, curPx = -1e4, curPy = -1e4; // cursor in canvas px
-    let inside = false, playMs = 0, lastT = 0;
-    const SIGMA = 130;      // px: Gaussian falloff radius
+    // Scroll drives everything: the orbit, the capture playback, and the
+    // wavefront. The scene is STILL at rest, so all motion is the visitor's.
+    // Scrolling the hero scrubs the real recording from first frame to last.
+    let tgtP = 0, curP = 0;
+    const progress = () => {
+      const hh = hero.offsetHeight || 1;
+      return Math.max(0, Math.min(1, window.scrollY / (hh * 0.9)));
+    };
 
-    function draw(t) {
+    function draw() {
       ctx.clearRect(0, 0, w, h);
-      const dt = lastT ? Math.min(t - lastT, 100) : 0;
-      lastT = t;
-      if (inside) playMs += dt;
-      curX += (tgtX - curX) * 0.09;
-      curY += (tgtY - curY) * 0.09;
-      curPx += (tgtPx - curPx) * 0.12;
-      curPy += (tgtPy - curPy) * 0.12;
-      const fi = (playMs * 0.01) % data.frames;     // ~10 Hz, the real capture rate
-      const i0 = Math.floor(fi), i1 = (i0 + 1) % data.frames, mix = fi - i0;
-      const yaw = 0.42 + curX * 0.5;
-      const pitch = -0.22 + curY * 0.18;
+      curP += (tgtP - curP) * 0.14;
+      const prog = curP;
+      const fi = prog * (data.frames - 1);
+      const i0 = Math.floor(fi), i1 = Math.min(i0 + 1, data.frames - 1), mix = fi - i0;
+      const yaw = 0.34 + prog * 0.8;
+      const pitch = -0.2 + prog * 0.28;
       const cy = Math.cos(yaw), sy = Math.sin(yaw);
       const cp = Math.cos(pitch), sp = Math.sin(pitch);
-      const f = w * (w > 900 ? 1.06 : 1.9);
+      const f = w * (w > 900 ? 1.34 : 2.0);
       // Sit the scene right of centre so it never fights the headline.
       const wide = w > 900;
-      const ax = w * (wide ? 0.69 : 0.52), ay = h * (wide ? 0.48 : 0.72);
+      const ax = w * (wide ? 0.68 : 0.52), ay = h * (wide ? 0.45 : 0.7);
 
       // One projector for everything in the scene: cloud, cone, and helmet.
       const proj = (x, y, z) => {
@@ -685,11 +683,9 @@
       for (const p of pts) {
         if (!p) continue;
         const near = Math.max(0, Math.min(1, (110 - p[2]) / 35));
-        const dx = p[0] - curPx, dy = p[1] - curPy;
-        const inf = Math.exp(-(dx * dx + dy * dy) / (2 * SIGMA * SIGMA));
-        ctx.fillStyle = `rgba(141, 164, 245, ${Math.min(1, 0.16 + near * 0.32 + inf * 0.5)})`;
+        ctx.fillStyle = `rgba(141, 164, 245, ${Math.min(1, 0.2 + near * 0.38)})`;
         ctx.beginPath();
-        ctx.arc(p[0], p[1] - inf * 12, 1.8 + near * 1.9 + inf * 2.6, 0, 6.2832);
+        ctx.arc(p[0], p[1], 1.9 + near * 2.2, 0, 6.2832);
         ctx.fill();
       }
 
@@ -709,8 +705,8 @@
           ctx.lineTo(q[0], q[1]);
           ctx.stroke();
         }
-        // A wavefront leaving the emitter, one every 1.6 s of pointer time.
-        const s01 = (playMs % 1600) / 1600;
+        // A wavefront leaving the emitter, three across the scroll.
+        const s01 = (prog * 3) % 1;
         ctx.strokeStyle = `rgba(141, 164, 245, ${0.45 * Math.sin(s01 * Math.PI)})`;
         ctx.beginPath();
         far.forEach((q, k) => {
@@ -773,36 +769,36 @@
     }
 
     resize();
-    if (!animate) { draw(40000); window.addEventListener('resize', () => { resize(); draw(40000); }); return; }
+    tgtP = curP = progress();
+    draw();
+    if (!animate) {
+      window.addEventListener('resize', () => { resize(); tgtP = curP = progress(); draw(); });
+      return;
+    }
 
-    let running = false, rafId = 0;
-    const settled = () =>
-      !inside &&
-      Math.abs(tgtX - curX) < 0.001 && Math.abs(tgtY - curY) < 0.001 &&
-      curPx < -5000;
-    const loop = t => {
-      draw(t);
-      if (settled()) { running = false; lastT = 0; return; } // rest: hold one still frame
+    let running = false, rafId = 0, visible = true;
+    const loop = () => {
+      draw();
+      if (Math.abs(tgtP - curP) < 0.0004) {   // rest: hold one still frame
+        curP = tgtP;
+        draw();
+        running = false;
+        return;
+      }
       rafId = requestAnimationFrame(loop);
     };
-    const start = () => { if (!running) { running = true; lastT = 0; rafId = requestAnimationFrame(loop); } };
-    const stop = () => { if (running) { running = false; lastT = 0; cancelAnimationFrame(rafId); } };
+    const start = () => { if (!running && visible) { running = true; rafId = requestAnimationFrame(loop); } };
+    const stop = () => { if (running) { running = false; cancelAnimationFrame(rafId); } };
 
-    hero.addEventListener('pointermove', e => {
-      const r = hero.getBoundingClientRect();
-      inside = true;
-      tgtX = e.clientX / r.width - 0.5;
-      tgtY = e.clientY / r.height - 0.5;
-      tgtPx = e.clientX - r.left;
-      tgtPy = e.clientY - r.top;
-      start();
-    });
-    hero.addEventListener('pointerleave', () => { inside = false; tgtX = 0; tgtY = 0; tgtPx = tgtPy = -1e4; start(); });
-    window.addEventListener('resize', () => { resize(); start(); });
+    window.addEventListener('scroll', () => { tgtP = progress(); start(); }, { passive: true });
+    window.addEventListener('resize', () => { resize(); tgtP = progress(); start(); });
     document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
     if ('IntersectionObserver' in window) {
-      new IntersectionObserver(es => es.forEach(e => (e.isIntersecting ? start() : stop()))).observe(hero);
-    } else start();
+      new IntersectionObserver(es => es.forEach(e => {
+        visible = e.isIntersecting;
+        visible ? start() : stop();
+      })).observe(hero);
+    }
   })();
 
   // --- Gallery lightbox ---
