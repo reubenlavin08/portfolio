@@ -621,6 +621,22 @@
     const motors = [dome(0, 1.34), dome(-1.5708, 1.62), dome(1.5708, 1.62)];
     // Grid corners, for the FoV cone.
     const CORNERS = [0, data.cols - 1, N - 1, N - data.cols];
+
+    // Every zone gets its own phase, rate and amplitude, so the field is
+    // always alive on its own clock rather than only when the page moves.
+    // Two terms per zone at unrelated rates, so it never settles into a
+    // visible beat. Deterministic, so it looks the same on every load.
+    const zPhase = new Float32Array(N);
+    const zRate = new Float32Array(N);
+    const zAmp = new Float32Array(N);
+    const frac = v => v - Math.floor(v);
+    for (let z = 0; z < N; z++) {
+      const a = frac(Math.sin(z * 12.9898) * 43758.5453);
+      const b = frac(Math.sin(z * 78.233) * 12345.6789);
+      zPhase[z] = a * 6.2832;
+      zRate[z] = 0.55 + b * 1.5;
+      zAmp[z] = 3.5 + a * 5.5;
+    }
     const BANDS = 6;   // depth-fade buckets, so the wireframe strokes in 6 passes
 
     // Scroll drives everything: the orbit, the capture playback, and the
@@ -638,12 +654,14 @@
       return Math.max(0, Math.min(1, -track.getBoundingClientRect().top / span));
     };
 
-    function draw() {
+    function draw(t) {
       ctx.clearRect(0, 0, w, h);
       curP += (tgtP - curP) * 0.14;
       const prog = curP;
-      const fi = prog * (data.frames - 1);
-      const i0 = Math.floor(fi), i1 = Math.min(i0 + 1, data.frames - 1), mix = fi - i0;
+      // The recording plays on its own clock at its real 10 Hz, so the data
+      // keeps moving whether or not anyone is scrolling.
+      const fi = (t * 10) % data.frames;
+      const i0 = Math.floor(fi), i1 = (i0 + 1) % data.frames, mix = fi - i0;
       // Two rotations. The rig turns about the sensor's own vertical axis,
       // which is the wearer turning their head and sweeping the cone with it;
       // the camera only drifts, because orbiting it far enough to read as a
@@ -686,31 +704,16 @@
         return depth < 20 ? null : [ax + (x2 / depth) * f, ay + (y2 / depth) * f, depth];
       };
 
-      // The recorded scene is a flat wall, so on its own the field barely
-      // moves. An obstacle is synthesised on top of it: a soft blob crossing
-      // the grid that pulls the zones it covers much closer, which is exactly
-      // what the sensor sees when something passes in front of the wearer.
-      // The wall underneath is the real capture; the obstacle is not.
-      const obsX = Math.sin(prog * 8.4) * 0.44 + Math.sin(prog * 3.1) * 0.1;
-      const obsY = Math.cos(prog * 5.6) * 0.26;
-      const obsD = 38 + Math.sin(prog * 12.7) * 16;
-      const OBS_S2 = 2 * 0.19 * 0.19;
-      // Absent on the first screen, so the page opens on the clean wall and
-      // the obstacle is something the visitor's scroll brings into the field.
-      const obsAmt = Math.min(1, prog * 5);
-
       let sum = 0, nValid = 0;
       const nearest = [1e4, 1e4, 1e4];   // centre, left, right: the firmware's regions
       for (let z = 0; z < N; z++) {
         const d0 = all[i0 * N + z], d1 = all[i1 * N + z];
         if (!d0 || !d1) { pts[z] = null; continue; }
-        const col0 = z % data.cols, row0 = (z / data.cols) | 0;
-        const nx = (col0 + 0.5) / data.cols - 0.5;
-        const ny = (row0 + 0.5) / data.rows - 0.5;
-        const g = obsAmt * Math.exp(-((nx - obsX) * (nx - obsX) + (ny - obsY) * (ny - obsY)) / OBS_S2);
-        let d = d0 + (d1 - d0) * mix;
-        d = d * (1 - g) + obsD * g;
-        d += Math.sin(z * 1.73 + prog * 46) * 1.4 * obsAmt;   // per-zone shimmer
+        // Each zone drifts along its own ray, on its own rhythm.
+        const r0 = zRate[z], p0 = zPhase[z], a0 = zAmp[z];
+        const d = d0 + (d1 - d0) * mix
+          + a0 * Math.sin(t * r0 + p0)
+          + a0 * 0.55 * Math.sin(t * r0 * 0.37 + p0 * 1.7);
         const p = proj(dirs[z][0] * d, dirs[z][1] * d, d - PIVOT);
         if (!p) { pts[z] = null; continue; }
         pts[z] = [p[0], p[1], d];
@@ -824,35 +827,40 @@
 
     resize();
     tgtP = curP = progress();
-    draw();
+    draw(0);
     if (!animate) {
-      window.addEventListener('resize', () => { resize(); tgtP = curP = progress(); draw(); });
+      window.addEventListener('resize', () => { resize(); tgtP = curP = progress(); draw(0); });
       return;
     }
 
-    let running = false, rafId = 0, visible = true;
-    const loop = () => {
-      draw();
-      if (Math.abs(tgtP - curP) < 0.0004) {   // rest: hold one still frame
-        curP = tgtP;
-        draw();
-        running = false;
-        return;
-      }
+    // The field animates continuously, so the loop runs for as long as the
+    // hero is on screen rather than settling. It stops the moment the hero
+    // scrolls away or the tab is hidden, which is what keeps that honest.
+    let running = false, rafId = 0, visible = true, t0 = 0, tLast = 0;
+    const loop = ts => {
+      if (!t0) t0 = ts - tLast * 1000;
+      tLast = (ts - t0) / 1000;
+      draw(tLast);
       rafId = requestAnimationFrame(loop);
     };
-    const start = () => { if (!running && visible) { running = true; rafId = requestAnimationFrame(loop); } };
+    const start = () => {
+      if (!running && visible && !document.hidden) {
+        running = true;
+        t0 = 0;                      // resume the clock where it left off
+        rafId = requestAnimationFrame(loop);
+      }
+    };
     const stop = () => { if (running) { running = false; cancelAnimationFrame(rafId); } };
 
-    window.addEventListener('scroll', () => { tgtP = progress(); start(); }, { passive: true });
-    window.addEventListener('resize', () => { resize(); tgtP = progress(); start(); });
+    window.addEventListener('scroll', () => { tgtP = progress(); }, { passive: true });
+    window.addEventListener('resize', () => { resize(); tgtP = progress(); });
     document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(es => es.forEach(e => {
         visible = e.isIntersecting;
         visible ? start() : stop();
       })).observe(hero);
-    }
+    } else start();
   })();
 
   // --- Gallery lightbox ---
