@@ -489,7 +489,6 @@ h1, h2, h3, h4, .hd-title, .certs-head, .proj-more {
 /* ---------- Card surface ---------- */
 /* Dark elevation is a lighter face plus a hairline. Mercury's own mechanic. */
 .about-text,
-.about-card,
 .timeline,
 .activity,
 .cert,
@@ -524,36 +523,6 @@ h1, h2, h3, h4, .hd-title, .certs-head, .proj-more {
 }
 .about-text p:last-child { margin-bottom: 0; }
 .about-text strong { color: var(--ink); font-weight: 500; }
-.about-card {
-  border-radius: var(--r-lg);
-  padding: 24px;
-}
-.about-card h3 {
-  font-family: var(--text);
-  font-size: 16px;
-  color: var(--ink-3);
-  margin: 0 0 14px;
-  font-weight: 400;
-  letter-spacing: 0;
-}
-.about-card ul li {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 14px;
-  padding: 12px 0;
-  border-bottom: var(--hair) solid var(--line);
-  font-size: 16px;
-}
-.about-card ul li:last-child { border-bottom: none; padding-bottom: 0; }
-.about-card ul li:first-child { padding-top: 0; }
-.about-card ul li span { color: var(--ink-3); font-size: 15px; }
-.about-card ul li strong {
-  color: var(--ink);
-  font-weight: 500;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
 
 /* ---------- Timeline ---------- */
 .timeline {
