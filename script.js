@@ -1,4 +1,4 @@
-﻿(() => {
+(() => {
   // --- Nav ---
   const nav = document.getElementById('nav');
   const toggle = document.getElementById('navToggle');
@@ -503,8 +503,8 @@
         if (d[k] > 0 && d[k] < top) d[k] = DUTY_MIN + (d[k] - DUTY_MIN) * 0.7;
         const pct = d[k] ? Math.round((d[k] / DUTY_MAX) * 100) : 0;
         vals[k].textContent = pct ? pct + '%' : 'off';
-        rings[k].style.background = `rgba(95, 208, 138, ${d[k] / DUTY_MAX})`;
-        rings[k].style.boxShadow = d[k] ? `0 0 ${6 + (d[k] / DUTY_MAX) * 14}px rgba(95, 208, 138, 0.55)` : 'none';
+        rings[k].style.background = `rgba(82, 102, 235, ${d[k] / DUTY_MAX})`;
+        rings[k].style.boxShadow = 'none';
       }
     }
 
@@ -616,7 +616,7 @@
         if (depth < 20) { pts[z] = null; continue; }
         pts[z] = [ax + (x2 / depth) * f, ay + (y2 / depth) * f, d];
       }
-      ctx.strokeStyle = 'rgba(95, 208, 138, 0.045)';
+      ctx.strokeStyle = 'rgba(82, 102, 235, 0.11)';
       ctx.lineWidth = 1;
       ctx.beginPath();
       for (let r = 0; r < data.rows; r++) {
@@ -635,7 +635,7 @@
         const near = Math.max(0, Math.min(1, (110 - p[2]) / 35));
         const dx = p[0] - curPx, dy = p[1] - curPy;
         const inf = Math.exp(-(dx * dx + dy * dy) / (2 * SIGMA * SIGMA));
-        ctx.fillStyle = `rgba(95, 208, 138, ${Math.min(1, 0.1 + near * 0.28 + inf * 0.55)})`;
+        ctx.fillStyle = `rgba(82, 102, 235, ${Math.min(1, 0.2 + near * 0.34 + inf * 0.46)})`;
         ctx.beginPath();
         ctx.arc(p[0], p[1] - inf * 12, 1.8 + near * 1.9 + inf * 2.6, 0, 6.2832);
         ctx.fill();
