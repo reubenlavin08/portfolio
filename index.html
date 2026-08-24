@@ -245,7 +245,6 @@
         <article class="case" id="sunrise-mask">
           <div class="case-media">
             <figure class="case-video case-video--contain">
-              <span class="proj-status">In progress</span>
               <video src="assets/projects/sunrise-mask-demo.mp4" poster="assets/projects/sunrise-mask-poster.jpg" controls preload="metadata" style="aspect-ratio: 9 / 16;" aria-label="Walkthrough of the sunrise wake-up mask"></video>
               <figcaption>A walkthrough of the build, hardware, and app</figcaption>
             </figure>
@@ -286,7 +285,7 @@
               <li>Every dead end and fix, including a 10-bit HDR export that wouldn't play and a swapped data/ground line that killed the strip, is written up in the repo's devlog</li>
             </ul>
             <p class="case-results">
-              <strong>Where it stands:</strong> the full sunrise-and-haptic wake sequence runs on the bench, configured live from the desktop app, with WiFi time sync working. Next is the battery enclosure and a dedicated haptic driver.
+              <strong>Where it stands:</strong> finished. The full sunrise-and-haptic wake sequence runs on hardware, configured live from the desktop app, with WiFi time sync working.
             </p>
             <div class="project-stack">
               <span>C · ESP-IDF 5.4</span><span>ESP32-C6</span><span>WS2812B LEDs</span><span>Haptics</span><span>FreeRTOS</span><span>WiFi · SNTP</span><span>Web Serial</span><span>Electron</span>
@@ -300,7 +299,6 @@
         <article class="case" id="spindle-whorl">
           <div class="case-media">
             <figure class="case-video case-video--contain">
-              <span class="proj-status">In progress</span>
               <video src="assets/projects/spindle-whorl-demo.mp4" poster="assets/projects/spindle-whorl-poster.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Hand-tracked grab of a spindle whorl disc in passthrough AR"></video>
               <figcaption>Bare-hand pinch and turn, captured in-headset on a Quest 3</figcaption>
             </figure>
@@ -339,7 +337,7 @@
               <li>One rule throughout: no AI-generated stand-in art. Placeholders are unlabeled UV grids, and AI only cleans real photographs; it never invents Coast Salish designs</li>
             </ul>
             <p class="case-results">
-              <strong>Where it stands:</strong> v0.5, a working hand-tracked six-whorl gallery on a Quest 3, with headless builds and a verified deploy pipeline.
+              <strong>Where it stands:</strong> finished at v0.5. A working hand-tracked six-whorl gallery on a Quest 3, with headless builds and a verified deploy pipeline.
             </p>
             <div class="project-stack">
               <span>Unity 6</span><span>Meta Quest 3</span><span>Passthrough AR</span><span>OpenXR</span><span>XR Hands</span><span>C#</span><span>Python · OpenCV</span>
@@ -355,30 +353,6 @@
       <h3 class="proj-more">More builds</h3>
       <div class="proj-grid">
 
-        <article class="proj-card" data-project="bullseye" tabindex="0" role="button" aria-label="Open Bullseye project">
-          <figure class="proj-thumb proj-thumb--video proj-thumb--contain">
-            <video src="assets/projects/bullseye-demo.mp4" poster="assets/projects/bullseye-poster.jpg" autoplay muted loop playsinline preload="metadata"></video>
-          </figure>
-          <div class="proj-body">
-            <span class="proj-tag">Product · Open Source</span>
-            <h3>Bullseye: Marketplace Deal Scorer</h3>
-            <p>Open-source Windows app that scores Facebook Marketplace listings against real eBay sold comps in real time.</p>
-            <span class="proj-cta">View project &rarr;</span>
-          </div>
-        </article>
-
-        <article class="proj-card" data-project="claudemonitor" tabindex="0" role="button" aria-label="Open Claude Monitor project">
-          <figure class="proj-thumb">
-            <img src="assets/projects/claude-monitor-dashboard.png" alt="Claude Monitor CRT dashboard" loading="lazy" width="1517" height="895" />
-          </figure>
-          <div class="proj-body">
-            <span class="proj-tag">Embedded · Dashboards</span>
-            <h3>Claude Monitor: Live Pi Usage Dashboard</h3>
-            <p>Wall-mounted 7" Raspberry Pi screen showing live Claude Code usage scraped from the CLI dialog.</p>
-            <span class="proj-cta">View project &rarr;</span>
-          </div>
-        </article>
-
         <article class="proj-card" data-project="sentinel" tabindex="0" role="button" aria-label="Open Sentinel project">
           <figure class="proj-thumb">
             <img src="assets/projects/sentinel-demo.webp" alt="Sentinel occupancy dashboard" loading="lazy" width="1919" height="861" />
@@ -387,18 +361,6 @@
             <span class="proj-tag">AI · Computer Vision</span>
             <h3>Sentinel: AI Occupancy Monitor</h3>
             <p>Real-time people counting via YOLOv8-Pose tripwire over an IP camera, with a live Streamlit dashboard.</p>
-            <span class="proj-cta">View project &rarr;</span>
-          </div>
-        </article>
-
-        <article class="proj-card" data-project="cvcourse" tabindex="0" role="button" aria-label="Open Sensor Fusion Course project">
-          <figure class="proj-thumb">
-            <img src="assets/projects/cv-course-home.png" alt="Sensor Fusion course homepage" loading="lazy" width="1280" height="800" />
-          </figure>
-          <div class="proj-body">
-            <span class="proj-tag">Learning · Experiment</span>
-            <h3>Sensor Fusion: A Personalized Learning Experiment</h3>
-            <p>Self-paced CV / calibration / fusion course built around AI as a first-class learning collaborator.</p>
             <span class="proj-cta">View project &rarr;</span>
           </div>
         </article>
@@ -423,6 +385,30 @@
             <span class="proj-tag">Aerospace · Hardware</span>
             <h3>RC Plane Build</h3>
             <p>Designed and assembled an RC airplane from scratch: airframe, control surfaces, and radio tuning.</p>
+            <span class="proj-cta">View project &rarr;</span>
+          </div>
+        </article>
+
+        <article class="proj-card" data-project="claudemonitor" tabindex="0" role="button" aria-label="Open Claude Monitor project">
+          <figure class="proj-thumb">
+            <img src="assets/projects/claude-monitor-dashboard.png" alt="Claude Monitor CRT dashboard" loading="lazy" width="1517" height="895" />
+          </figure>
+          <div class="proj-body">
+            <span class="proj-tag">Embedded · Dashboards</span>
+            <h3>Claude Monitor: Live Pi Usage Dashboard</h3>
+            <p>Wall-mounted 7" Raspberry Pi screen showing live Claude Code usage scraped from the CLI dialog.</p>
+            <span class="proj-cta">View project &rarr;</span>
+          </div>
+        </article>
+
+        <article class="proj-card" data-project="bullseye" tabindex="0" role="button" aria-label="Open Bullseye project">
+          <figure class="proj-thumb proj-thumb--video proj-thumb--contain">
+            <video src="assets/projects/bullseye-demo.mp4" poster="assets/projects/bullseye-poster.jpg" autoplay muted loop playsinline preload="metadata"></video>
+          </figure>
+          <div class="proj-body">
+            <span class="proj-tag">Product · Open Source</span>
+            <h3>Bullseye: Marketplace Deal Scorer</h3>
+            <p>Open-source Windows app that scores Facebook Marketplace listings against real eBay sold comps in real time.</p>
             <span class="proj-cta">View project &rarr;</span>
           </div>
         </article>
@@ -477,8 +463,10 @@
         <div class="skill-group">
           <h3>Programming</h3>
           <ul>
-            <li>Java <span class="lvl">· fundamentals (AP CS)</span></li>
-            <li>Python <span class="lvl">· intermediate</span></li>
+            <li>C <span class="lvl">· ESP-IDF firmware</span></li>
+            <li>Python <span class="lvl">· CV &amp; tooling</span></li>
+            <li>C# <span class="lvl">· Unity</span></li>
+            <li>Java <span class="lvl">· AP CS</span></li>
             <li>SQL / SQLite</li>
           </ul>
         </div>
@@ -510,6 +498,11 @@
         <h2>Activities &amp; Leadership</h2>
       </div>
       <div class="activities">
+        <div class="activity">
+          <h3>Junior Software Developer &middot; AI Operations</h3>
+          <p class="a-meta">SentryDevices &middot; Vancouver, BC &middot; June&ndash;August 2026</p>
+          <p>First paid software role, part-time through the summer. The work is covered by a non-disclosure agreement, so the detail stays off this page; happy to talk about what I learned in general terms.</p>
+        </div>
         <div class="activity">
           <h3>Black Belt &amp; Assistant Instructor</h3>
           <p class="a-meta">Ken Shin Dojo · Kerrisdale Community Centre</p>

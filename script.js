@@ -121,23 +121,6 @@
         { type: 'image', src: 'assets/projects/sentinel-demo.webp' },
       ],
     },
-    cvcourse: {
-      thumb: 'assets/projects/cv-course-home.png',
-      tag: 'Learning · Experiment',
-      title: 'Sensor Fusion: A Personalized Learning Experiment',
-      desc: 'A self-paced course on computer vision, sensor calibration, and multi-sensor fusion, designed around AI as a first-class learning collaborator. The artifact is a working static-site course; the point is the experiment: testing whether structured AI collaboration helps a single learner cover college-level technical material faster and deeper than passive content or solo grinding.',
-      bullets: [
-        '"Ask Claude" and "Stuck?" buttons on every lesson and quiz; each click copies a topic-specific, pre-engineered Socratic prompt to the clipboard and opens claude.ai',
-        'A portable BRIEFING.md handoff document reloads full project context into any fresh Claude chat in under 30 seconds',
-        'Built to support a three-phase assistive-helmet project: Phase 1 (shipped) = ToF + 6-DOF pose, Phase 2 = camera CV, Phase 3 = ToF + camera + IMU fused into a unified state estimator',
-      ],
-      stack: ['Static site', 'Active recall', 'AI-collaborative design', 'Sensor fusion', 'Computer vision', 'Linear algebra'],
-      github: 'https://github.com/reubenlavin08/cv-robotics-course',
-      website: 'https://reubenlavin08.github.io/cv-robotics-course/',
-      gallery: [
-        { type: 'image', src: 'assets/projects/cv-course-home.png' },
-      ],
-    },
     rccar: {
       thumb: 'assets/projects/rc-car-thumb.jpg',
       tag: 'Robotics',
@@ -392,7 +375,7 @@
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     // i=0 (strongest project) is the big front panel; later items recede.
-    const order = ['bullseye', 'claudemonitor', 'sentinel', 'cvcourse', 'rccar', 'rcplane', 'ccdiscord'];
+    const order = ['sentinel', 'rccar', 'rcplane', 'claudemonitor', 'bullseye', 'ccdiscord'];
     const N = order.length;
     const Z_SPREAD = 110;   // depth gap between panels
     const X_STEP = 74;      // lateral staircase so every panel stays reachable
